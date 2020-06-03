@@ -1,0 +1,2 @@
+rootProject.name='Android NDK OpenGL Research'
+include ':app'
