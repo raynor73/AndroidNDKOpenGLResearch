@@ -17,7 +17,7 @@
 class GameObject {
 
 public:
-    GameObject(const std::string &name);
+    explicit GameObject(const std::string &name);
     virtual ~GameObject();
 
     const std::string &name() const { return m_name; }
@@ -28,16 +28,20 @@ public:
     std::shared_ptr<GameObject> parent() { return m_parent; }
     const std::unordered_map<std::string, std::shared_ptr<GameObject>> children() { return m_children; }
 
-    void addChild(GameObject &child);
-    void removeChild(GameObject &child);
+    void addChild(std::shared_ptr<GameObject> child);
+    void removeChild(std::shared_ptr<GameObject> child);
 
-    void addComponent(GameObjectComponent &component);
-    void removeComponent(GameObjectComponent &component);
+    void addComponent(std::shared_ptr<GameObjectComponent> component);
+    void removeComponent(std::shared_ptr<GameObjectComponent> component);
 
     void update();
+    void onAttachedToParent();
+    void onDetachedFromParent();
 
-    void clone();
-    void clone(const std::string &cloneName);
+    std::shared_ptr<GameObjectComponent> findComponent(const std::string &name);
+
+    std::shared_ptr<GameObject> clone();
+    std::shared_ptr<GameObject> clone(const std::string &cloneName);
 
 private:
     bool m_isEnabled;
