@@ -7,15 +7,10 @@
 #include "L.h"
 
 void GameWrapper::onDrawFrame() {
-
 }
 
 void GameWrapper::onSurfaceChanged(int width, int height) {
-    std::stringstream ss;
-    ss << "onSurfaceChanged: " << width << "x" << height;
-    L::d("!@£", ss.str());
 }
 
 void GameWrapper::onSurfaceCreated() {
-    L::d("!@£", "onSurfaceCreated");
 }

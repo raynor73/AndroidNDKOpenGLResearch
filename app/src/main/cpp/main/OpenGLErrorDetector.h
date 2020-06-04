@@ -7,12 +7,28 @@
 
 
 #include <unordered_map>
+#include <string>
 #include <GLES2/gl2.h>
 
 class OpenGLErrorDetector {
 
+public:
+    OpenGLErrorDetector();
+
+    bool isOpenGLErrorDetected() const { return m_isOpenGLErrorDetected; }
+
+    void checkOpenGLErrors(const std::string &locationName);
+    /*void checkShaderCompilationError(int shader, const std::string &locationName);
+    void checkShaderLinkingError(int shader, const std::string &locationName);
+    void checkFramebufferStatus(const std::string &locationName);*/
+
 private:
-    //static std::unordered_map<
+    bool m_isOpenGLErrorDetected;
+
+    static const std::unordered_map<GLenum, const std::string> s_openGLErrorMap;
+    static const std::unordered_map<GLenum, const std::string> s_framebufferStatusMap;
+
+    static const std::string LOG_TAG;
 };
 
 
