@@ -24,6 +24,8 @@ add_library(
         engine_3d/GameObject.cpp
         game/touch_screen/TouchScreen.cpp
         game/DisplayInfo.cpp
+
+        main/GameWrapper.cpp
 )
 
 # Searches for a specified prebuilt library and stores the path as a
