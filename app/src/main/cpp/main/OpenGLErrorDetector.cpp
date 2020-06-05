@@ -8,7 +8,11 @@
 #include "L.h"
 
 OpenGLErrorDetector::OpenGLErrorDetector() : m_isOpenGLErrorDetected(false) {
-    // do nothing
+    m_infoBuffer = new GLchar[INFO_BUFFER_SIZE];
+}
+
+OpenGLErrorDetector::~OpenGLErrorDetector() {
+    delete m_infoBuffer;
 }
 
 void OpenGLErrorDetector::checkOpenGLErrors(const std::string &locationName) {
@@ -29,6 +33,49 @@ void OpenGLErrorDetector::checkOpenGLErrors(const std::string &locationName) {
         L::d(LOG_TAG, ss.str());
 
         error = glGetError();
+    }
+}
+
+void OpenGLErrorDetector::checkShaderCompilationError(GLuint shader, const std::string &locationName) {
+    GLint compileStatus;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+    if (compileStatus == GL_FALSE) {
+        m_isOpenGLErrorDetected = true;
+
+        glGetShaderInfoLog(shader, INFO_BUFFER_SIZE, nullptr, m_infoBuffer);
+        std::stringstream ss;
+        ss << "OpenGL shader compilation failure detected at " << locationName << ": " << m_infoBuffer;
+        L::d(LOG_TAG, ss.str());
+    }
+}
+
+void OpenGLErrorDetector::checkShaderLinkingError(GLuint shader, const std::string &locationName) {
+    GLint linkStatus;
+    glGetProgramiv(shader, GL_LINK_STATUS, &linkStatus);
+    if (linkStatus == GL_FALSE) {
+        m_isOpenGLErrorDetected = true;
+
+        std::stringstream ss;
+        ss << "OpenGL shader linking failure detected at " << locationName;
+        L::d(LOG_TAG, ss.str());
+    }
+}
+
+void OpenGLErrorDetector::checkFramebufferStatus(const std::string &locationName) {
+    auto framebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (framebufferStatus != GL_FRAMEBUFFER_COMPLETE) {
+        m_isOpenGLErrorDetected = true;
+        std::string statusDescription;
+        if (s_framebufferStatusMap.count(framebufferStatus) > 0) {
+            statusDescription = s_framebufferStatusMap.at(framebufferStatus);
+        } else {
+            std::stringstream ss;
+            ss << "Unknown status " << framebufferStatus;
+            statusDescription = ss.str();
+        }
+        std::stringstream ss;
+        ss << "Incomplete framebuffer status at " << locationName << ": " << statusDescription;
+        L::d(LOG_TAG, ss.str());
     }
 }
 
