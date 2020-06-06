@@ -8,6 +8,7 @@
 #include "TouchEventType.h"
 
 struct TouchEvent {
+    int id;
     float x, y;
     TouchEventType type;
 };

@@ -27,10 +27,12 @@ add_library(
         game/TimeProvider.cpp
         game/Scene.cpp
         game/dev_scenes/ScreenBlinkingScene.cpp
+        game/MessageQueue.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp
         main/L.cpp
+        main/AndroidDisplayInfo.cpp
 )
 
 # Searches for a specified prebuilt library and stores the path as a

@@ -9,11 +9,12 @@
 #include <memory>
 #include "../engine_3d/GameObject.h"
 #include "TimeProvider.h"
+#include "DisplayInfo.h"
 
 class Scene {
 
 public:
-    explicit Scene(std::shared_ptr<TimeProvider> timeProvider);
+    explicit Scene(std::shared_ptr<TimeProvider> timeProvider, std::shared_ptr<DisplayInfo> displayInfo);
     virtual ~Scene() = default;
 
     std::shared_ptr<GameObject> rootGameObject() { return m_rootGameObject; }
@@ -24,6 +25,7 @@ public:
 private:
     std::shared_ptr<GameObject> m_rootGameObject;
     std::shared_ptr<TimeProvider> m_timeProvider;
+    std::shared_ptr<DisplayInfo> m_displayInfo;
     float m_prevTimestamp;
     bool m_hasPrevTimestamp;
 };

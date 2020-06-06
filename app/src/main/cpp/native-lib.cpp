@@ -1,14 +1,5 @@
 #include <jni.h>
-#include <string>
 #include "main/GameWrapper.h"
-
-/*extern "C" JNIEXPORT jstring JNICALL
-Java_ilapin_opengl_1research_MainActivity_stringFromJNI(
-        JNIEnv* env,
-        jobject that) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}*/
 
 static GameWrapper gameWrapper;
 

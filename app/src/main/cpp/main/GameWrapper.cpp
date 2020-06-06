@@ -6,6 +6,7 @@
 #include "L.h"
 
 void GameWrapper::onDrawFrame() {
+    m_messageQueue.update();
     m_scene->Scene::update();
 }
 

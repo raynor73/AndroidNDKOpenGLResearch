@@ -8,6 +8,7 @@
 
 #include <memory>
 #include "../game/dev_scenes/ScreenBlinkingScene.h"
+#include "../game/MessageQueue.h"
 
 class GameWrapper {
 
@@ -17,6 +18,7 @@ public:
     void onSurfaceCreated();
 
 private:
+    MessageQueue m_messageQueue;
     std::shared_ptr<ScreenBlinkingScene> m_scene;
 };
 
