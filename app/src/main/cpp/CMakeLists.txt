@@ -24,6 +24,9 @@ add_library(
         engine_3d/GameObject.cpp
         game/touch_screen/TouchScreen.cpp
         game/DisplayInfo.cpp
+        game/TimeProvider.cpp
+        game/Scene.cpp
+        game/dev_scenes/ScreenBlinkingScene.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp
