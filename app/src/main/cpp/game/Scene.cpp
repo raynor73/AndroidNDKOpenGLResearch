@@ -6,9 +6,10 @@
 
 #include <utility>
 
-Scene::Scene(std::shared_ptr<TimeProvider> timeProvider) :
+Scene::Scene(std::shared_ptr<TimeProvider> timeProvider, std::shared_ptr<DisplayInfo> displayInfo) :
     m_rootGameObject(std::make_shared<GameObject>("root")),
     m_timeProvider(std::move(timeProvider)),
+    m_displayInfo(std::move(displayInfo)),
     m_prevTimestamp(0.0f),
     m_hasPrevTimestamp(false)
 {

@@ -1,12 +1,23 @@
 #include <jni.h>
 #include "main/GameWrapper.h"
 
-static GameWrapper gameWrapper;
+static GameWrapper *gameWrapper = nullptr;
+static float displayDensityFactor;
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperInit(
+        JNIEnv *env,
+        jobject that,
+        jfloat display_density_factor
+) {
+    displayDensityFactor = display_density_factor;
+}
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnDrawFrame(JNIEnv *env, jobject that) {
-    gameWrapper.onDrawFrame();
+    gameWrapper->onDrawFrame();
 }
 
 extern "C"
@@ -17,11 +28,14 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceChanged(
         jint width,
         jint height
 ) {
-    gameWrapper.onSurfaceChanged(width, height);
+    if (gameWrapper == nullptr) {
+        gameWrapper = new GameWrapper(displayDensityFactor);
+    }
+    gameWrapper->onSurfaceChanged(width, height);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceCreated(JNIEnv *env, jobject that) {
-    gameWrapper.onSurfaceCreated();
+    gameWrapper->onSurfaceCreated();
 }

@@ -5,10 +5,12 @@
 #include <GLES2/gl2.h>
 #include "ScreenBlinkingScene.h"
 
-ScreenBlinkingScene::ScreenBlinkingScene(std::shared_ptr<TimeProvider> timeProvider) :
-    m_elapsed(0),
+ScreenBlinkingScene::ScreenBlinkingScene(
+        std::shared_ptr<TimeProvider> timeProvider,
+        std::shared_ptr<DisplayInfo> displayInfo
+) : m_elapsed(0),
     m_isWhite(true),
-    Scene(std::move(timeProvider))
+    Scene(std::move(timeProvider), std::move(displayInfo))
 {
     // do nothing
 }

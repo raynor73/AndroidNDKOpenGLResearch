@@ -9,16 +9,21 @@
 #include <memory>
 #include "../game/dev_scenes/ScreenBlinkingScene.h"
 #include "../game/MessageQueue.h"
+#include "AndroidDisplayInfo.h"
 
 class GameWrapper {
 
 public:
+    explicit GameWrapper(float displayDensityFactor);
+
     void onDrawFrame();
     void onSurfaceChanged(int width, int height);
     void onSurfaceCreated();
 
 private:
     MessageQueue m_messageQueue;
+    float m_displayDensityFactor;
+    std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
     std::shared_ptr<ScreenBlinkingScene> m_scene;
 };
 

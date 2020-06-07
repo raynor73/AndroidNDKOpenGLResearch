@@ -12,7 +12,10 @@
 class ScreenBlinkingScene : public Scene {
 
 public:
-    explicit ScreenBlinkingScene(std::shared_ptr<TimeProvider> timeProvider);
+    explicit ScreenBlinkingScene(
+            std::shared_ptr<TimeProvider> timeProvider,
+            std::shared_ptr<DisplayInfo> displayInfo
+    );
 
     virtual void update(float dt) override;
 

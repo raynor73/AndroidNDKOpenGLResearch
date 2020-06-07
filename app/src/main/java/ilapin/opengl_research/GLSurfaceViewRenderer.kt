@@ -7,7 +7,11 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * @author igorlapin on 03/06/2020.
  */
-class GLSurfaceViewRenderer : GLSurfaceView.Renderer {
+class GLSurfaceViewRenderer(displayDensityFactor: Float) : GLSurfaceView.Renderer {
+
+    init {
+        gameWrapperInit(displayDensityFactor)
+    }
 
     override fun onDrawFrame(gl: GL10?) {
         gameWrapperOnDrawFrame()
@@ -21,6 +25,7 @@ class GLSurfaceViewRenderer : GLSurfaceView.Renderer {
         gameWrapperOnSurfaceCreated()
     }
 
+    private external fun gameWrapperInit(displayDensityFactor: Float)
     private external fun gameWrapperOnDrawFrame()
     private external fun gameWrapperOnSurfaceChanged(width: Int, height: Int)
     private external fun gameWrapperOnSurfaceCreated()

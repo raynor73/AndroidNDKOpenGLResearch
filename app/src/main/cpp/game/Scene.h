@@ -22,10 +22,12 @@ public:
     void update();
     virtual void update(float dt) = 0;
 
-private:
+protected:
     std::shared_ptr<GameObject> m_rootGameObject;
     std::shared_ptr<TimeProvider> m_timeProvider;
     std::shared_ptr<DisplayInfo> m_displayInfo;
+
+private:
     float m_prevTimestamp;
     bool m_hasPrevTimestamp;
 };

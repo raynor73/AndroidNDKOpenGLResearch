@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        renderer = GLSurfaceViewRenderer()
+        renderer = GLSurfaceViewRenderer(resources.displayMetrics.density)
 
         val glView = GLSurfaceView(this)
         glView.setEGLContextClientVersion(2)
