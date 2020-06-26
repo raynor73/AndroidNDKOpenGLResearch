@@ -31,19 +31,19 @@ public:
     GameObject(const GameObject&&) = delete;
     virtual ~GameObject();
 
-    const std::string &name() const { return m_name; }
+    const std::string& name() const { return m_name; }
 
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
     std::shared_ptr<GameObject> parent() { return m_parent; }
-    const std::unordered_map<std::string, std::shared_ptr<GameObject>> children() { return m_children; }
+    const std::unordered_map<std::string, std::shared_ptr<GameObject>>& children() { return m_children; }
 
-    void addChild(std::shared_ptr<GameObject> child);
-    void removeChild(std::shared_ptr<GameObject> child);
+    void addChild(const std::shared_ptr<GameObject>& child);
+    void removeChild(const std::shared_ptr<GameObject>& child);
 
-    void addComponent(std::shared_ptr<GameObjectComponent> component);
-    void removeComponent(std::shared_ptr<GameObjectComponent> component);
+    void addComponent(const std::shared_ptr<GameObjectComponent>& component);
+    void removeComponent(const std::shared_ptr<GameObjectComponent>& component);
 
     void update();
     void onAttachedToParent();

@@ -14,7 +14,7 @@ GameObject::~GameObject() {
     m_components.clear();
 }
 
-void GameObject::addChild(std::shared_ptr<GameObject> child) {
+void GameObject::addChild(const std::shared_ptr<GameObject>& child) {
     auto childName = child->name();
     if (m_children.count(childName) > 0) {
         std::stringstream ss;
@@ -27,7 +27,7 @@ void GameObject::addChild(std::shared_ptr<GameObject> child) {
     child->onAttachedToParent();
 }
 
-void GameObject::removeChild(std::shared_ptr<GameObject> child) {
+void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
     auto childName = child->name();
     if (m_children.count(childName) == 0) {
         std::stringstream ss;
@@ -40,7 +40,7 @@ void GameObject::removeChild(std::shared_ptr<GameObject> child) {
     child->onDetachedFromParent();
 }
 
-void GameObject::addComponent(std::shared_ptr<GameObjectComponent> component) {
+void GameObject::addComponent(const std::shared_ptr<GameObjectComponent>& component) {
     auto componentName = component->name();
     if (m_components.count(componentName) > 0) {
         std::stringstream ss;
@@ -53,7 +53,7 @@ void GameObject::addComponent(std::shared_ptr<GameObjectComponent> component) {
     component->onAttachedToGameObject();
 }
 
-void GameObject::removeComponent(std::shared_ptr<GameObjectComponent> component) {
+void GameObject::removeComponent(const std::shared_ptr<GameObjectComponent>& component) {
     auto componentName = component->name();
     if (m_components.count(componentName) == 0) {
         std::stringstream ss;
