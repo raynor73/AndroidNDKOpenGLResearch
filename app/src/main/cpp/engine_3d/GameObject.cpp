@@ -2,9 +2,12 @@
 // Created by Igor Lapin on 02/06/2020.
 //
 
+#include <utility>
 #include "GameObject.h"
 
-GameObject::GameObject(const std::string &name) : m_name(name), m_isEnabled(true) {}
+using namespace std;
+
+GameObject::GameObject(std::string name) : m_name(std::move(name)), m_isEnabled(true) {}
 
 GameObject::~GameObject() {
     m_children.clear();
@@ -65,12 +68,12 @@ void GameObject::removeComponent(std::shared_ptr<GameObjectComponent> component)
 
 void GameObject::update() {
     if (m_isEnabled) {
-        for (auto &pair : m_components) {
-            pair.second.get()->update();
+        for (auto &entry : m_components) {
+            entry.second->update();
         }
 
-        for (auto &pair : m_children) {
-            pair.second.get()->update();
+        for (auto &entry : m_children) {
+            entry.second->update();
         }
     }
 }
@@ -96,12 +99,12 @@ std::shared_ptr<GameObject> GameObject::clone() {
 std::shared_ptr<GameObject> GameObject::clone(const std::string &cloneName) {
     auto clone = new GameObject(cloneName);
 
-    for (auto &pair : m_children) {
-        clone->addChild(pair.second.get()->clone());
+    for (auto& entry : m_children) {
+        clone->addChild(entry.second->clone());
     }
 
-    for (auto &pair : m_components) {
-        clone->addComponent(pair.second.get()->clone());
+    for (auto& entry : m_components) {
+        clone->addComponent(entry.second->clone());
     }
 
     return std::shared_ptr<GameObject>(clone);
