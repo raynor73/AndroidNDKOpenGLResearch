@@ -2,9 +2,8 @@
 // Created by Igor Lapin on 06/06/2020.
 //
 
-#include "Scene.h"
-
 #include <utility>
+#include "Scene.h"
 
 Scene::Scene(std::shared_ptr<TimeProvider> timeProvider, std::shared_ptr<DisplayInfo> displayInfo) :
     m_rootGameObject(std::make_shared<GameObject>("root")),

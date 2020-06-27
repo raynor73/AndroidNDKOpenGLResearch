@@ -28,7 +28,7 @@ class GameObject {
 public:
     explicit GameObject(std::string name);
     GameObject(const GameObject&) = delete;
-    GameObject(const GameObject&&) = delete;
+    GameObject(GameObject&&) = delete;
     virtual ~GameObject();
 
     const std::string& name() const { return m_name; }
@@ -52,7 +52,7 @@ public:
     std::shared_ptr<GameObjectComponent> findComponent(const std::string &name);
 
     GameObject& operator=(const GameObject&) = delete;
-    GameObject& operator=(const GameObject&&) = delete;
+    GameObject& operator=(GameObject&&) = delete;
     std::shared_ptr<GameObject> clone();
     std::shared_ptr<GameObject> clone(const std::string &cloneName);
 

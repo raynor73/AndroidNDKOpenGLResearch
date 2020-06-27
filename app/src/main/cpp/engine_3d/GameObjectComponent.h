@@ -13,26 +13,30 @@ class GameObject;
 
 class GameObjectComponent {
 
+protected:
     bool m_isEnabled;
-    std::string m_name;
     std::shared_ptr<GameObject> m_gameObject;
 
 public:
-    explicit GameObjectComponent(std::string name) {};
+    GameObjectComponent() : m_isEnabled(true) {}
+    GameObjectComponent(const GameObjectComponent&) = delete;
+    GameObjectComponent(GameObjectComponent&&) = delete;
     virtual ~GameObjectComponent() = default;
 
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
-    std::string name() const { return m_name; }
+    virtual std::string typeName() const = 0;
 
     std::shared_ptr<GameObject> gameObject() { return m_gameObject; }
     void setGameObject(const std::shared_ptr<GameObject>& gameObject) { m_gameObject = gameObject; }
 
-    virtual void update() { };
+    virtual void update() {};
     virtual void onAttachedToGameObject() {};
     virtual void onDetachedFromGameObject() {};
 
+    GameObjectComponent& operator=(const GameObjectComponent&) = delete;
+    GameObjectComponent& operator=(GameObjectComponent&&) = delete;
     virtual std::shared_ptr<GameObjectComponent> clone() = 0;
 };
 

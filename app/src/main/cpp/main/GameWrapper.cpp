@@ -3,7 +3,6 @@
 //
 
 #include "GameWrapper.h"
-#include "L.h"
 
 GameWrapper::GameWrapper(float displayDensityFactor) : m_displayDensityFactor(displayDensityFactor) {
     // do nothing
@@ -26,7 +25,6 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 std::make_shared<TimeProvider>(),
                 m_displayInfo
         );
-        L::d("!@£", "Scene created");
     }
 }
 

@@ -41,7 +41,7 @@ void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
 }
 
 void GameObject::addComponent(const std::shared_ptr<GameObjectComponent>& component) {
-    auto componentName = component->name();
+    auto componentName = component->typeName();
     if (m_components.count(componentName) > 0) {
         std::stringstream ss;
         ss << "Already have " << componentName << " component";
@@ -54,7 +54,7 @@ void GameObject::addComponent(const std::shared_ptr<GameObjectComponent>& compon
 }
 
 void GameObject::removeComponent(const std::shared_ptr<GameObjectComponent>& component) {
-    auto componentName = component->name();
+    auto componentName = component->typeName();
     if (m_components.count(componentName) == 0) {
         std::stringstream ss;
         ss << "Component " << componentName << " not found";

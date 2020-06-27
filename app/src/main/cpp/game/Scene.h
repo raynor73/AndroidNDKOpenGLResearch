@@ -7,7 +7,7 @@
 
 
 #include <memory>
-#include "../engine_3d/GameObject.h"
+#include <engine_3d/GameObject.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
 
