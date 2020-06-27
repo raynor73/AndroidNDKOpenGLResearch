@@ -1,6 +1,4 @@
 #include <jni.h>
-#include "glm/vec3.hpp"
-#include "glm/geometric.hpp"
 #include "main/GameWrapper.h"
 
 static GameWrapper *gameWrapper = nullptr;
@@ -32,8 +30,6 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceChanged(
 ) {
     if (gameWrapper == nullptr) {
         gameWrapper = new GameWrapper(displayDensityFactor);
-        glm::vec3 a;
-        glm::length(a);
     }
     gameWrapper->onSurfaceChanged(width, height);
 }

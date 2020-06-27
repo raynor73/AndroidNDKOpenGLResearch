@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
 
         init {
-            System.loadLibrary("glm_shared")
             System.loadLibrary("native-lib")
         }
     }
