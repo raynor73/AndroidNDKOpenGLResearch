@@ -37,7 +37,7 @@ public:
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
     std::shared_ptr<GameObject> parent() { return m_parent; }
-    const std::unordered_map<std::string, std::shared_ptr<GameObject>>& children() { return m_children; }
+    const std::unordered_map<std::string, std::shared_ptr<GameObject>>& children() const { return m_children; }
 
     void addChild(const std::shared_ptr<GameObject>& child);
     void removeChild(const std::shared_ptr<GameObject>& child);

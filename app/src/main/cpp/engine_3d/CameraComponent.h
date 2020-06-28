@@ -13,6 +13,7 @@
 
 class CameraComponent : public GameObjectComponent {
 
+protected:
     float m_zNear;
     float m_zFar;
 
@@ -43,10 +44,11 @@ public:
     float viewportHeight() const { return m_viewportHeight; };
     void setViewportHeight(float viewportHeight) { m_viewportHeight = viewportHeight; };
 
-    const std::vector<const std::string>& layerNames() const { return m_layerNames; };
+    const std::vector<std::string>& layerNames() const { return m_layerNames; };
     void setLayerNames(const std::vector<std::string>& layerNames);
 
-    glm::mat4 calculateViewMatrix()
+    virtual glm::mat4 calculateViewMatrix() = 0;
+    virtual glm::mat4 calculateProjectionMatrix() = 0;
 };
 
 
