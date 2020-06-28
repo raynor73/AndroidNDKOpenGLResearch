@@ -11,17 +11,17 @@
 
 class ScreenBlinkingScene : public Scene {
 
+    float m_elapsed;
+    bool m_isWhite;
+
 public:
     explicit ScreenBlinkingScene(
             std::shared_ptr<TimeProvider> timeProvider,
             std::shared_ptr<DisplayInfo> displayInfo
     );
 
+protected:
     virtual void update(float dt) override;
-
-private:
-    float m_elapsed;
-    bool m_isWhite;
 };
 
 

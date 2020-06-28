@@ -11,6 +11,7 @@
 class RenderingEngine {
 
 public:
+    RenderingEngine() = default;
     RenderingEngine(const RenderingEngine&) = delete;
     RenderingEngine(RenderingEngine&&) = delete;
 

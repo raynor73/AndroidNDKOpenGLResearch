@@ -9,5 +9,8 @@
 void RenderingEngine::render(Scene &scene) {
     std::vector<GameObjectComponent> activeCameras;
 
+    /*auto currentGameObject = scene.rootGameObject();
+    for (auto& gameObject : currentGameObject->children()) {
 
+    }*/
 }
