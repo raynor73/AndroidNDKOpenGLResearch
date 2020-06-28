@@ -6,8 +6,18 @@
 #define GAME_RENDERINGENGINE_H
 
 
+#include <game/Scene.h>
+
 class RenderingEngine {
 
+public:
+    RenderingEngine(const RenderingEngine&) = delete;
+    RenderingEngine(RenderingEngine&&) = delete;
+
+    void render(Scene& scene);
+
+    RenderingEngine& operator=(const RenderingEngine&) = delete;
+    RenderingEngine& operator=(RenderingEngine&&) = delete;
 };
 
 

@@ -30,6 +30,7 @@ add_library(
         game/TimeProvider.cpp
         game/Scene.cpp
         game/dev_scenes/ScreenBlinkingScene.cpp
+        game/dev_scenes/RenderingEngineDevScene.cpp
         game/MessageQueue.cpp
         game/rendering_engine/RenderingEngine.cpp
 
