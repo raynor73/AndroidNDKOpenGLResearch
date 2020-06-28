@@ -23,7 +23,7 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
     m_displayInfo->setHeight(height);
 
     if (m_renderingEngine == nullptr) {
-        m_renderingEngine = std::make_shared<RenderingEngine>();
+        m_renderingEngine = std::make_shared<RenderingEngine>(m_displayInfo);
     }
 
     if (m_scene == nullptr) {

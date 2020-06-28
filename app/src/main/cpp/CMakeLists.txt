@@ -33,6 +33,7 @@ add_library(
         game/dev_scenes/RenderingEngineDevScene.cpp
         game/MessageQueue.cpp
         game/rendering_engine/RenderingEngine.cpp
+        game/rendering_engine/OpenGLState.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp

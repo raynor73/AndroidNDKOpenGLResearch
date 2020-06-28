@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <glm/mat4x4.hpp>
+#include <glm/vec4.hpp>
 #include "GameObjectComponent.h"
 
 class CameraComponent : public GameObjectComponent {
@@ -22,10 +23,14 @@ protected:
     float m_viewportWidth = 1;
     float m_viewportHeight = 1;
 
+    glm::vec4 m_clearColor;
+    bool m_shouldClearDepth = true;
+    bool m_shouldClearColor = true;
+
     std::vector<std::string> m_layerNames;
 
 public:
-    CameraComponent(const std::vector<std::string>& layerNames, float zNear, float zFar) :
+    CameraComponent(const glm::vec4& clearColor, const std::vector<std::string>& layerNames, float zNear, float zFar) :
         m_layerNames(layerNames),
         m_zNear(zNear),
         m_zFar(zFar) {}
@@ -43,6 +48,13 @@ public:
     void setViewportWidth(float viewportWidth) { m_viewportWidth = viewportWidth; };
     float viewportHeight() const { return m_viewportHeight; };
     void setViewportHeight(float viewportHeight) { m_viewportHeight = viewportHeight; };
+
+    glm::vec4 clearColor() const { return m_clearColor; }
+    void setClearColor(const glm::vec4& clearColor) { m_clearColor = clearColor; }
+    bool shouldClearDepth() const { return m_shouldClearDepth; }
+    void setShouldClearDepth(bool shouldClearDepth) { m_shouldClearDepth = shouldClearDepth; }
+    bool shouldClearColor() const { return m_shouldClearColor; }
+    void setShouldClearColor(bool shouldClearColor) { m_shouldClearColor = shouldClearColor; }
 
     const std::vector<std::string>& layerNames() const { return m_layerNames; };
     void setLayerNames(const std::vector<std::string>& layerNames);

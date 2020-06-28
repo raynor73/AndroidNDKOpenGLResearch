@@ -3,14 +3,87 @@
 //
 
 #include <vector>
+#include <glm/gtx/compatibility.hpp>
 #include <engine_3d/CameraComponent.h>
+#include <engine_3d/OrthoCameraComponent.h>
 #include "RenderingEngine.h"
 
 void RenderingEngine::render(Scene &scene) {
-    std::vector<GameObjectComponent> activeCameras;
+    std::vector<std::shared_ptr<CameraComponent>> activeCameras;
 
-    /*auto currentGameObject = scene.rootGameObject();
-    for (auto& gameObject : currentGameObject->children()) {
+    traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
+        if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
+            if (camera->isEnabled()) {
+                activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
+            }
+        }
 
-    }*/
+        /*if (auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME); camera != nullptr) {
+
+        }*/
+    });
+
+    for (auto& camera : activeCameras) {
+        GLbitfield clearMask = 0;
+        if (camera->shouldClearColor()) {
+            clearMask |= GL_COLOR_BUFFER_BIT;
+        }
+        if (camera->shouldClearDepth()) {
+            clearMask |= GL_DEPTH_BUFFER_BIT;
+        }
+
+        int viewportX = glm::lerp(0.0f, m_displayInfo->width(), camera->viewportX());
+        int viewportY = glm::lerp(0.0f, m_displayInfo->height(), camera->viewportY());
+        int viewportWidth = glm::lerp(0.0f, m_displayInfo->width(), camera->viewportWidth());
+        int viewportHeight = glm::lerp(0.0f, m_displayInfo->height(), camera->viewportHeight());
+        OpenGLState openGlState {
+            {viewportX, viewportY, viewportWidth, viewportHeight},
+            {viewportX, viewportY, viewportWidth, viewportHeight},
+            true,
+            {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
+            true,
+            GL_LESS
+        };
+        pushOpenGLState(openGlState);
+
+        auto clearColor = camera->clearColor();
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+        glClear(clearMask);
+
+        popOpenGLState();
+    }
+}
+
+void RenderingEngine::traverseSceneHierarchy(GameObject &gameObject, const std::function<void(GameObject &)>& callback) {
+    callback(gameObject);
+    for (auto& entry : gameObject.children()) {
+        traverseSceneHierarchy(*entry.second, callback);
+    }
+}
+
+void RenderingEngine::pushOpenGLState(const OpenGLState& state) {
+    applyOpenGLState(state);
+    m_openGLStateStack.push(state);
+}
+
+void RenderingEngine::popOpenGLState() {
+    m_openGLStateStack.pop();
+    if (!m_openGLStateStack.empty()) {
+        applyOpenGLState(m_openGLStateStack.top());
+    }
+}
+
+void RenderingEngine::applyOpenGLState(const OpenGLState& state) {
+    glViewport(state.viewport.x, state.viewport.y, state.viewport.width, state.viewport.height);
+    glScissor(state.scissor.x, state.scissor.y, state.scissor.width, state.scissor.height);
+    if (state.blend) {
+        glEnable(GL_BLEND);
+    } else {
+        glDisable(GL_BLEND);
+    }
+    glBlendFunc(state.blendFunction.sFactor, state.blendFunction.dFactor);
+    glDepthMask(state.depthMask);
+    glDepthFunc(state.depthFunction);
+
+    m_openGLErrorDetector.checkOpenGLErrors("RenderingEngine::applyOpenGLState");
 }

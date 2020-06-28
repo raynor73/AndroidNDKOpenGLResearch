@@ -19,6 +19,7 @@ public:
     static const std::string TYPE_NAME;
 
     OrthoCameraComponent(
+            const glm::vec4& clearColor,
             const std::vector<std::string>& layerNames,
             float left,
             float top,
@@ -26,7 +27,7 @@ public:
             float bottom,
             float zNear,
             float zFar
-    ) : CameraComponent(layerNames, zNear, zFar) {}
+    ) : CameraComponent(clearColor, layerNames, zNear, zFar) {}
 
     glm::mat4 calculateViewMatrix() override;
     glm::mat4 calculateProjectionMatrix() override;
