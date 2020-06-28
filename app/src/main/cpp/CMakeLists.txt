@@ -31,6 +31,7 @@ add_library(
         game/Scene.cpp
         game/dev_scenes/ScreenBlinkingScene.cpp
         game/MessageQueue.cpp
+        game/rendering_engine/RenderingEngine.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp
