@@ -29,7 +29,7 @@ add_library(
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
         game/Scene.cpp
-        game/SceneLoader.cpp
+        game/SceneDataLoader.cpp
         game/dev_scenes/ScreenBlinkingScene.cpp
         game/dev_scenes/RenderingEngineDevScene.cpp
         game/MessageQueue.cpp
@@ -40,6 +40,7 @@ add_library(
         main/OpenGLErrorDetector.cpp
         main/L.cpp
         main/AndroidDisplayInfo.cpp
+        main/AndroidSceneDataLoader.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

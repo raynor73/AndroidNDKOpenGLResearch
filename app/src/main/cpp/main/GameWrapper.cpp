@@ -5,9 +5,13 @@
 #include <game/dev_scenes/RenderingEngineDevScene.h>
 #include "GameWrapper.h"
 
-GameWrapper::GameWrapper(float displayDensityFactor) : m_displayDensityFactor(displayDensityFactor) {
-    // do nothing
-}
+GameWrapper::GameWrapper(
+        float displayDensityFactor,
+        jclass sceneJsonStringLoaderClass,
+        jobject sceneJsonStringLoaderObject
+) : m_displayDensityFactor(displayDensityFactor),
+    m_sceneDataLoader(std::make_shared<AndroidSceneDataLoader>(sceneJsonStringLoaderClass, sceneJsonStringLoaderObject))
+    {}
 
 void GameWrapper::onDrawFrame() {
     m_messageQueue.update();
