@@ -1,5 +1,6 @@
 package ilapin.opengl_research
 
+import android.content.Context
 import android.opengl.GLSurfaceView
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -7,7 +8,7 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * @author igorlapin on 03/06/2020.
  */
-class GLSurfaceViewRenderer(displayDensityFactor: Float) : GLSurfaceView.Renderer {
+class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: Float) : GLSurfaceView.Renderer {
 
     init {
         gameWrapperInit(displayDensityFactor)
@@ -23,6 +24,13 @@ class GLSurfaceViewRenderer(displayDensityFactor: Float) : GLSurfaceView.Rendere
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         gameWrapperOnSurfaceCreated()
+    }
+
+    fun loadTextFileFromAssets(path: String): String {
+        val inputStream = context.openFileInput(path)
+        val fileContent = inputStream.readBytes().toString()
+        inputStream.close()
+        return fileContent
     }
 
     private external fun gameWrapperInit(displayDensityFactor: Float)

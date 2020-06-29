@@ -11,11 +11,13 @@
 
 class AndroidSceneDataLoader : public SceneDataLoader {
 
+    JavaVM* m_javaVm;
     jclass m_sceneJsonStringLoaderClass;
     jobject m_sceneJsonStringLoaderObject;
 
 public:
-    AndroidSceneDataLoader(jclass sceneJsonStringLoaderClass, jobject sceneJsonStringLoaderObject) :
+    AndroidSceneDataLoader(JavaVM* javaVm, jclass sceneJsonStringLoaderClass, jobject sceneJsonStringLoaderObject) :
+        m_javaVm(javaVm),
         m_sceneJsonStringLoaderClass(sceneJsonStringLoaderClass),
         m_sceneJsonStringLoaderObject(sceneJsonStringLoaderObject) {}
 

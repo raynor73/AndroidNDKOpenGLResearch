@@ -29,8 +29,11 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceChanged(
         jint height
 ) {
     if (gameWrapper == nullptr) {
+        JavaVM* javaVm;
+        env->GetJavaVM(&javaVm);
         gameWrapper = new GameWrapper(
                 displayDensityFactor,
+                javaVm,
                 reinterpret_cast<jclass>(env->NewGlobalRef(env->GetObjectClass(that))),
                 env->NewGlobalRef(that)
         );

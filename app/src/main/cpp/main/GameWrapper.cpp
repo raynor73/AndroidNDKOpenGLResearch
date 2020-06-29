@@ -7,11 +7,18 @@
 
 GameWrapper::GameWrapper(
         float displayDensityFactor,
+        JavaVM* javaVm,
         jclass sceneJsonStringLoaderClass,
         jobject sceneJsonStringLoaderObject
 ) : m_displayDensityFactor(displayDensityFactor),
-    m_sceneDataLoader(std::make_shared<AndroidSceneDataLoader>(sceneJsonStringLoaderClass, sceneJsonStringLoaderObject))
-    {}
+    m_javaVm(javaVm),
+    m_sceneJsonStringLoaderClass(sceneJsonStringLoaderClass),
+    m_sceneJsonStringLoaderObject(sceneJsonStringLoaderObject),
+    m_sceneDataLoader(std::make_shared<AndroidSceneDataLoader>(
+            m_javaVm,
+            sceneJsonStringLoaderClass,
+            sceneJsonStringLoaderObject
+    )) {}
 
 void GameWrapper::onDrawFrame() {
     m_messageQueue.update();
@@ -35,6 +42,7 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 std::make_shared<TimeProvider>(),
                 m_displayInfo
         );
+        m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
     }
 }
 

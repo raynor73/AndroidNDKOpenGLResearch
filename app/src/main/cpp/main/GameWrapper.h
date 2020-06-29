@@ -17,6 +17,9 @@ class GameWrapper {
 
     MessageQueue m_messageQueue;
     float m_displayDensityFactor;
+    JavaVM* m_javaVm;
+    jclass m_sceneJsonStringLoaderClass;
+    jobject m_sceneJsonStringLoaderObject;
     std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<RenderingEngine> m_renderingEngine;
@@ -25,6 +28,7 @@ class GameWrapper {
 public:
     explicit GameWrapper(
             float displayDensityFactor,
+            JavaVM* javaVm,
             jclass sceneJsonStringLoaderClass,
             jobject sceneJsonStringLoaderObject
     );
