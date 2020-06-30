@@ -22,6 +22,9 @@ public:
         m_sceneJsonStringLoaderObject(sceneJsonStringLoaderObject) {}
 
     virtual void loadSceneData(const std::string &path, Scene &scene) override;
+
+private:
+    void parseAndUseData(const std::string& data, Scene& scene);
 };
 
 

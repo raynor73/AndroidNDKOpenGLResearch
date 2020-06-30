@@ -112,19 +112,6 @@
     { "name": "female_idle", "path": "meshes/female_idle2.dae" }
   ],
   "scene": {
-    "scriptPaths": [
-      "scenes/utils.js",
-      "scenes/joystick_controller.js",
-      "scenes/scroll_controller.js",
-      "scenes/player_controller.js",
-      "scenes/click_detector.js",
-      "scenes/fireball_engine.js",
-      "scenes/fps_calculator.js",
-      "scenes/objects_pool.js",
-      "scenes/collisions_visualizer.js",
-      "scenes/character_movement_scene2/character_movement_scene2.js"
-    ],
-    "activeCameras": ["player_camera", "ui_camera", "keyboard_camera"],
     "renderTargets": [],
     "gravity": [0.0, -9.81, 0.0],
     "gameObjects": [
