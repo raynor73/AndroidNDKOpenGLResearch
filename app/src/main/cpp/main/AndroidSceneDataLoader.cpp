@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <main/L.h>
 #include "AndroidSceneDataLoader.h"
 
 void AndroidSceneDataLoader::loadSceneData(const std::string &path, Scene &scene) {
@@ -14,9 +13,13 @@ void AndroidSceneDataLoader::loadSceneData(const std::string &path, Scene &scene
             "loadTextFileFromAssets",
             "(Ljava/lang/String;)Ljava/lang/String;"
     );
-    auto resultJString = static_cast<jstring>(env->CallObjectMethod(m_sceneJsonStringLoaderObject, method));
-    /*const char *resultCString = env->GetStringUTFChars(resultJString, JNI_FALSE);
+    jstring pathJString = env->NewStringUTF(path.c_str());
+    auto resultJString = static_cast<jstring>(env->CallObjectMethod(
+            m_sceneJsonStringLoaderObject,
+            method,
+            pathJString
+    ));
+    const char* resultCString = env->GetStringUTFChars(resultJString, JNI_FALSE);
     std::string jsonString = resultCString;
-    L::d("!@£", jsonString);
-    env->ReleaseStringUTFChars(resultJString, resultCString);*/
+    env->ReleaseStringUTFChars(resultJString, resultCString);
 }

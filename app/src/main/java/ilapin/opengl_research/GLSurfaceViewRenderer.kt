@@ -2,6 +2,7 @@ package ilapin.opengl_research
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import java.nio.charset.Charset
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -27,8 +28,8 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
     }
 
     fun loadTextFileFromAssets(path: String): String {
-        val inputStream = context.openFileInput(path)
-        val fileContent = inputStream.readBytes().toString()
+        val inputStream = context.assets.open(path)
+        val fileContent = inputStream.readBytes().toString(Charset.defaultCharset())
         inputStream.close()
         return fileContent
     }
