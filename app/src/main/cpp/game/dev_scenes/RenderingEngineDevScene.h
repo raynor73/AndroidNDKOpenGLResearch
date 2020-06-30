@@ -16,6 +16,9 @@ public:
             std::shared_ptr<DisplayInfo> displayInfo
     ) : Scene(timeProvider, displayInfo) {}
 
+    virtual std::string createStateRepresentation() override;
+    virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
+
     virtual void update(float dt) override;
 };
 

@@ -21,10 +21,8 @@ void AndroidSceneDataLoader::loadSceneData(const std::string &path, Scene &scene
     ));
     const char* resultCString = env->GetStringUTFChars(resultJString, JNI_FALSE);
     std::string jsonString = resultCString;
-    parseAndUseData(jsonString, scene);
+
+    scene.restoreFromStateRepresentation(jsonString);
+
     env->ReleaseStringUTFChars(resultJString, resultCString);
-}
-
-void AndroidSceneDataLoader::parseAndUseData(const std::string &data, Scene &scene) {
-
 }

@@ -7,3 +7,11 @@
 void RenderingEngineDevScene::update(float dt) {
 
 }
+
+std::string RenderingEngineDevScene::createStateRepresentation() {
+    return std::string();
+}
+
+void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
+
+}
