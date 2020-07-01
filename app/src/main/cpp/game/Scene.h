@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <unordered_map>
 #include <engine_3d/GameObject.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
@@ -29,10 +30,14 @@ public:
 
 protected:
     std::shared_ptr<GameObject> m_rootGameObject;
+    std::unordered_map<std::string, std::shared_ptr<GameObject>> m_gameObjectsMap;
     std::shared_ptr<TimeProvider> m_timeProvider;
     std::shared_ptr<DisplayInfo> m_displayInfo;
 
     virtual void update(float dt) = 0;
+
+    void addGameObject(const std::string& parentName, std::shared_ptr<GameObject> gameObject);
+    void removeGameObject(const std::string& name);
 };
 
 
