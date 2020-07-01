@@ -30,7 +30,6 @@ public:
     static const std::string TYPE_NAME;
 
     TransformationComponent(
-            const std::string& name,
             const glm::vec3& position,
             const glm::quat& rotation,
             const glm::vec3& scale

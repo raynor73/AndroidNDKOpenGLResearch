@@ -30,10 +30,10 @@ glm::mat4 OrthoCameraComponent::calculateViewMatrix() {
     glm::vec3 lookAtDirection;
     glm::vec3 up;
 
-    lookAtDirection = Constants::DEFAULT_FORWARD_DIRECTION;
+    lookAtDirection = Engine3D::Constants::DEFAULT_FORWARD_DIRECTION;
     lookAtDirection = transform->rotation() * lookAtDirection;
 
-    up = Constants::CAMERA_UP_DIRECTION;
+    up = Engine3D::Constants::CAMERA_UP_DIRECTION;
     up = transform->rotation() * up;
 
     return glm::lookAt(transform->position(), transform->position() + lookAtDirection, up);

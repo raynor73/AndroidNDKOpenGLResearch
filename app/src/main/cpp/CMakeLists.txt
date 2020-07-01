@@ -35,12 +35,14 @@ add_library(
         game/MessageQueue.cpp
         game/rendering_engine/RenderingEngine.cpp
         game/rendering_engine/OpenGLState.cpp
+        game/UnitsConverter.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp
         main/L.cpp
         main/AndroidDisplayInfo.cpp
         main/AndroidSceneDataLoader.cpp
+        main/AndroidUnitsConverter.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

@@ -8,6 +8,7 @@
 
 #include <android/log.h>
 #include <string>
+#include <exception>
 
 class L {
 
@@ -15,6 +16,14 @@ public:
 
     static void d(const std::string &tag, const std::string &msg) {
         __android_log_print(ANDROID_LOG_DEBUG, tag.c_str(), "%s", msg.c_str());
+    }
+
+    static void e(const std::string& tag, const std::string& msg) {
+        __android_log_print(ANDROID_LOG_ERROR, tag.c_str(), "%s", msg.c_str());
+    }
+
+    static void e(const std::string& tag, const std::string& msg, const std::exception& e) {
+        __android_log_print(ANDROID_LOG_ERROR, tag.c_str(), "%s: %s", msg.c_str(), e.what());
     }
 };
 
