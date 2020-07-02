@@ -47,6 +47,8 @@ public:
     void setRotation(const glm::quat& rotation);
     const glm::vec3& scale();
     void setScale(const glm::vec3& scale);
+
+    virtual std::shared_ptr<GameObjectComponent> clone() override;
 };
 
 

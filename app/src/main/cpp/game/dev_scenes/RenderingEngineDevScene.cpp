@@ -7,6 +7,7 @@
 #include <main/L.h>
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_float.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <main/Constants.h>
 #include <engine_3d/TransformationComponent.h>
 #include "RenderingEngineDevScene.h"
@@ -85,14 +86,32 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
                 continue;
             }
 
+            auto rotationMatrix = glm::identity<glm::mat4>();
+            rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+            rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+            rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+            auto rotationQuaternion = glm::quat_cast(rotationMatrix);
             if (name != "root") {
                 auto gameObject = std::make_shared<GameObject>(name);
+
                 auto transform = std::make_shared<TransformationComponent>(
                         position,
-                        glm::orirotation,
+                        rotationQuaternion,
                         scale
                 );
+                gameObject->addComponent(transform);
+
                 addGameObject(parentName, gameObject);
+            } else {
+                auto transform = std::static_pointer_cast<TransformationComponent>(
+                        m_rootGameObject->findComponent(TransformationComponent::TYPE_NAME)
+                );
+                if (transform == nullptr) {
+                    throw std::domain_error("Root game object have no transform");
+                }
+                transform->setPosition(position);
+                transform->setRotation(rotationQuaternion);
+                transform->setScale(scale);
             }
         }
     }

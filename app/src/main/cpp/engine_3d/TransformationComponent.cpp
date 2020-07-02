@@ -97,3 +97,13 @@ void TransformationComponent::calculateFinalTransformation() {
         m_isDirty = false;
     }
 }
+
+shared_ptr<GameObjectComponent> TransformationComponent::clone() {
+    auto clone = std::make_shared<TransformationComponent>(
+            m_position,
+            m_rotation,
+            m_scale
+    );
+    clone->setEnabled(m_isEnabled);
+    return clone;
+}
