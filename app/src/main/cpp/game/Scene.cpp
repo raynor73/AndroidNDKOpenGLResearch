@@ -14,7 +14,7 @@ Scene::Scene(std::shared_ptr<TimeProvider> timeProvider, std::shared_ptr<Display
     m_prevTimestamp(0.0f),
     m_hasPrevTimestamp(false)
 {
-    // do nothing
+    m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
 }
 
 void Scene::update() {

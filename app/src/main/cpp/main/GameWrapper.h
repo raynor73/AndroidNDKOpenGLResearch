@@ -11,6 +11,7 @@
 #include <game/MessageQueue.h>
 #include <game/rendering_engine/RenderingEngine.h>
 #include <main/AndroidSceneDataLoader.h>
+#include <main/AndroidUnitsConverter.h>
 #include "AndroidDisplayInfo.h"
 
 class GameWrapper {
@@ -21,6 +22,7 @@ class GameWrapper {
     jclass m_sceneJsonStringLoaderClass;
     jobject m_sceneJsonStringLoaderObject;
     std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
+    std::shared_ptr<AndroidUnitsConverter> m_unitsConverter;
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<RenderingEngine> m_renderingEngine;
     std::shared_ptr<AndroidSceneDataLoader> m_sceneDataLoader;

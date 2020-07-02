@@ -32,10 +32,10 @@ void RenderingEngine::render(Scene &scene) {
             clearMask |= GL_DEPTH_BUFFER_BIT;
         }
 
-        int viewportX = glm::lerp(0.0f, m_displayInfo->width(), camera->viewportX());
-        int viewportY = glm::lerp(0.0f, m_displayInfo->height(), camera->viewportY());
-        int viewportWidth = glm::lerp(0.0f, m_displayInfo->width(), camera->viewportWidth());
-        int viewportHeight = glm::lerp(0.0f, m_displayInfo->height(), camera->viewportHeight());
+        int viewportX = m_unitsConverter->widthPercentToPixels(camera->viewportX() * 100);
+        int viewportY =  m_unitsConverter->heightPercentToPixels(camera->viewportY() * 100);
+        int viewportWidth = m_unitsConverter->widthPercentToPixels(camera->viewportWidth() * 100);
+        int viewportHeight = m_unitsConverter->heightPercentToPixels(camera->viewportHeight() * 100);
         OpenGLState openGlState {
             {viewportX, viewportY, viewportWidth, viewportHeight},
             {viewportX, viewportY, viewportWidth, viewportHeight},

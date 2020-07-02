@@ -9,16 +9,17 @@
 #include <stack>
 #include <game/Scene.h>
 #include <main/OpenGLErrorDetector.h>
+#include <game/UnitsConverter.h>
 #include "OpenGLState.h"
 
 class RenderingEngine {
 
     std::stack<OpenGLState> m_openGLStateStack;
     OpenGLErrorDetector m_openGLErrorDetector;
-    std::shared_ptr<DisplayInfo> m_displayInfo;
+    std::shared_ptr<UnitsConverter> m_unitsConverter;
 
 public:
-    RenderingEngine(std::shared_ptr<DisplayInfo> displayInfo) : m_displayInfo(displayInfo) {}
+    RenderingEngine(std::shared_ptr<UnitsConverter> unitsConverter) : m_unitsConverter(unitsConverter) {}
     RenderingEngine(const RenderingEngine&) = delete;
     RenderingEngine(RenderingEngine&&) = delete;
 
