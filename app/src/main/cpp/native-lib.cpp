@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <assimp/Importer.hpp>
 #include "main/GameWrapper.h"
 
 static GameWrapper *gameWrapper = nullptr;
@@ -37,6 +38,7 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceChanged(
                 reinterpret_cast<jclass>(env->NewGlobalRef(env->GetObjectClass(that))),
                 env->NewGlobalRef(that)
         );
+        Assimp::Importer importer;
     }
     gameWrapper->onSurfaceChanged(width, height);
 }

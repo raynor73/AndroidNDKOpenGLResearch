@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
 
         init {
+            System.loadLibrary("assimpd")
             System.loadLibrary("native-lib")
         }
     }

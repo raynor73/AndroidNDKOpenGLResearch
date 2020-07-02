@@ -73,3 +73,4 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib})
 target_link_libraries(native-lib ${opengl-lib})
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libassimpd.so)
