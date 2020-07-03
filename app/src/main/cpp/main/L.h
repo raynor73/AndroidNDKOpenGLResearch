@@ -18,6 +18,10 @@ public:
         __android_log_print(ANDROID_LOG_DEBUG, tag.c_str(), "%s", msg.c_str());
     }
 
+    static void w(const std::string &tag, const std::string &msg) {
+        __android_log_print(ANDROID_LOG_WARN, tag.c_str(), "%s", msg.c_str());
+    }
+
     static void e(const std::string& tag, const std::string& msg) {
         __android_log_print(ANDROID_LOG_ERROR, tag.c_str(), "%s", msg.c_str());
     }

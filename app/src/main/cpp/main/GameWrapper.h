@@ -12,6 +12,7 @@
 #include <game/rendering_engine/RenderingEngine.h>
 #include <main/AndroidSceneDataLoader.h>
 #include <main/AndroidUnitsConverter.h>
+#include <main/AndroidMeshLoadingRepository.h>
 #include "AndroidDisplayInfo.h"
 
 class GameWrapper {
@@ -19,20 +20,21 @@ class GameWrapper {
     MessageQueue m_messageQueue;
     float m_displayDensityFactor;
     JavaVM* m_javaVm;
-    jclass m_sceneJsonStringLoaderClass;
-    jobject m_sceneJsonStringLoaderObject;
+    jclass m_bridgeClass;
+    jobject m_bridgeObject;
     std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
     std::shared_ptr<AndroidUnitsConverter> m_unitsConverter;
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<RenderingEngine> m_renderingEngine;
     std::shared_ptr<AndroidSceneDataLoader> m_sceneDataLoader;
+    std::shared_ptr<AndroidMeshLoadingRepository> m_meshLoadingRepository;
 
 public:
     explicit GameWrapper(
             float displayDensityFactor,
             JavaVM* javaVm,
-            jclass sceneJsonStringLoaderClass,
-            jobject sceneJsonStringLoaderObject
+            jclass bridgeClass,
+            jobject bridgeObject
     );
     GameWrapper(const GameWrapper&) = delete;
     GameWrapper(GameWrapper&&) = delete;

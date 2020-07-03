@@ -91,28 +91,22 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1, 0, 0));
             rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
             auto rotationQuaternion = glm::quat_cast(rotationMatrix);
+
+            std::shared_ptr<GameObject> gameObject;
             if (name != "root") {
-                auto gameObject = std::make_shared<GameObject>(name);
-
-                auto transform = std::make_shared<TransformationComponent>(
-                        position,
-                        rotationQuaternion,
-                        scale
-                );
-                gameObject->addComponent(transform);
-
+                gameObject = std::make_shared<GameObject>(name);
                 addGameObject(parentName, gameObject);
             } else {
-                auto transform = std::static_pointer_cast<TransformationComponent>(
-                        m_rootGameObject->findComponent(TransformationComponent::TYPE_NAME)
-                );
-                if (transform == nullptr) {
-                    throw std::domain_error("Root game object have no transform");
-                }
-                transform->setPosition(position);
-                transform->setRotation(rotationQuaternion);
-                transform->setScale(scale);
+                gameObject = m_rootGameObject;
             }
+            auto transform = std::make_shared<TransformationComponent>(
+                    position,
+                    rotationQuaternion,
+                    scale
+            );
+            gameObject->addComponent(transform);
+
+            m_meshLoadingRepository->loadMesh("meshes/planeUV.obj");
         }
     }
 }

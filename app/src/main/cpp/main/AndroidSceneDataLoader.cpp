@@ -7,7 +7,7 @@
 
 void AndroidSceneDataLoader::loadSceneData(const std::string &path, Scene &scene) {
     JNIEnv *env;
-    m_javaVm->AttachCurrentThread(&env, nullptr);
+    m_javaVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
     jmethodID method = env->GetMethodID(
             m_sceneJsonStringLoaderClass,
             "loadTextFileFromAssets",

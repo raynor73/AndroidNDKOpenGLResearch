@@ -34,6 +34,13 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         return fileContent
     }
 
+    fun loadBinaryFileFromAssets(path: String): ByteArray {
+        val inputStream = context.assets.open(path)
+        val fileContent = inputStream.readBytes()
+        inputStream.close()
+        return fileContent
+    }
+
     private external fun gameWrapperInit(displayDensityFactor: Float)
     private external fun gameWrapperOnDrawFrame()
     private external fun gameWrapperOnSurfaceChanged(width: Int, height: Int)

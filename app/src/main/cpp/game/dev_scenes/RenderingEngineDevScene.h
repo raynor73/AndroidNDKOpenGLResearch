@@ -10,17 +10,22 @@
 #include <nlohmann/json.hpp>
 #include <memory>
 #include <game/UnitsConverter.h>
+#include <game/MeshLoadingRepository.h>
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<UnitsConverter> m_unitsConverter;
+    std::shared_ptr<MeshLoadingRepository> m_meshLoadingRepository;
 
 public:
     RenderingEngineDevScene(
             std::shared_ptr<TimeProvider> timeProvider,
             std::shared_ptr<DisplayInfo> displayInfo,
-            std::shared_ptr<UnitsConverter> unitsConverter
-    ) : Scene(timeProvider, displayInfo), m_unitsConverter(unitsConverter) {}
+            std::shared_ptr<UnitsConverter> unitsConverter,
+            std::shared_ptr<MeshLoadingRepository> meshLoadingRepository
+    ) : Scene(timeProvider, displayInfo),
+        m_unitsConverter(unitsConverter),
+        m_meshLoadingRepository(meshLoadingRepository) {}
 
     virtual std::string createStateRepresentation() override;
     virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
