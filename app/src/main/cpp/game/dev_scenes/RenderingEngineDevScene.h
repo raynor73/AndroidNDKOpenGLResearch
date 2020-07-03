@@ -11,11 +11,13 @@
 #include <memory>
 #include <game/UnitsConverter.h>
 #include <game/MeshLoadingRepository.h>
+#include <game/MeshStorage.h>
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<UnitsConverter> m_unitsConverter;
     std::shared_ptr<MeshLoadingRepository> m_meshLoadingRepository;
+    MeshStorage m_meshStorage;
 
 public:
     RenderingEngineDevScene(
@@ -38,6 +40,7 @@ private:
     };
 
     float parseNumber(const nlohmann::json& jsonValue, DimensionType dimensionType);
+    std::shared_ptr<GameObjectComponent> parseComponent(const nlohmann::json& componentJson);
 };
 
 

@@ -106,8 +106,28 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             );
             gameObject->addComponent(transform);
 
-            m_meshLoadingRepository->loadMesh("meshes/planeUV.obj");
+            auto componentsJsonArray = gameObjectJson["components"];
+            if (componentsJsonArray.is_array()) {
+                for (auto& componentJson : componentsJsonArray) {
+                    gameObject->addComponent(parseComponent(componentJson));
+                }
+            }
         }
+    }
+}
+
+std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(const nlohmann::json& componentJson) {
+    if (!componentJson.contains("type")) {
+        throw std::domain_error("No type found while parsing component");
+    }
+    auto type = componentJson["type"].get<std::string>();
+    if (type == "Mesh") {
+        return std::shared_ptr<GameObjectComponent>();
+
+    } else {
+        std::stringstream ss;
+        ss << "Unknown component type " << type;
+        throw std::domain_error(ss.str());
     }
 }
 

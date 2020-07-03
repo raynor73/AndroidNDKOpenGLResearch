@@ -36,6 +36,7 @@ add_library(
         game/rendering_engine/RenderingEngine.cpp
         game/rendering_engine/OpenGLState.cpp
         game/UnitsConverter.cpp
+        game/MeshStorage.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp
@@ -44,6 +45,8 @@ add_library(
         main/AndroidSceneDataLoader.cpp
         main/AndroidUnitsConverter.cpp
         main/android_mesh_loading_repository/AndroidMeshLoadingRepository.cpp
+        main/AndroidMeshRendererComponent.cpp
+        main/AndroidMeshRendererFactory.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)
