@@ -43,7 +43,7 @@ add_library(
         main/AndroidDisplayInfo.cpp
         main/AndroidSceneDataLoader.cpp
         main/AndroidUnitsConverter.cpp
-        main/AndroidMeshLoadingRepository.cpp
+        main/android_mesh_loading_repository/AndroidMeshLoadingRepository.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

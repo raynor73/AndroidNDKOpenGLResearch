@@ -75,6 +75,9 @@ Mesh AndroidMeshLoadingRepository::loadMesh(const std::string& path) {
                         glm::vec3 { assimpNormal.x, assimpNormal.y, assimpNormal.z },
                         glm::vec2 { assimpUv.x, assimpUv.y }
                     };
+
+                    vertices.push_back(vertex);
+                    indices.push_back(index);
                 }
             }
         } else {
