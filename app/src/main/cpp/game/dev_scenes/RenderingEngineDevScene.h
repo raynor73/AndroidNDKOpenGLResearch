@@ -12,11 +12,13 @@
 #include <game/UnitsConverter.h>
 #include <game/MeshLoadingRepository.h>
 #include <game/MeshStorage.h>
+#include <game/MeshRendererFactory.h>
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<UnitsConverter> m_unitsConverter;
     std::shared_ptr<MeshLoadingRepository> m_meshLoadingRepository;
+    std::shared_ptr<MeshRendererFactory> m_meshRendererFactory;
     MeshStorage m_meshStorage;
 
 public:
@@ -24,10 +26,12 @@ public:
             std::shared_ptr<TimeProvider> timeProvider,
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
-            std::shared_ptr<MeshLoadingRepository> meshLoadingRepository
+            std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
+            std::shared_ptr<MeshRendererFactory> meshRendererFactory
     ) : Scene(timeProvider, displayInfo),
         m_unitsConverter(unitsConverter),
-        m_meshLoadingRepository(meshLoadingRepository) {}
+        m_meshLoadingRepository(meshLoadingRepository),
+        m_meshRendererFactory(meshRendererFactory) {}
 
     virtual std::string createStateRepresentation() override;
     virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;

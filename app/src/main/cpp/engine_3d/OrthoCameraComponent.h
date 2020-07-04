@@ -31,8 +31,8 @@ public:
 
     glm::mat4 calculateViewMatrix() override;
     glm::mat4 calculateProjectionMatrix() override;
-    std::string typeName() const override { return OrthoCameraComponent::TYPE_NAME; }
-    std::shared_ptr<GameObjectComponent> clone() override;
+    virtual const std::string& typeName() const override { return OrthoCameraComponent::TYPE_NAME; }
+    virtual std::shared_ptr<GameObjectComponent> clone() override;
 };
 
 

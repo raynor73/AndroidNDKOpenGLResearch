@@ -26,7 +26,7 @@ public:
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
-    virtual std::string typeName() const = 0;
+    virtual const std::string& typeName() const = 0;
 
     std::shared_ptr<GameObject> gameObject() { return m_gameObject; }
     void setGameObject(const std::shared_ptr<GameObject>& gameObject) { m_gameObject = gameObject; }

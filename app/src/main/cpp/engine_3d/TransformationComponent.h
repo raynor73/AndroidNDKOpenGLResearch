@@ -35,7 +35,7 @@ public:
             const glm::vec3& scale
     ) : m_position(position), m_rotation(rotation), m_scale(scale) {}
 
-    virtual std::string typeName() const override { return TransformationComponent::TYPE_NAME; }
+    virtual const std::string& typeName() const override { return TransformationComponent::TYPE_NAME; }
 
     const glm::vec3& localPosition() const { return m_position; }
     const glm::quat& localRotation() const { return m_rotation; }

@@ -6,8 +6,18 @@
 #define ANDROID_NDK_OPENGL_RESEARCH_ANDROIDMESHRENDERERFACTORY_H
 
 
-class AndroidMeshRendererFactory {
+#include <game/MeshRendererFactory.h>
 
+class AndroidMeshRendererFactory : public MeshRendererFactory {
+
+public:
+    AndroidMeshRendererFactory(const AndroidMeshRendererFactory& other) = delete;
+    AndroidMeshRendererFactory(AndroidMeshRendererFactory&& other) = delete;
+
+    virtual std::shared_ptr<GameObjectComponent> createMeshRenderer(std::vector<std::string> layerNames) override;
+
+    AndroidMeshRendererFactory& operator=(const AndroidMeshRendererFactory& other) = delete;
+    AndroidMeshRendererFactory& operator=(AndroidMeshRendererFactory&& other) = delete;
 };
 
 

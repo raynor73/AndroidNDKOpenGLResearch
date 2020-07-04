@@ -10,6 +10,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <main/Constants.h>
 #include <engine_3d/TransformationComponent.h>
+#include <engine_3d/MeshComponent.h>
 #include "RenderingEngineDevScene.h"
 
 void RenderingEngineDevScene::update(float dt) {}
@@ -24,6 +25,28 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
         sceneJson = nlohmann::json::parse(stateRepresentation);
     } catch (nlohmann::json::parse_error& e) {
         L::e(App::Constants::LOG_TAG, "Error restoring scene", e);
+    }
+
+    auto meshesJsonArray = sceneJson["meshes"];
+    if (meshesJsonArray.is_array()) {
+        for (auto& meshJson : meshesJsonArray) {
+            std::string name;
+            std::string path;
+
+            if (!meshJson["name"].is_null()) {
+                name = meshJson["name"].get<std::string>();
+            } else {
+                continue;
+            }
+
+            if (!meshJson["path"].is_null()) {
+                path = meshJson["path"].get<std::string>();
+            } else {
+                continue;
+            }
+
+            m_meshStorage.putMesh(name, m_meshLoadingRepository->loadMesh(path));
+        }
     }
 
     auto gameObjectsJsonArray = sceneJson["gameObjects"];
@@ -122,8 +145,24 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(con
     }
     auto type = componentJson["type"].get<std::string>();
     if (type == "Mesh") {
-        return std::shared_ptr<GameObjectComponent>();
-
+        if (componentJson["meshName"].is_null() || !componentJson["meshName"].is_string()) {
+            throw std::domain_error("No mesh name provided");
+        }
+        return std::make_shared<MeshComponent>(
+                m_meshStorage.findMesh(componentJson["meshName"].get<std::string>())
+        );
+    } else if (type == "MeshRenderer") {
+        if (componentJson["layerNames"].is_null() || !componentJson["layerNames"].is_array()) {
+            throw std::domain_error("No layer names provided for mesh renderer");
+        }
+        std::vector<std::string> layerNames;
+        for (auto& layerNameJson : componentJson["layerNames"]) {
+            if (!layerNameJson.is_string()) {
+                throw std::domain_error("String expected as layer name");
+            }
+            layerNames.push_back(layerNameJson.get<std::string>());
+        }
+        return m_meshRendererFactory->createMeshRenderer(layerNames);
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
