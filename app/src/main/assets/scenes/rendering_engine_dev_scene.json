@@ -32,10 +32,13 @@
       "components": [
         {
           "type": "OrthoCamera",
+          "clearColor": [0, 0, 0, 0],
           "left": 0,
-          "right": 1024,
+          "right": "100%",
           "bottom": 0,
-          "top": 768,
+          "top": "100%",
+          "zNear": 0,
+          "zFar": 1000,
           "layerNames": ["ui"]
         },
         { "type": "AmbientLight", "color": [0.5, 0.5, 0.5], "layerNames": ["ui"] }

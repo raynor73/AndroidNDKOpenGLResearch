@@ -42,6 +42,7 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
 
     if (m_renderingEngine == nullptr) {
         m_renderingEngine = std::make_shared<RenderingEngine>(m_unitsConverter);
+        m_meshRendererFactory = std::make_shared<AndroidMeshRendererFactory>();
     }
 
     if (m_scene == nullptr) {
@@ -49,7 +50,8 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 std::make_shared<TimeProvider>(),
                 m_displayInfo,
                 m_unitsConverter,
-                m_meshLoadingRepository
+                m_meshLoadingRepository,
+                m_meshRendererFactory
         );
         m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
     }

@@ -13,6 +13,7 @@
 #include <main/AndroidSceneDataLoader.h>
 #include <main/AndroidUnitsConverter.h>
 #include <main/android_mesh_loading_repository/AndroidMeshLoadingRepository.h>
+#include <main/AndroidMeshRendererFactory.h>
 #include "AndroidDisplayInfo.h"
 
 class GameWrapper {
@@ -28,6 +29,7 @@ class GameWrapper {
     std::shared_ptr<RenderingEngine> m_renderingEngine;
     std::shared_ptr<AndroidSceneDataLoader> m_sceneDataLoader;
     std::shared_ptr<AndroidMeshLoadingRepository> m_meshLoadingRepository;
+    std::shared_ptr<AndroidMeshRendererFactory> m_meshRendererFactory;
 
 public:
     explicit GameWrapper(

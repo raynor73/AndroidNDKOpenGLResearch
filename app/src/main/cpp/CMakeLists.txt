@@ -26,6 +26,7 @@ add_library(
         engine_3d/CameraComponent.cpp
         engine_3d/OrthoCameraComponent.cpp
         engine_3d/MeshComponent.cpp
+        engine_3d/AmbientLightComponent.cpp
         game/touch_screen/TouchScreen.cpp
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

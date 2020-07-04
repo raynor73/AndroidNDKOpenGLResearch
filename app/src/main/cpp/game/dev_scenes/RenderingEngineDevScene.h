@@ -44,7 +44,11 @@ private:
     };
 
     float parseNumber(const nlohmann::json& jsonValue, DimensionType dimensionType);
+    static std::vector<std::string> parseLayerNames(const nlohmann::json& layerNamesJsonArray);
     std::shared_ptr<GameObjectComponent> parseComponent(const nlohmann::json& componentJson);
+    static glm::vec3 parseColor3f(const nlohmann::json& colorJson);
+    static glm::vec4 parseColor4f(const nlohmann::json& colorJson);
+    static float parseFloatNumber(const nlohmann::json& jsonValue);
 };
 
 

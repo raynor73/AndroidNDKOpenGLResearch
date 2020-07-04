@@ -5,7 +5,8 @@
 #include "AndroidMeshRendererComponent.h"
 #include "AndroidMeshRendererFactory.h"
 
-std::shared_ptr<GameObjectComponent> AndroidMeshRendererFactory::createMeshRenderer(std::vector<std::string> layerNames) {
-    auto meshRenderer = std::make_shared<AndroidMeshRendererComponent>();
-    return std::shared_ptr<GameObjectComponent>();
+std::shared_ptr<GameObjectComponent> AndroidMeshRendererFactory::createMeshRenderer(
+        std::vector<std::string> layerNames
+) {
+    return std::make_shared<AndroidMeshRendererComponent>(layerNames);
 }

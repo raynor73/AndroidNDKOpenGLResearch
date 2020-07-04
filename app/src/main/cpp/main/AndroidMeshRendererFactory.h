@@ -11,6 +11,7 @@
 class AndroidMeshRendererFactory : public MeshRendererFactory {
 
 public:
+    AndroidMeshRendererFactory() = default;
     AndroidMeshRendererFactory(const AndroidMeshRendererFactory& other) = delete;
     AndroidMeshRendererFactory(AndroidMeshRendererFactory&& other) = delete;
 

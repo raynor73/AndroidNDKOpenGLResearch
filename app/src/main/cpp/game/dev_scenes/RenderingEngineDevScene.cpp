@@ -11,9 +11,11 @@
 #include <main/Constants.h>
 #include <engine_3d/TransformationComponent.h>
 #include <engine_3d/MeshComponent.h>
+#include <engine_3d/OrthoCameraComponent.h>
+#include <engine_3d/AmbientLightComponent.h>
 #include "RenderingEngineDevScene.h"
 
-void RenderingEngineDevScene::update(float dt) {}
+void RenderingEngineDevScene::update(float) {}
 
 std::string RenderingEngineDevScene::createStateRepresentation() {
     throw std::domain_error("Not implemented");
@@ -152,22 +154,100 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(con
                 m_meshStorage.findMesh(componentJson["meshName"].get<std::string>())
         );
     } else if (type == "MeshRenderer") {
-        if (componentJson["layerNames"].is_null() || !componentJson["layerNames"].is_array()) {
-            throw std::domain_error("No layer names provided for mesh renderer");
-        }
-        std::vector<std::string> layerNames;
-        for (auto& layerNameJson : componentJson["layerNames"]) {
-            if (!layerNameJson.is_string()) {
-                throw std::domain_error("String expected as layer name");
-            }
-            layerNames.push_back(layerNameJson.get<std::string>());
-        }
-        return m_meshRendererFactory->createMeshRenderer(layerNames);
+        return m_meshRendererFactory->createMeshRenderer(parseLayerNames(componentJson["layerNames"]));
+    } else if (type == "OrthoCamera") {
+        return std::make_shared<OrthoCameraComponent>(
+                parseColor4f(componentJson["clearColor"]),
+                parseLayerNames(componentJson["layerNames"]),
+                parseNumber(componentJson["left"], DimensionType::WIDTH),
+                parseNumber(componentJson["top"], DimensionType::HEIGHT),
+                parseNumber(componentJson["right"], DimensionType::WIDTH),
+                parseNumber(componentJson["bottom"], DimensionType::HEIGHT),
+                parseFloatNumber(componentJson["zNear"]),
+                parseFloatNumber(componentJson["zFar"])
+        );
+    } else if (type == "AmbientLight") {
+        return std::make_shared<AmbientLightComponent>(
+                parseColor3f(componentJson["color"]),
+                parseLayerNames(componentJson["layerNames"])
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
         throw std::domain_error(ss.str());
     }
+}
+
+float RenderingEngineDevScene::parseFloatNumber(const nlohmann::json& jsonValue) {
+    if (!jsonValue.is_number()) {
+        throw std::domain_error("Float number has invalid format or missing");
+    }
+    return jsonValue.get<float>();
+}
+
+glm::vec3 RenderingEngineDevScene::parseColor3f(const nlohmann::json &colorJson) {
+    if (!colorJson.is_array() || colorJson.size() != 3) {
+        throw std::domain_error("Invalid or missing 3 components color");
+    }
+
+    if (!colorJson[0].is_number()) {
+        throw std::domain_error("Invalid red component of 3 components color");
+    }
+    auto red = colorJson[0].get<float>();
+
+    if (!colorJson[1].is_number()) {
+        throw std::domain_error("Invalid green component of 3 components color");
+    }
+    auto green = colorJson[1].get<float>();
+
+    if (!colorJson[2].is_number()) {
+        throw std::domain_error("Invalid blue component of 3 components color");
+    }
+    auto blue = colorJson[2].get<float>();
+
+    return glm::vec3 { red, green, blue };
+}
+
+glm::vec4 RenderingEngineDevScene::parseColor4f(const nlohmann::json &colorJson) {
+    if (!colorJson.is_array() || colorJson.size() != 4) {
+        throw std::domain_error("Invalid or missing 4 components color");
+    }
+
+    if (!colorJson[0].is_number()) {
+        throw std::domain_error("Invalid red component of 4 components color");
+    }
+    auto red = colorJson[0].get<float>();
+
+    if (!colorJson[1].is_number()) {
+        throw std::domain_error("Invalid green component of 4 components color");
+    }
+    auto green = colorJson[1].get<float>();
+
+    if (!colorJson[2].is_number()) {
+        throw std::domain_error("Invalid blue component of 4 components color");
+    }
+    auto blue = colorJson[2].get<float>();
+
+    if (!colorJson[3].is_number()) {
+        throw std::domain_error("Invalid alpha component of 4 components color");
+    }
+    auto alpha = colorJson[3].get<float>();
+
+    return glm::vec4 { red, green, blue, alpha };
+}
+
+std::vector<std::string> RenderingEngineDevScene::parseLayerNames(const nlohmann::json& layerNamesJsonArray) {
+    if (layerNamesJsonArray.is_null() || !layerNamesJsonArray.is_array()) {
+        throw std::domain_error("Bad layer names JSON");
+    }
+    std::vector<std::string> layerNames;
+    for (auto &layerNameJson : layerNamesJsonArray) {
+        if (!layerNameJson.is_string()) {
+            throw std::domain_error("String expected as layer name");
+        }
+        layerNames.push_back(layerNameJson.get<std::string>());
+    }
+    return layerNames;
 }
 
 float RenderingEngineDevScene::parseNumber(const nlohmann::json &jsonValue, DimensionType dimensionType) {
