@@ -68,8 +68,6 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
 
             if (gameObjectJson["parent"].is_string()) {
                 parentName = gameObjectJson["parent"].get<std::string>();
-            } else {
-                continue;
             }
 
             if (gameObjectJson["position"].is_array() && gameObjectJson["position"].size() == 3) {
