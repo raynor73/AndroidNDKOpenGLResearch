@@ -9,7 +9,7 @@
 #include <memory>
 #include <jni.h>
 #include <game/MessageQueue.h>
-#include <game/rendering_engine/RenderingEngine.h>
+#include <main/rendering_engine/RenderingEngine.h>
 #include <main/AndroidSceneDataLoader.h>
 #include <main/AndroidUnitsConverter.h>
 #include <main/android_mesh_loading_repository/AndroidMeshLoadingRepository.h>

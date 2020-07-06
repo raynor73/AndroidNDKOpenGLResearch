@@ -35,8 +35,6 @@ add_library(
         game/dev_scenes/ScreenBlinkingScene.cpp
         game/dev_scenes/RenderingEngineDevScene.cpp
         game/MessageQueue.cpp
-        game/rendering_engine/RenderingEngine.cpp
-        game/rendering_engine/OpenGLState.cpp
         game/UnitsConverter.cpp
         game/MeshStorage.cpp
 
@@ -49,6 +47,9 @@ add_library(
         main/android_mesh_loading_repository/AndroidMeshLoadingRepository.cpp
         main/AndroidMeshRendererComponent.cpp
         main/AndroidMeshRendererFactory.cpp
+        main/rendering_engine/RenderingEngine.cpp
+        main/rendering_engine/OpenGLState.cpp
+        main/rendering_engine/OpenGLGeometryBuffersStorage.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)
