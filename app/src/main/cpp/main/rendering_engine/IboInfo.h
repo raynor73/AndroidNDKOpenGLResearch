@@ -9,8 +9,8 @@
 #include <GLES2/gl2.h>
 
 struct IboInfo {
-    GLunit ibo;
-    int numberOfIndices;
+    GLuint ibo;
+    size_t numberOfIndices;
 };
 
 #endif //IBO_INFO_RESEARCH_IBOINFO_H

@@ -14,15 +14,18 @@
 #include <vector>
 #include <main/OpenGLErrorDetector.h>
 #include <game/MeshStorage.h>
+#include <variant>
 #include "IboInfo.h"
+#include "BufferCreationParams.h"
 
 class OpenGLGeometryBuffersStorage {
 
     std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
-    std::shared_ptr<MeshStorage> m_meshStorage;
 
     std::unordered_map<std::string, GLuint> m_vbos;
     std::unordered_map<std::string, IboInfo> m_ibos;
+
+    std::vector<std::variant<VertexBufferCreationParams, IndexBufferCreationParams>> m_buffersCreationParams;
 
 public:
     OpenGLGeometryBuffersStorage(std::shared_ptr<OpenGLErrorDetector> openGlErrorDetector) :
@@ -30,8 +33,18 @@ public:
     OpenGLGeometryBuffersStorage(const OpenGLGeometryBuffersStorage&) = delete;
     OpenGLGeometryBuffersStorage(OpenGLGeometryBuffersStorage&&) = delete;
 
+    GLuint createStaticVertexBuffer(std::string name, std::vector<float> vertexData);
+    IboInfo createStaticIndexBuffer(std::string name, std::vector<uint16_t> indices);
+
+    GLuint findVbo(const std::string& name);
+    IboInfo findIbo(const std::string& name);
+
     void restoreBuffers();
-    void createStaticVertexBuffer(const std::string& name, const std::vector<uint16_t> indices);
+
+    void removeStaticVertexBuffer(const std::string& name);
+    void removeStaticIndexBuffer(const std::string& name);
+
+    void removeAllBuffers();
 
     OpenGLGeometryBuffersStorage& operator=(const OpenGLGeometryBuffersStorage&) = delete;
     OpenGLGeometryBuffersStorage& operator=(const OpenGLGeometryBuffersStorage&&) = delete;
