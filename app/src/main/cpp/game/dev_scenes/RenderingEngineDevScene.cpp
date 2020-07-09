@@ -51,6 +51,13 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
         }
     }
 
+    auto materialsJsonArray = sceneJson["materials"];
+    if (materialsJsonArray.is_array()) {
+        for (auto& materialJson : materialsJsonArray) {
+
+        }
+    }
+
     auto gameObjectsJsonArray = sceneJson["gameObjects"];
     if (gameObjectsJsonArray.is_array()) {
         for (auto& gameObjectJson : gameObjectsJsonArray) {
