@@ -20,6 +20,8 @@ public:
 
     MeshComponent(Mesh mesh) : m_mesh(std::move(mesh)) {}
 
+    const Mesh& mesh() const { return m_mesh; }
+
     virtual const std::string& typeName() const override { return TYPE_NAME; }
     virtual std::shared_ptr<GameObjectComponent> clone() override;
 };
