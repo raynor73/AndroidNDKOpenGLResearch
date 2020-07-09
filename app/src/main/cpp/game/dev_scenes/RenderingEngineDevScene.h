@@ -19,6 +19,7 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<UnitsConverter> m_unitsConverter;
     std::shared_ptr<MeshLoadingRepository> m_meshLoadingRepository;
     std::shared_ptr<MeshRendererFactory> m_meshRendererFactory;
+    // TODO Remove mesh storage as it is probably is not required because mesh is kept inside MeshComponent.
     MeshStorage m_meshStorage;
 
 public:
