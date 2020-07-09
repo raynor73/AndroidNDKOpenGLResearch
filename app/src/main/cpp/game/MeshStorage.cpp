@@ -17,7 +17,7 @@ void MeshStorage::putMesh(const std::string &name, Mesh mesh) {
     m_storage[name] = std::move(mesh);
 }
 
-Mesh MeshStorage::findMesh(const std::string &name) {
+Mesh MeshStorage::getMesh(const std::string &name) {
     if (m_storage.count(name) == 0) {
         std::stringstream ss;
         ss << "Mesh " << name << " not found";

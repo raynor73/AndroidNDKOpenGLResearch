@@ -13,12 +13,12 @@ struct BufferCreationParams {
     std::string name;
 };
 
-struct IndexBufferCreationParams : public BufferCreationParams {
+struct VertexBufferCreationParams : public BufferCreationParams {
     std::vector<float> vertexData;
 };
 
-struct VertexBufferCreationParams : public BufferCreationParams {
-    std::vector<uint16_t> indexData;
+struct IndexBufferCreationParams : public BufferCreationParams {
+    std::vector<uint16_t> indices;
 };
 
 #endif //RENDERING_ENGINE_BUFFERCREATIONPARAMS_H

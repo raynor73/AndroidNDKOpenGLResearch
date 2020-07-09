@@ -20,7 +20,7 @@ public:
     MeshStorage(MeshStorage&& other) = delete;
 
     void putMesh(const std::string& name, Mesh mesh);
-    Mesh findMesh(const std::string& name);
+    Mesh getMesh(const std::string& name);
     void removeMesh(const std::string& name);
     void removeAllMeshes();
 

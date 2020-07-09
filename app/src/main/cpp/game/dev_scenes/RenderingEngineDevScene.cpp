@@ -149,7 +149,7 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(con
             throw std::domain_error("No mesh name provided");
         }
         return std::make_shared<MeshComponent>(
-                m_meshStorage.findMesh(componentJson["meshName"].get<std::string>())
+                m_meshStorage.getMesh(componentJson["meshName"].get<std::string>())
         );
     } else if (type == "MeshRenderer") {
         return m_meshRendererFactory->createMeshRenderer(parseLayerNames(componentJson["layerNames"]));

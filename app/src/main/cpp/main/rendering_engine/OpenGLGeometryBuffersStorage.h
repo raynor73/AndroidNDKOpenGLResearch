@@ -33,11 +33,11 @@ public:
     OpenGLGeometryBuffersStorage(const OpenGLGeometryBuffersStorage&) = delete;
     OpenGLGeometryBuffersStorage(OpenGLGeometryBuffersStorage&&) = delete;
 
-    GLuint createStaticVertexBuffer(std::string name, std::vector<float> vertexData);
-    IboInfo createStaticIndexBuffer(std::string name, std::vector<uint16_t> indices);
+    GLuint createStaticVertexBuffer(const std::string& name, const std::vector<float>& vertexData);
+    IboInfo createStaticIndexBuffer(const std::string& name, const std::vector<uint16_t>& indices);
 
-    GLuint findVbo(const std::string& name);
-    IboInfo findIbo(const std::string& name);
+    GLuint getVbo(const std::string& name);
+    IboInfo getIbo(const std::string& name);
 
     void restoreBuffers();
 
@@ -48,6 +48,10 @@ public:
 
     OpenGLGeometryBuffersStorage& operator=(const OpenGLGeometryBuffersStorage&) = delete;
     OpenGLGeometryBuffersStorage& operator=(const OpenGLGeometryBuffersStorage&&) = delete;
+
+private:
+    GLuint createStaticVertexBuffer(const std::string& name, std::vector<float> vertexData, bool isBeingRestored);
+    IboInfo createStaticIndexBuffer(const std::string& name, std::vector<uint16_t> indices, bool isBeingRestored);
 };
 
 

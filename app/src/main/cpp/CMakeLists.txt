@@ -50,6 +50,8 @@ add_library(
         main/rendering_engine/RenderingEngine.cpp
         main/rendering_engine/OpenGLState.cpp
         main/rendering_engine/OpenGLGeometryBuffersStorage.cpp
+        main/rendering_engine/OpenGlShadersRepository.cpp
+        main/rendering_engine/OpenGlShaderProgramContainer.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)
