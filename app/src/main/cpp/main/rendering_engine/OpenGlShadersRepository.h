@@ -11,12 +11,17 @@
 #include <unordered_map>
 #include <string>
 #include <main/OpenGLErrorDetector.h>
-#include "OpenGlShaderProgramContainer.h"
+#include <variant>
+#include <vector>
+#include "ShaderCreationParams.h"
 #include "OpenGlShaderProgramContainer.h"
 
 class OpenGlShadersRepository {
 
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
+
+    std::vector<std::variant<VertexShaderCreationParams, FragmentShaderCreationParams, ShaderProgramCreationParams>>
+        m_shadersCreationParams;
 
     std::unordered_map<std::string, GLuint> m_vertexShaders;
     std::unordered_map<std::string, GLuint> m_fragmentShaders;
@@ -31,13 +36,31 @@ public:
     GLuint getVertexShader(const std::string& name) const;
     GLuint getFragmentShader(const std::string& name) const;
     OpenGlShaderProgramContainer getShaderProgram(const std::string& name) const;
+
     GLuint createVertexShader(const std::string& name, const std::string& source);
     GLuint createFragmentShader(const std::string& name, const std::string& source);
-    void createShaderProgram(const std::string& name, GLuint vertexShader, GLuint fragmentShader);
+    OpenGlShaderProgramContainer createShaderProgram(
+            const std::string& name,
+            const std::string& vertexShaderName,
+            const std::string& fragmentShaderName
+    );
+
+    void restoreShaders();
+
     void removeAllShadersAndPrograms();
 
     OpenGlShadersRepository& operator=(const OpenGlShadersRepository&) = delete;
     OpenGlShadersRepository& operator=(OpenGlShadersRepository&&) = delete;
+
+private:
+    GLuint createVertexShader(const std::string& name, const std::string& source, bool isBeingRestored);
+    GLuint createFragmentShader(const std::string& name, const std::string& source, bool isBeingRestored);
+    OpenGlShaderProgramContainer createShaderProgram(
+            const std::string& name,
+            const std::string& vertexShaderName,
+            const std::string& fragmentShaderName,
+            bool isBeingRestored
+    );
 };
 
 
