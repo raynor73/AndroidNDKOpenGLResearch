@@ -12,7 +12,7 @@
 #include <main/rendering_engine/RenderingEngine.h>
 #include <main/AndroidSceneDataLoader.h>
 #include <main/AndroidUnitsConverter.h>
-#include <main/android_mesh_loading_repository/AndroidMeshLoadingRepository.h>
+#include <main/AndroidMeshLoadingRepository.h>
 #include <main/AndroidMeshRendererFactory.h>
 #include "AndroidDisplayInfo.h"
 

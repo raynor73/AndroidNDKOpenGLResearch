@@ -45,7 +45,7 @@ add_library(
         main/AndroidDisplayInfo.cpp
         main/AndroidSceneDataLoader.cpp
         main/AndroidUnitsConverter.cpp
-        main/android_mesh_loading_repository/AndroidMeshLoadingRepository.cpp
+        main/AndroidMeshLoadingRepository.cpp
         main/AndroidMeshRendererComponent.cpp
         main/AndroidMeshRendererFactory.cpp
         main/rendering_engine/RenderingEngine.cpp
@@ -53,6 +53,7 @@ add_library(
         main/rendering_engine/OpenGLGeometryBuffersStorage.cpp
         main/rendering_engine/OpenGlShadersRepository.cpp
         main/rendering_engine/OpenGlShaderProgramContainer.cpp
+        main/rendering_engine/ShaderSourcePreprocessor.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)
