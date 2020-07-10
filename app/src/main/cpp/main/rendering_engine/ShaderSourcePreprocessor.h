@@ -23,6 +23,10 @@ public:
 
     ShaderSourcePreprocessor& operator=(const ShaderSourcePreprocessor&) = delete;
     ShaderSourcePreprocessor& operator=(ShaderSourcePreprocessor&&) = delete;
+
+private:
+    static const std::string INCLUDE_TOKEN_PREFIX;
+    static const std::string INCLUDE_TOKEN_POSTFIX;
 };
 
 
