@@ -54,6 +54,7 @@ add_library(
         main/rendering_engine/OpenGlShadersRepository.cpp
         main/rendering_engine/OpenGlShaderProgramContainer.cpp
         main/rendering_engine/ShaderSourcePreprocessor.cpp
+        main/AndroidShaderSourceRepository.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)
