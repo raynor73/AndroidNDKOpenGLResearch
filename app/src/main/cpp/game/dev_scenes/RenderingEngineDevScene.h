@@ -13,6 +13,7 @@
 #include <game/MeshLoadingRepository.h>
 #include <game/MeshStorage.h>
 #include <game/MeshRendererFactory.h>
+#include <engine_3d/Material.h>
 
 class RenderingEngineDevScene : public Scene {
 
@@ -45,7 +46,10 @@ private:
 
     float parseNumber(const nlohmann::json& jsonValue, DimensionType dimensionType);
     static std::vector<std::string> parseLayerNames(const nlohmann::json& layerNamesJsonArray);
-    std::shared_ptr<GameObjectComponent> parseComponent(const nlohmann::json& componentJson);
+    std::shared_ptr<GameObjectComponent> parseComponent(
+            const nlohmann::json& componentJson,
+            const std::unordered_map<std::string, Material>& materialsMap
+    );
     static glm::vec3 parseColor3f(const nlohmann::json& colorJson);
     static glm::vec4 parseColor4f(const nlohmann::json& colorJson);
     static float parseFloatNumber(const nlohmann::json& jsonValue);

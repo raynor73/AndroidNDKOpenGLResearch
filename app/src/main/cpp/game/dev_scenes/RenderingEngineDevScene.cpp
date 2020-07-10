@@ -13,6 +13,8 @@
 #include <engine_3d/MeshComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
 #include <engine_3d/AmbientLightComponent.h>
+#include <engine_3d/Material.h>
+#include <engine_3d/MaterialComponent.h>
 #include "RenderingEngineDevScene.h"
 
 void RenderingEngineDevScene::update(float) {}
@@ -22,6 +24,8 @@ std::string RenderingEngineDevScene::createStateRepresentation() {
 }
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
+    std::unordered_map<std::string, Material> materialsMap;
+
     nlohmann::json sceneJson;
     try {
         sceneJson = nlohmann::json::parse(stateRepresentation);
@@ -54,7 +58,12 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     auto materialsJsonArray = sceneJson["materials"];
     if (materialsJsonArray.is_array()) {
         for (auto& materialJson : materialsJsonArray) {
-
+            auto nameJson = materialJson["name"];
+            if (nameJson.is_null()) {
+                continue;
+            }
+            Material material { parseColor4f(materialJson["diffuseColor"]) };
+            materialsMap[nameJson.get<std::string>()] = material;
         }
     }
 
@@ -139,14 +148,17 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             auto componentsJsonArray = gameObjectJson["components"];
             if (componentsJsonArray.is_array()) {
                 for (auto& componentJson : componentsJsonArray) {
-                    gameObject->addComponent(parseComponent(componentJson));
+                    gameObject->addComponent(parseComponent(componentJson, materialsMap));
                 }
             }
         }
     }
 }
 
-std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(const nlohmann::json& componentJson) {
+std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(
+        const nlohmann::json& componentJson,
+        const std::unordered_map<std::string, Material>& materialsMap
+) {
     if (!componentJson.contains("type")) {
         throw std::domain_error("No type found while parsing component");
     }
@@ -158,6 +170,17 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(con
         return std::make_shared<MeshComponent>(
                 m_meshStorage.getMesh(componentJson["meshName"].get<std::string>())
         );
+    } else if (type == "Material") {
+        if (!componentJson["materialName"].is_string()) {
+            throw std::domain_error("No material name provided");
+        }
+        auto materialName = componentJson["materialName"].get<std::string>();
+        if (materialsMap.count(materialName) == 0) {
+            std::stringstream ss;
+            ss << "Material " << materialName << " not found";
+            throw std::domain_error(ss.str());
+        }
+        return std::make_shared<MaterialComponent>(materialsMap.at(materialName));
     } else if (type == "MeshRenderer") {
         return m_meshRendererFactory->createMeshRenderer(parseLayerNames(componentJson["layerNames"]));
     } else if (type == "OrthoCamera") {
