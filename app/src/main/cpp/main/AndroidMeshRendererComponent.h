@@ -23,6 +23,8 @@ public:
     const std::vector<std::string>& layerNames() const { return m_layerNames; }
     void setLayerNames(std::vector<std::string> layerNames) { m_layerNames = std::move(layerNames); }
 
+    void render();
+
     virtual const std::string& typeName() const override { return TYPE_NAME; }
 
     virtual std::shared_ptr<GameObjectComponent> clone() override;

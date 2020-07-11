@@ -6,15 +6,29 @@
 #include <glm/gtx/compatibility.hpp>
 #include <engine_3d/CameraComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
+#include <main/AndroidMeshRendererComponent.h>
+#include <unordered_map>
 #include "RenderingEngine.h"
 
 void RenderingEngine::render(Scene &scene) {
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
+    std::unordered_multimap<std::string, std::shared_ptr<AndroidMeshRendererComponent>> layerNameToMeshRendererMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
         if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
             if (camera->isEnabled()) {
                 activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
+            }
+        }
+
+        if (
+                auto meshRenderer = std::static_pointer_cast<AndroidMeshRendererComponent>(
+                        gameObject.findComponent(AndroidMeshRendererComponent::TYPE_NAME)
+                );
+                meshRenderer != nullptr
+        ) {
+            for (auto& layerName : meshRenderer->layerNames()) {
+                layerNameToMeshRendererMap.insert({layerName, meshRenderer });
             }
         }
 
@@ -39,8 +53,8 @@ void RenderingEngine::render(Scene &scene) {
         OpenGLState openGlState {
             {viewportX, viewportY, viewportWidth, viewportHeight},
             {viewportX, viewportY, viewportWidth, viewportHeight},
-            true,
-            {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
+            false,
+            {GL_ONE, GL_ONE},
             true,
             GL_LESS
         };
@@ -49,6 +63,16 @@ void RenderingEngine::render(Scene &scene) {
         auto clearColor = camera->clearColor();
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(clearMask);
+
+        for (auto& layerName : camera->layerNames()) {
+            for (
+                    auto it = layerNameToMeshRendererMap.find(layerName);
+                    it != layerNameToMeshRendererMap.end();
+                    it++
+            ) {
+                it->second->render();
+            }
+        }
 
         popOpenGLState();
     }

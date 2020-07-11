@@ -6,6 +6,12 @@
 
 const std::string AndroidMeshRendererComponent::TYPE_NAME = "AndroidMeshRendererComponent";
 
+void AndroidMeshRendererComponent::render() {
+
+}
+
 std::shared_ptr<GameObjectComponent> AndroidMeshRendererComponent::clone() {
-    return std::shared_ptr<GameObjectComponent>();
+    auto clone = std::make_shared<AndroidMeshRendererComponent>(m_layerNames);
+    clone->setEnabled(m_isEnabled);
+    return clone;
 }
