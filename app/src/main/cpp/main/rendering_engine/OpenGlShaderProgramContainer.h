@@ -21,6 +21,9 @@ class OpenGlShaderProgramContainer {
 
     GLint m_mvpMatrixUniform;
     GLint m_diffuseColorUniform;
+    GLint m_useDiffuseColorUniform;
+
+    GLint m_hasSkeletalAnimationUniform;
 
 public:
     OpenGlShaderProgramContainer() = default;
@@ -34,6 +37,10 @@ public:
 
     GLint mvpMatrixUniform() const { return m_mvpMatrixUniform; }
     GLint diffuseColorUniform() const { return m_diffuseColorUniform; }
+
+    GLint useDiffuseColorUniform() const { return m_useDiffuseColorUniform; }
+
+    GLint hasSkeletalAnimationUniform() const { return m_hasSkeletalAnimationUniform; }
 };
 
 

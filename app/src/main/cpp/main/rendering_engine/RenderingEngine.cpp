@@ -8,9 +8,44 @@
 #include <engine_3d/OrthoCameraComponent.h>
 #include <main/AndroidMeshRendererComponent.h>
 #include <unordered_map>
+#include <main/L.h>
+#include <main/Constants.h>
 #include "RenderingEngine.h"
 
+RenderingEngine::RenderingEngine(
+        std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
+        std::shared_ptr<UnitsConverter> unitsConverter,
+        std::shared_ptr<OpenGlShadersRepository> shadersRepository,
+        std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor
+) : m_openGLErrorDetector(openGLErrorDetector),
+    m_unitsConverter(unitsConverter),
+    m_shadersRepository(shadersRepository),
+    m_isErrorLogged(false)
+{
+    auto unlitVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/unlit/unlitVertexShader.glsl"
+    );
+    auto unlitFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/unlit/unlitFragmentShader.glsl"
+    );
+    shadersRepository->createVertexShader("unlit", unlitVertexShaderSource);
+    shadersRepository->createFragmentShader("unlit", unlitFragmentShaderSource);
+    shadersRepository->createShaderProgram("unlit", "unlit", "unlit");
+}
+
 void RenderingEngine::render(Scene &scene) {
+    if (m_openGLErrorDetector->isOpenGLErrorDetected()) {
+        if (!m_isErrorLogged) {
+            m_isErrorLogged = true;
+            L::e(
+                    App::Constants::LOG_TAG,
+                    "Rendering Engine will not render anymore as OpenGL error have been detected"
+            );
+        }
+
+        return;
+    }
+
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
     std::unordered_multimap<std::string, std::shared_ptr<AndroidMeshRendererComponent>> layerNameToMeshRendererMap;
 
@@ -78,6 +113,10 @@ void RenderingEngine::render(Scene &scene) {
     }
 }
 
+void RenderingEngine::onOpenGlContextRecreated() {
+    m_shadersRepository->restoreShaders();
+}
+
 void RenderingEngine::traverseSceneHierarchy(GameObject &gameObject, const std::function<void(GameObject &)>& callback) {
     callback(gameObject);
     for (auto& entry : gameObject.children()) {
@@ -109,5 +148,5 @@ void RenderingEngine::applyOpenGLState(const OpenGLState& state) {
     glDepthMask(state.depthMask);
     glDepthFunc(state.depthFunction);
 
-    m_openGLErrorDetector.checkOpenGLErrors("RenderingEngine::applyOpenGLState");
+    m_openGLErrorDetector->checkOpenGLErrors("RenderingEngine::applyOpenGLState");
 }

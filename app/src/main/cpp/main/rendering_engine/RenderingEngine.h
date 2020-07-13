@@ -11,24 +11,36 @@
 #include <main/OpenGLErrorDetector.h>
 #include <game/UnitsConverter.h>
 #include "OpenGLState.h"
+#include "OpenGlShadersRepository.h"
+#include "ShaderSourcePreprocessor.h"
 
 class RenderingEngine {
 
     std::stack<OpenGLState> m_openGLStateStack;
-    OpenGLErrorDetector m_openGLErrorDetector;
+    std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
     std::shared_ptr<UnitsConverter> m_unitsConverter;
+    std::shared_ptr<OpenGlShadersRepository> m_shadersRepository;
+    std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
 
 public:
-    RenderingEngine(std::shared_ptr<UnitsConverter> unitsConverter) : m_unitsConverter(unitsConverter) {}
+    RenderingEngine(
+            std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
+            std::shared_ptr<UnitsConverter> unitsConverter,
+            std::shared_ptr<OpenGlShadersRepository> shadersRepository,
+            std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor
+    );
     RenderingEngine(const RenderingEngine&) = delete;
     RenderingEngine(RenderingEngine&&) = delete;
 
     void render(Scene& scene);
+    void onOpenGlContextRecreated();
 
     RenderingEngine& operator=(const RenderingEngine&) = delete;
     RenderingEngine& operator=(RenderingEngine&&) = delete;
 
 private:
+    bool m_isErrorLogged;
+
     void traverseSceneHierarchy(GameObject& gameObject, const std::function<void(GameObject&)>& callback);
 
     void pushOpenGLState(const OpenGLState& state);

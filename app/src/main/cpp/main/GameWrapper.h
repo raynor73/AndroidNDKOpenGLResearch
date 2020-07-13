@@ -14,7 +14,9 @@
 #include <main/AndroidUnitsConverter.h>
 #include <main/AndroidMeshLoadingRepository.h>
 #include <main/AndroidMeshRendererFactory.h>
+#include <main/OpenGLErrorDetector.h>
 #include "AndroidDisplayInfo.h"
+#include "AndroidShaderSourceRepository.h"
 
 class GameWrapper {
 
@@ -23,6 +25,7 @@ class GameWrapper {
     JavaVM* m_javaVm;
     jclass m_bridgeClass;
     jobject m_bridgeObject;
+    std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
     std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
     std::shared_ptr<AndroidUnitsConverter> m_unitsConverter;
     std::shared_ptr<Scene> m_scene;
@@ -30,6 +33,9 @@ class GameWrapper {
     std::shared_ptr<AndroidSceneDataLoader> m_sceneDataLoader;
     std::shared_ptr<AndroidMeshLoadingRepository> m_meshLoadingRepository;
     std::shared_ptr<AndroidMeshRendererFactory> m_meshRendererFactory;
+    std::shared_ptr<OpenGlShadersRepository> m_shadersRepository;
+    std::shared_ptr<AndroidShaderSourceRepository> m_shaderSourceRepository;
+    std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
 
 public:
     explicit GameWrapper(

@@ -14,6 +14,7 @@ GameWrapper::GameWrapper(
     m_javaVm(javaVm),
     m_bridgeClass(bridgeClass),
     m_bridgeObject(bridgeObject),
+    m_openGlErrorDetector(std::make_shared<OpenGLErrorDetector>()),
     m_sceneDataLoader(std::make_shared<AndroidSceneDataLoader>(
             m_javaVm,
             bridgeClass,
@@ -23,7 +24,14 @@ GameWrapper::GameWrapper(
             m_javaVm,
             bridgeClass,
             bridgeObject
-    ))
+    )),
+    m_shadersRepository(std::make_shared<OpenGlShadersRepository>(m_openGlErrorDetector)),
+    m_shaderSourceRepository(std::make_shared<AndroidShaderSourceRepository>(
+            m_javaVm,
+            bridgeClass,
+            bridgeObject
+    )),
+    m_shaderSourcePreprocessor(std::make_shared<ShaderSourcePreprocessor>(m_shaderSourceRepository))
     {}
 
 void GameWrapper::onDrawFrame() {
@@ -41,8 +49,15 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
     m_displayInfo->setHeight(height);
 
     if (m_renderingEngine == nullptr) {
-        m_renderingEngine = std::make_shared<RenderingEngine>(m_unitsConverter);
+        m_renderingEngine = std::make_shared<RenderingEngine>(
+                m_openGlErrorDetector,
+                m_unitsConverter,
+                m_shadersRepository,
+                m_shaderSourcePreprocessor
+        );
         m_meshRendererFactory = std::make_shared<AndroidMeshRendererFactory>();
+    } else {
+        m_renderingEngine->onOpenGlContextRecreated();
     }
 
     if (m_scene == nullptr) {
