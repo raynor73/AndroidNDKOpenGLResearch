@@ -46,7 +46,7 @@ private:
 
     void traverseSceneHierarchy(GameObject& gameObject, const std::function<void(GameObject&)>& callback);
 
-    void checkMeshInGeometryBuffersAndCreateIfNecessary(const std::string& name, const Mesh& mesh);
+    void putMeshInGeometryBuffersIfNecessary(const std::string& name, const Mesh& mesh);
 
     void pushOpenGLState(const OpenGLState& state);
     void popOpenGLState();

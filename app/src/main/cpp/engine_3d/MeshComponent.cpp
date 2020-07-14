@@ -8,7 +8,7 @@
 const std::string MeshComponent::TYPE_NAME = "MeshComponent";
 
 std::shared_ptr<GameObjectComponent> MeshComponent::clone() {
-    auto clone = std::make_shared<MeshComponent>(m_mesh);
+    auto clone = std::make_shared<MeshComponent>(m_mesh, m_meshName);
     clone->setEnabled(m_isEnabled);
     return clone;
 }

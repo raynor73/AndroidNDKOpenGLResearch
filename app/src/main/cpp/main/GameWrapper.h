@@ -10,6 +10,7 @@
 #include <jni.h>
 #include <game/MessageQueue.h>
 #include <main/rendering_engine/RenderingEngine.h>
+#include <main/rendering_engine/OpenGLGeometryBuffersStorage.h>
 #include <main/AndroidSceneDataLoader.h>
 #include <main/AndroidUnitsConverter.h>
 #include <main/AndroidMeshLoadingRepository.h>
@@ -36,6 +37,7 @@ class GameWrapper {
     std::shared_ptr<OpenGlShadersRepository> m_shadersRepository;
     std::shared_ptr<AndroidShaderSourceRepository> m_shaderSourceRepository;
     std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
+    std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
 
 public:
     explicit GameWrapper(

@@ -6,6 +6,7 @@
 #include <glm/gtx/compatibility.hpp>
 #include <engine_3d/CameraComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
+#include <engine_3d/MeshComponent.h>
 #include <main/AndroidMeshRendererComponent.h>
 #include <unordered_map>
 #include <main/L.h>
@@ -58,6 +59,10 @@ void RenderingEngine::render(Scene &scene) {
             }
         }
 
+        /*if (auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME); camera != nullptr) {
+
+        }*/
+
         if (
                 auto meshRenderer = std::static_pointer_cast<AndroidMeshRendererComponent>(
                         gameObject.findComponent(AndroidMeshRendererComponent::TYPE_NAME)
@@ -69,9 +74,14 @@ void RenderingEngine::render(Scene &scene) {
             }
         }
 
-        /*if (auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME); camera != nullptr) {
-
-        }*/
+        if (
+                auto meshComponent = std::static_pointer_cast<MeshComponent>(
+                        gameObject.findComponent(MeshComponent::TYPE_NAME)
+                );
+                meshComponent != nullptr
+        ) {
+            putMeshInGeometryBuffersIfNecessary(meshComponent->meshName(), meshComponent->mesh());
+        }
     });
 
     for (auto& camera : activeCameras) {
@@ -153,7 +163,23 @@ void RenderingEngine::applyOpenGLState(const OpenGLState& state) {
     m_openGLErrorDetector->checkOpenGLErrors("RenderingEngine::applyOpenGLState");
 }
 
-void RenderingEngine::checkMeshInGeometryBuffersAndCreateIfNecessary(const std::string& name, const Mesh& mesh) {
-    std::vector<float> vertexData;
+void RenderingEngine::putMeshInGeometryBuffersIfNecessary(const std::string& name, const Mesh& mesh) {
+    std::vector<float> vertexData(mesh.vertices().size() * Vertex::VERTEX_COMPONENTS);
+
+    for (int i = 0; i < mesh.vertices().size(); i++) {
+        vertexData[0 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().x;
+        vertexData[1 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().y;
+        vertexData[2 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().z;
+
+        vertexData[3 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().x;
+        vertexData[4 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().y;
+        vertexData[5 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().z;
+
+        vertexData[6 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].uv().x;
+        vertexData[7 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].uv().y;
+    }
+
     m_geometryBuffersStorage->createStaticVertexBuffer(name, vertexData);
+
+    m_geometryBuffersStorage->createStaticIndexBuffer(name, mesh.indices());
 }

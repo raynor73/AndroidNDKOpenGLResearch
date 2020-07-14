@@ -31,7 +31,8 @@ GameWrapper::GameWrapper(
             bridgeClass,
             bridgeObject
     )),
-    m_shaderSourcePreprocessor(std::make_shared<ShaderSourcePreprocessor>(m_shaderSourceRepository))
+    m_shaderSourcePreprocessor(std::make_shared<ShaderSourcePreprocessor>(m_shaderSourceRepository)),
+    m_geometryBuffersStorage(std::make_shared<OpenGLGeometryBuffersStorage>(m_openGlErrorDetector))
     {}
 
 void GameWrapper::onDrawFrame() {
@@ -53,7 +54,8 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_openGlErrorDetector,
                 m_unitsConverter,
                 m_shadersRepository,
-                m_shaderSourcePreprocessor
+                m_shaderSourcePreprocessor,
+                m_geometryBuffersStorage
         );
         m_meshRendererFactory = std::make_shared<AndroidMeshRendererFactory>();
     } else {
