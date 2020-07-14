@@ -44,6 +44,9 @@ public:
     void removeStaticVertexBuffer(const std::string& name);
     void removeStaticIndexBuffer(const std::string& name);
 
+    std::vector<std::string> retrieveStoredVboNames() const;
+    std::vector<std::string> retrieveStoredIboNames() const;
+
     void removeAllBuffers();
 
     OpenGLGeometryBuffersStorage& operator=(const OpenGLGeometryBuffersStorage&) = delete;

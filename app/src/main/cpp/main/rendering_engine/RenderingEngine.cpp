@@ -16,10 +16,12 @@ RenderingEngine::RenderingEngine(
         std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
         std::shared_ptr<UnitsConverter> unitsConverter,
         std::shared_ptr<OpenGlShadersRepository> shadersRepository,
-        std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor
+        std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor,
+        std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage
 ) : m_openGLErrorDetector(openGLErrorDetector),
     m_unitsConverter(unitsConverter),
     m_shadersRepository(shadersRepository),
+    m_geometryBuffersStorage(m_geometryBuffersStorage),
     m_isErrorLogged(false)
 {
     auto unlitVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
@@ -149,4 +151,9 @@ void RenderingEngine::applyOpenGLState(const OpenGLState& state) {
     glDepthFunc(state.depthFunction);
 
     m_openGLErrorDetector->checkOpenGLErrors("RenderingEngine::applyOpenGLState");
+}
+
+void RenderingEngine::checkMeshInGeometryBuffersAndCreateIfNecessary(const std::string& name, const Mesh& mesh) {
+    std::vector<float> vertexData;
+    m_geometryBuffersStorage->createStaticVertexBuffer(name, vertexData);
 }

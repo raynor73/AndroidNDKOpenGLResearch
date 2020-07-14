@@ -13,6 +13,7 @@
 #include "OpenGLState.h"
 #include "OpenGlShadersRepository.h"
 #include "ShaderSourcePreprocessor.h"
+#include "OpenGLGeometryBuffersStorage.h"
 
 class RenderingEngine {
 
@@ -21,13 +22,15 @@ class RenderingEngine {
     std::shared_ptr<UnitsConverter> m_unitsConverter;
     std::shared_ptr<OpenGlShadersRepository> m_shadersRepository;
     std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
+    std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
 
 public:
     RenderingEngine(
             std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<OpenGlShadersRepository> shadersRepository,
-            std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor
+            std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor,
+            std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage
     );
     RenderingEngine(const RenderingEngine&) = delete;
     RenderingEngine(RenderingEngine&&) = delete;
@@ -42,6 +45,8 @@ private:
     bool m_isErrorLogged;
 
     void traverseSceneHierarchy(GameObject& gameObject, const std::function<void(GameObject&)>& callback);
+
+    void checkMeshInGeometryBuffersAndCreateIfNecessary(const std::string& name, const Mesh& mesh);
 
     void pushOpenGLState(const OpenGLState& state);
     void popOpenGLState();

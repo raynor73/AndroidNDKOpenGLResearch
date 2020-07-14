@@ -164,11 +164,14 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(
     }
     auto type = componentJson["type"].get<std::string>();
     if (type == "Mesh") {
-        if (componentJson["meshName"].is_null() || !componentJson["meshName"].is_string()) {
+        auto meshNameJson = componentJson["meshName"];
+        if (!meshNameJson.is_string()) {
             throw std::domain_error("No mesh name provided");
         }
+        auto meshName = meshNameJson.get<std::string>();
         return std::make_shared<MeshComponent>(
-                m_meshStorage.getMesh(componentJson["meshName"].get<std::string>())
+                m_meshStorage.getMesh(meshName),
+                meshName
         );
     } else if (type == "Material") {
         if (!componentJson["materialName"].is_string()) {

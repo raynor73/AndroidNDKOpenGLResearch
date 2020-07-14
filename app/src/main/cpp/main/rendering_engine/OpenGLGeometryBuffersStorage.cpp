@@ -158,3 +158,23 @@ void OpenGLGeometryBuffersStorage::removeAllBuffers() {
         removeStaticIndexBuffer(name);
     }
 }
+
+std::vector<std::string> OpenGLGeometryBuffersStorage::retrieveStoredVboNames() const {
+    auto names = std::vector<std::string>(m_vbos.size());
+
+    for (auto& entry : m_vbos) {
+        names.emplace_back(entry.first);
+    }
+
+    return names;
+}
+
+std::vector<std::string> OpenGLGeometryBuffersStorage::retrieveStoredIboNames() const {
+    auto names = std::vector<std::string>(m_ibos.size());
+
+    for (auto& entry : m_ibos) {
+        names.emplace_back(entry.first);
+    }
+
+    return names;
+}
