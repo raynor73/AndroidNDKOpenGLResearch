@@ -46,8 +46,8 @@ add_library(
         main/AndroidSceneDataLoader.cpp
         main/AndroidUnitsConverter.cpp
         main/AndroidMeshLoadingRepository.cpp
-        main/AndroidMeshRendererComponent.cpp
-        main/AndroidMeshRendererFactory.cpp
+        main/rendering_engine/OpenGlMeshRendererComponent.cpp
+        main/rendering_engine/OpenGlMeshRendererFactory.cpp
         main/rendering_engine/RenderingEngine.cpp
         main/rendering_engine/OpenGLState.cpp
         main/rendering_engine/OpenGLGeometryBuffersStorage.cpp

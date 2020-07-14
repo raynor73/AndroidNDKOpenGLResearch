@@ -57,7 +57,7 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_shaderSourcePreprocessor,
                 m_geometryBuffersStorage
         );
-        m_meshRendererFactory = std::make_shared<AndroidMeshRendererFactory>();
+        m_meshRendererFactory = std::make_shared<OpenGlMeshRendererFactory>();
     } else {
         m_renderingEngine->onOpenGlContextRecreated();
     }

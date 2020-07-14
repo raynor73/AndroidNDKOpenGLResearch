@@ -7,7 +7,7 @@
 #include <engine_3d/CameraComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
 #include <engine_3d/MeshComponent.h>
-#include <main/AndroidMeshRendererComponent.h>
+#include <main/rendering_engine/OpenGlMeshRendererComponent.h>
 #include <unordered_map>
 #include <main/L.h>
 #include <main/Constants.h>
@@ -50,7 +50,7 @@ void RenderingEngine::render(Scene &scene) {
     }
 
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
-    std::unordered_multimap<std::string, std::shared_ptr<AndroidMeshRendererComponent>> layerNameToMeshRendererMap;
+    std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
         if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
@@ -64,8 +64,8 @@ void RenderingEngine::render(Scene &scene) {
         }*/
 
         if (
-                auto meshRenderer = std::static_pointer_cast<AndroidMeshRendererComponent>(
-                        gameObject.findComponent(AndroidMeshRendererComponent::TYPE_NAME)
+                auto meshRenderer = std::static_pointer_cast<OpenGlMeshRendererComponent>(
+                        gameObject.findComponent(OpenGlMeshRendererComponent::TYPE_NAME)
                 );
                 meshRenderer != nullptr
         ) {
