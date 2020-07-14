@@ -80,7 +80,7 @@ void OpenGlShadersRepository::restoreShaders() {
             auto vertexShaderCreationParams = std::get<VertexShaderCreationParams>(shaderCreationParams);
             createVertexShader(vertexShaderCreationParams.name, vertexShaderCreationParams.source, true);
         } else if (std::holds_alternative<FragmentShaderCreationParams>(shaderCreationParams)) {
-            auto fragmentShaderCreationParams = std::get<VertexShaderCreationParams>(shaderCreationParams);
+            auto fragmentShaderCreationParams = std::get<FragmentShaderCreationParams>(shaderCreationParams);
             createFragmentShader(fragmentShaderCreationParams.name, fragmentShaderCreationParams.source, true);
         } else if (std::holds_alternative<ShaderProgramCreationParams>(shaderCreationParams)) {
             auto shaderProgramCreationParams = std::get<ShaderProgramCreationParams>(shaderCreationParams);
