@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <glm/gtx/compatibility.hpp>
+#include <glm/mat4x4.hpp>
 #include <engine_3d/CameraComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
 #include <engine_3d/MeshComponent.h>
@@ -117,7 +118,12 @@ void RenderingEngine::render(Scene &scene) {
                     it != layerNameToMeshRendererMap.end();
                     it++
             ) {
-                it->second->render();
+                it->second->render(
+                        m_shadersRepository->getShaderProgram("unlit"),
+                        glm::identity<glm::mat4x4>(),
+                        camera->calculateViewMatrix(),
+                        camera->calculateProjectionMatrix()
+                );
             }
         }
 
