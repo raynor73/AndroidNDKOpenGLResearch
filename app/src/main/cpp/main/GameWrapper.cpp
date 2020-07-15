@@ -57,7 +57,10 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_shaderSourcePreprocessor,
                 m_geometryBuffersStorage
         );
-        m_meshRendererFactory = std::make_shared<OpenGlMeshRendererFactory>();
+        m_meshRendererFactory = std::make_shared<OpenGlMeshRendererFactory>(
+                m_geometryBuffersStorage,
+                m_openGlErrorDetector
+        );
     } else {
         m_renderingEngine->onOpenGlContextRecreated();
     }

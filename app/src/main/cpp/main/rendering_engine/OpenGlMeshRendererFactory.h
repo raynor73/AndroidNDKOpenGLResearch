@@ -10,8 +10,16 @@
 
 class OpenGlMeshRendererFactory : public MeshRendererFactory {
 
+    std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
+    std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
+
 public:
-    OpenGlMeshRendererFactory() = default;
+    OpenGlMeshRendererFactory(
+            std::shared_ptr<OpenGLGeometryBuffersStorage> geometryBuffersStorage,
+            std::shared_ptr<OpenGLErrorDetector> openGlErrorDetector
+    ) : m_geometryBuffersStorage(geometryBuffersStorage),
+        m_openGlErrorDetector(openGlErrorDetector)
+    {}
     OpenGlMeshRendererFactory(const OpenGlMeshRendererFactory& other) = delete;
     OpenGlMeshRendererFactory(OpenGlMeshRendererFactory&& other) = delete;
 
