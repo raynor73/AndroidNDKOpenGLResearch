@@ -2,21 +2,45 @@
 // Created by Igor Lapin on 03/07/2020.
 //
 
+#include <GLES2/gl2.h>
+#include <memory>
+#include <sstream>
+#include <exception>
+#include <engine_3d/GameObject.h>
+#include <engine_3d/MeshComponent.h>
+#include <engine_3d/MaterialComponent.h>
 #include "OpenGlMeshRendererComponent.h"
 
 const std::string OpenGlMeshRendererComponent::TYPE_NAME = "AndroidMeshRendererComponent";
 
-void OpenGlMeshRendererComponent::render() {
-    /*if (!isEnabled || gameObject?.isEnabled == false) {
-        return
+void OpenGlMeshRendererComponent::render(
+        const OpenGlShaderProgramContainer& shaderProgramContainer,
+        const glm::mat4x4& modelMatrix,
+        const glm::mat4x4& viewMatrix,
+        const glm::mat4x4& projectionMatrix
+) {
+    if (!m_isEnabled || m_gameObject == nullptr || !m_gameObject->isEnabled()) {
+        return;
     }
 
-    val mesh = gameObject?.getComponent(MeshComponent::class.java) ?: return
-            val vbo = geometryManager.findVbo(mesh.name) ?: error("VBO ${mesh.name} not found")
-    val iboInfo = geometryManager.findIbo(mesh.name) ?: error("IBO ${mesh.name} not found")
-    val material = gameObject?.getComponent(MaterialComponent::class.java) ?: return
+    auto meshComponent = std::static_pointer_cast<MeshComponent>(m_gameObject->findComponent(MeshComponent::TYPE_NAME));
+    if (meshComponent == nullptr) {
+        std::stringstream ss;
+        ss << "No mesh to render for game object: " << m_gameObject->name();
+        throw std::domain_error(ss.str());
+    }
+    auto vbo = m_geometryBuffersStorage->getVbo(meshComponent->meshName());
+    auto iboInfo = m_geometryBuffersStorage->getIbo(meshComponent->meshName());
+    auto materialComponent = std::static_pointer_cast<MaterialComponent>(
+            m_gameObject->findComponent(MaterialComponent::TYPE_NAME)
+    );
+    if (meshComponent == nullptr) {
+        std::stringstream ss;
+        ss << "No material for rendering game object: " << m_gameObject->name();
+        throw std::domain_error(ss.str());
+    }
 
-    if (isShadowMapRendering && !material.castShadows) {
+    /*if (isShadowMapRendering && !material.castShadows) {
         return
     }
 
@@ -32,48 +56,53 @@ void OpenGlMeshRendererComponent::render() {
             (!material.isTranslucent && isTranslucentRendering)
             ) {
         return
+    }*/
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboInfo.ibo);
+
+    auto vertexPositionAttribute = shaderProgramContainer.positionAttribute();
+    if (vertexPositionAttribute >= 0) {
+        glVertexAttribPointer(
+                vertexPositionAttribute,
+                Vertex::VERTEX_POSITION_COMPONENTS,
+                GL_FLOAT,
+                false,
+                Vertex::VERTEX_COMPONENTS * sizeof(float),
+                reinterpret_cast<void*>(0)
+        );
+        glEnableVertexAttribArray(vertexPositionAttribute);
     }
 
-    GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo)
-    GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, iboInfo.ibo)
-
-    shaderProgram.vertexCoordinateAttribute.takeIf { it >= 0 }?.let { vertexCoordinateAttribute ->
-            GLES20.glVertexAttribPointer(
-            vertexCoordinateAttribute,
-            VERTEX_COORDINATE_COMPONENTS,
-            GLES20.GL_FLOAT,
-            false,
-            VERTEX_COMPONENTS * BYTES_IN_FLOAT,
-            0
-    )
-            GLES20.glEnableVertexAttribArray(vertexCoordinateAttribute)
+    auto vertexNormalAttribute = shaderProgramContainer.normalAttribute();
+    if (vertexNormalAttribute >= 0) {
+        glVertexAttribPointer(
+                vertexNormalAttribute,
+                Vertex::VERTEX_NORMAL_COMPONENTS,
+                GL_FLOAT,
+                false,
+                Vertex::VERTEX_COMPONENTS * sizeof(float),
+                reinterpret_cast<void*>(Vertex::VERTEX_POSITION_COMPONENTS * sizeof(float))
+        );
+        glEnableVertexAttribArray(vertexNormalAttribute);
     }
 
-    shaderProgram.normalAttribute.takeIf { it >= 0 }?.let { normalAttribute ->
-            GLES20.glVertexAttribPointer(
-            normalAttribute,
-            NORMAL_COMPONENTS,
-            GLES20.GL_FLOAT,
-            false,
-            VERTEX_COMPONENTS * BYTES_IN_FLOAT,
-            VERTEX_COORDINATE_COMPONENTS * BYTES_IN_FLOAT
-    )
-            GLES20.glEnableVertexAttribArray(normalAttribute)
+    auto vertexUvAttribute = shaderProgramContainer.uvAttribute();
+    if (vertexUvAttribute >= 0) {
+        glVertexAttribPointer(
+                vertexUvAttribute,
+                Vertex::VERTEX_UV_COMPONENTS,
+                GL_FLOAT,
+                false,
+                Vertex::VERTEX_COMPONENTS * sizeof(float),
+                reinterpret_cast<void*>(
+                        (Vertex::VERTEX_POSITION_COMPONENTS + Vertex::VERTEX_NORMAL_COMPONENTS) * sizeof(float)
+                )
+        );
+        glEnableVertexAttribArray(vertexUvAttribute);
     }
 
-    shaderProgram.uvAttribute.takeIf { it >= 0 }?.let { uvAttribute ->
-            GLES20.glVertexAttribPointer(
-            uvAttribute,
-            TEXTURE_COORDINATE_COMPONENTS,
-            GLES20.GL_FLOAT,
-            false,
-            VERTEX_COMPONENTS * BYTES_IN_FLOAT,
-            (VERTEX_COORDINATE_COMPONENTS + NORMAL_COMPONENTS) * BYTES_IN_FLOAT
-    )
-            GLES20.glEnableVertexAttribArray(uvAttribute)
-    }
-
-    shaderProgram.jointIndicesAttribute.takeIf { it >= 0 }?.let { jointIndicesAttribute ->
+    /*shaderProgram.jointIndicesAttribute.takeIf { it >= 0 }?.let { jointIndicesAttribute ->
             GLES20.glVertexAttribPointer(
             jointIndicesAttribute,
             NUMBER_OF_JOINT_INDICES,
@@ -100,17 +129,14 @@ void OpenGlMeshRendererComponent::render() {
              NUMBER_OF_JOINT_INDICES) * BYTES_IN_FLOAT
     )
             GLES20.glEnableVertexAttribArray(jointWeightsAttribute)
+    }*/
+
+    if (auto mvpMatrixUniform = shaderProgramContainer.mvpMatrixUniform(); mvpMatrixUniform >= 0) {
+        glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+        glUniformMatrix4fv(mvpMatrixUniform, 1, false, &mvpMatrix[0][0]);
     }
 
-    shaderProgram.mvpMatrixUniform.takeIf { it >= 0 }?.let { mvpMatrixUniform ->
-            tmpMatrix.set(projectionMatrix)
-            tmpMatrix.mul(viewMatrix)
-            tmpMatrix.mul(modelMatrix)
-            tmpMatrix.get(tmpFloatArray)
-            GLES20.glUniformMatrix4fv(mvpMatrixUniform, 1, false, tmpFloatArray, 0)
-    }
-
-    shaderProgram.lightMvpMatrixUniform.takeIf { it >= 0 }?.let { lightMvpMatrixUniform ->
+    /*shaderProgram.lightMvpMatrixUniform.takeIf { it >= 0 }?.let { lightMvpMatrixUniform ->
             tmpMatrix.set(lightProjectionMatrix)
             tmpMatrix.mul(lightViewMatrix)
             tmpMatrix.mul(lightModelMatrix)
@@ -126,19 +152,30 @@ void OpenGlMeshRendererComponent::render() {
     shaderProgram.biasMatrixUniform.takeIf { it >= 0 }?.let { biasMatrixUniform ->
             BIAS_MATRIX.get(tmpFloatArray)
             GLES20.glUniformMatrix4fv(biasMatrixUniform, 1, false, tmpFloatArray, 0)
+    }*/
+
+    if (auto diffuseColorUniform = shaderProgramContainer.diffuseColorUniform(); diffuseColorUniform >= 0) {
+        glUniform4f(
+                diffuseColorUniform,
+                materialComponent->material().diffuseColor.x,
+                materialComponent->material().diffuseColor.y,
+                materialComponent->material().diffuseColor.z,
+                materialComponent->material().diffuseColor.w
+        );
     }
 
-    shaderProgram.diffuseColorUniform.takeIf { it >= 0 }?.let { diffuseColorUniform ->
-            GLES20.glUniform4f(
-            diffuseColorUniform,
-            material.diffuseColor.x,
-            material.diffuseColor.y,
-            material.diffuseColor.z,
-            material.diffuseColor.w
-    )
+    if (auto useDiffuseColorUniform = shaderProgramContainer.useDiffuseColorUniform(); useDiffuseColorUniform >= 0) {
+        glUniform1i(useDiffuseColorUniform, GL_TRUE);
     }
 
-    val textureName = material.textureName
+    if (
+            auto hasSkeletalAnimationUniform = shaderProgramContainer.hasSkeletalAnimationUniform();
+            hasSkeletalAnimationUniform >= 0
+    ) {
+        glUniform1i(hasSkeletalAnimationUniform, GL_FALSE);
+    }
+
+    /*val textureName = material.textureName
     if (textureName != null) {
         val textureInfo = texturesManager.findTexture(textureName)
                           ?: error("Texture not found for ${gameObject?.name}")
@@ -177,22 +214,22 @@ void OpenGlMeshRendererComponent::render() {
         )
         true
     } ?: false
-    shaderProgram.hasSkeletalAnimationUniform.glUniform1i(hasSkeletalAnimation.toGLBoolean())
+    shaderProgram.hasSkeletalAnimationUniform.glUniform1i(hasSkeletalAnimation.toGLBoolean())*/
 
-    if (material.isDoubleSided) {
+    /*if (materialComponent.isDoubleSided) {
         GLES20.glDisable(GLES20.GL_CULL_FACE)
     } else {
         GLES20.glEnable(GLES20.GL_CULL_FACE)
     }
 
-    val mode = if (material.isWireframe) {
+    val mode = if (materialComponent.isWireframe) {
         GLES20.GL_LINES
     } else {
         GLES20.GL_TRIANGLES
     }
     GLES20.glLineWidth(lineWidth)
 
-    if (material.isTranslucent) {
+    if (materialComponent.isTranslucent) {
         GLES20.glEnable(GLES20.GL_CULL_FACE)
 
         GLES20.glCullFace(GLES20.GL_FRONT)
@@ -217,32 +254,45 @@ void OpenGlMeshRendererComponent::render() {
                 GLES20.GL_UNSIGNED_SHORT,
                 0
         )
+    }*/
+
+    glDrawElements(
+            GL_TRIANGLES,
+            iboInfo.numberOfIndices,
+            GL_UNSIGNED_SHORT,
+            reinterpret_cast<void*>(0)
+    );
+
+    if (vertexPositionAttribute >= 0) {
+        glDisableVertexAttribArray(vertexPositionAttribute);
+    }
+    if (vertexNormalAttribute >= 0) {
+        glDisableVertexAttribArray(vertexNormalAttribute);
+    }
+    if (vertexUvAttribute >= 0) {
+        glDisableVertexAttribArray(vertexUvAttribute);
     }
 
-    shaderProgram.vertexCoordinateAttribute.takeIf { it >= 0 }?.let { vertexCoordinateAttribute ->
-            GLES20.glDisableVertexAttribArray(vertexCoordinateAttribute)
-    }
-    shaderProgram.normalAttribute.takeIf { it >= 0 }?.let { normalAttribute ->
-            GLES20.glDisableVertexAttribArray(normalAttribute)
-    }
-    shaderProgram.uvAttribute.takeIf { it >= 0 }?.let { uvAttribute ->
-            GLES20.glDisableVertexAttribArray(uvAttribute)
-    }
-    shaderProgram.jointIndicesAttribute.takeIf { it >= 0 }?.let { jointIndicesAttribute ->
+    /*shaderProgram.jointIndicesAttribute.takeIf { it >= 0 }?.let { jointIndicesAttribute ->
             GLES20.glDisableVertexAttribArray(jointIndicesAttribute)
     }
     shaderProgram.jointWeightsAttribute.takeIf { it >= 0 }?.let { jointWeightsAttribute ->
             GLES20.glDisableVertexAttribArray(jointWeightsAttribute)
-    }
-    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
-    GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
-    GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
+    }*/
 
-    openGLErrorDetector.dispatchOpenGLErrors("MeshRendererComponent.render")*/
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    m_openGlErrorDetector->checkOpenGLErrors("OpenGlMeshRendererComponent::render");
 }
 
 std::shared_ptr<GameObjectComponent> OpenGlMeshRendererComponent::clone() {
-    auto clone = std::make_shared<OpenGlMeshRendererComponent>(m_layerNames, m_openGlErrorDetector);
+    auto clone = std::make_shared<OpenGlMeshRendererComponent>(
+            m_layerNames,
+            m_geometryBuffersStorage,
+            m_openGlErrorDetector
+    );
     clone->setEnabled(m_isEnabled);
     return clone;
 }
