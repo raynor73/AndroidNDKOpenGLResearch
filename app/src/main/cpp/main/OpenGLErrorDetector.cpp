@@ -29,7 +29,7 @@ void OpenGLErrorDetector::checkOpenGLErrors(const std::string &locationName) {
             errorDescription = ss.str();
         }
         std::stringstream ss;
-        ss << "OpenGL error detected at  " << locationName << ": " << errorDescription;
+        ss << "OpenGL error detected at " << locationName << ": " << errorDescription;
         L::d(LOG_TAG, ss.str());
 
         error = glGetError();

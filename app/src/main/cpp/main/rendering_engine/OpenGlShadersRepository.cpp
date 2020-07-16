@@ -28,7 +28,7 @@ GLuint OpenGlShadersRepository::getFragmentShader(const std::string &name) const
     return m_fragmentShaders.at(name);
 }
 
-OpenGlShaderProgramContainer OpenGlShadersRepository::getShaderProgram(const std::string &name) const {
+OpenGlShaderProgramContainer OpenGlShadersRepository::getShaderProgramContainer(const std::string &name) const {
     if (m_shaderProgramContainers.count(name) == 0) {
         std::stringstream ss;
         ss << "Shader program " << name << " does not exist";

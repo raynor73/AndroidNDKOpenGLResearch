@@ -29,8 +29,23 @@ void OpenGlMeshRendererComponent::render(
         ss << "No mesh to render for game object: " << m_gameObject->name();
         throw std::domain_error(ss.str());
     }
-    auto vbo = m_geometryBuffersStorage->getVbo(meshComponent->meshName());
-    auto iboInfo = m_geometryBuffersStorage->getIbo(meshComponent->meshName());
+
+    auto vboOptional = m_geometryBuffersStorage->findVbo(meshComponent->meshName());
+    if (!vboOptional) {
+        std::stringstream ss;
+        ss << "VBO " << meshComponent->meshName() << " not found";
+        throw std::domain_error(ss.str());
+    }
+    auto vbo = vboOptional.value();
+
+    auto iboInfoOptional = m_geometryBuffersStorage->findIbo(meshComponent->meshName());
+    if (!iboInfoOptional) {
+        std::stringstream ss;
+        ss << "IBO " << meshComponent->meshName() << " not found";
+        throw std::domain_error(ss.str());
+    }
+    auto iboInfo = iboInfoOptional.value();
+
     auto materialComponent = std::static_pointer_cast<MaterialComponent>(
             m_gameObject->findComponent(MaterialComponent::TYPE_NAME)
     );

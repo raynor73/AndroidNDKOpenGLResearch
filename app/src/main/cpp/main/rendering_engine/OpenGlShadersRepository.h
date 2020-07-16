@@ -35,7 +35,7 @@ public:
 
     GLuint getVertexShader(const std::string& name) const;
     GLuint getFragmentShader(const std::string& name) const;
-    OpenGlShaderProgramContainer getShaderProgram(const std::string& name) const;
+    OpenGlShaderProgramContainer getShaderProgramContainer(const std::string& name) const;
 
     GLuint createVertexShader(const std::string& name, const std::string& source);
     GLuint createFragmentShader(const std::string& name, const std::string& source);

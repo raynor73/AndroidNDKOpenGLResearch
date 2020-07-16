@@ -27,7 +27,11 @@ public:
             float bottom,
             float zNear,
             float zFar
-    ) : CameraComponent(clearColor, layerNames, zNear, zFar) {}
+    ) : CameraComponent(clearColor, layerNames, zNear, zFar),
+        m_left(left),
+        m_top(top),
+        m_right(right),
+        m_bottom(bottom) {}
 
     glm::mat4 calculateViewMatrix() override;
     glm::mat4 calculateProjectionMatrix() override;

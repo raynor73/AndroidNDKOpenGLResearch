@@ -50,6 +50,13 @@ void RenderingEngine::render(Scene &scene) {
         return;
     }
 
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_SCISSOR_TEST);
+
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
 
@@ -118,8 +125,10 @@ void RenderingEngine::render(Scene &scene) {
                     it != layerNameToMeshRendererMap.end();
                     it++
             ) {
+                auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
+                glUseProgram(shaderProgramContainer.shaderProgram());
                 it->second->render(
-                        m_shadersRepository->getShaderProgram("unlit"),
+                        shaderProgramContainer,
                         glm::identity<glm::mat4x4>(),
                         camera->calculateViewMatrix(),
                         camera->calculateProjectionMatrix()
@@ -170,22 +179,26 @@ void RenderingEngine::applyOpenGLState(const OpenGLState& state) {
 }
 
 void RenderingEngine::putMeshInGeometryBuffersIfNecessary(const std::string& name, const Mesh& mesh) {
-    std::vector<float> vertexData(mesh.vertices().size() * Vertex::VERTEX_COMPONENTS);
+    if (!m_geometryBuffersStorage->findVbo(name)) {
+        std::vector<float> vertexData(mesh.vertices().size() * Vertex::VERTEX_COMPONENTS);
 
-    for (int i = 0; i < mesh.vertices().size(); i++) {
-        vertexData[0 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().x;
-        vertexData[1 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().y;
-        vertexData[2 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().z;
+        for (int i = 0; i < mesh.vertices().size(); i++) {
+            vertexData[0 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().x;
+            vertexData[1 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().y;
+            vertexData[2 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].position().z;
 
-        vertexData[3 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().x;
-        vertexData[4 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().y;
-        vertexData[5 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().z;
+            vertexData[3 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().x;
+            vertexData[4 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().y;
+            vertexData[5 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].normal().z;
 
-        vertexData[6 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].uv().x;
-        vertexData[7 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].uv().y;
+            vertexData[6 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].uv().x;
+            vertexData[7 + i * Vertex::VERTEX_COMPONENTS] = mesh.vertices()[i].uv().y;
+        }
+
+        m_geometryBuffersStorage->createStaticVertexBuffer(name, vertexData);
     }
 
-    m_geometryBuffersStorage->createStaticVertexBuffer(name, vertexData);
-
-    m_geometryBuffersStorage->createStaticIndexBuffer(name, mesh.indices());
+    if (!m_geometryBuffersStorage->findIbo(name)) {
+        m_geometryBuffersStorage->createStaticIndexBuffer(name, mesh.indices());
+    }
 }

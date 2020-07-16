@@ -15,6 +15,7 @@
 #include <main/OpenGLErrorDetector.h>
 #include <game/MeshStorage.h>
 #include <variant>
+#include <optional>
 #include "IboInfo.h"
 #include "BufferCreationParams.h"
 
@@ -36,8 +37,8 @@ public:
     GLuint createStaticVertexBuffer(const std::string& name, const std::vector<float>& vertexData);
     IboInfo createStaticIndexBuffer(const std::string& name, const std::vector<uint16_t>& indices);
 
-    GLuint getVbo(const std::string& name);
-    IboInfo getIbo(const std::string& name);
+    std::optional<GLuint> findVbo(const std::string& name);
+    std::optional<IboInfo> findIbo(const std::string& name);
 
     void restoreBuffers();
 

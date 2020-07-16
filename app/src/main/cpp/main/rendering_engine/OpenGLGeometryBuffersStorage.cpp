@@ -7,24 +7,20 @@
 #include <utility>
 #include "OpenGLGeometryBuffersStorage.h"
 
-GLuint OpenGLGeometryBuffersStorage::getVbo(const std::string &name) {
+std::optional<GLuint> OpenGLGeometryBuffersStorage::findVbo(const std::string &name) {
     if (m_vbos.count(name) == 0) {
-        std::stringstream ss;
-        ss << "No vertex buffer " << name << " to remove";
-        throw std::domain_error(ss.str());
+        return std::optional<GLuint>();
+    } else {
+        return m_vbos[name];
     }
-
-    return m_vbos[name];
 }
 
-IboInfo OpenGLGeometryBuffersStorage::getIbo(const std::string &name) {
+std::optional<IboInfo> OpenGLGeometryBuffersStorage::findIbo(const std::string &name) {
     if (m_ibos.count(name) == 0) {
-        std::stringstream ss;
-        ss << "Static index buffer " << name << " not found";
-        throw std::domain_error(ss.str());
+        return std::optional<IboInfo>();
+    } else {
+        return m_ibos[name];
     }
-
-    return m_ibos[name];
 }
 
 GLuint OpenGLGeometryBuffersStorage::createStaticVertexBuffer(
@@ -46,6 +42,12 @@ GLuint OpenGLGeometryBuffersStorage::createStaticVertexBuffer(
         std::vector<float> vertexData,
         bool isBeingRestored
 ) {
+    if (m_vbos.count(name) > 0) {
+        std::stringstream ss;
+        ss << "VBO " << name << " already exists";
+        throw std::domain_error(ss.str());
+    }
+
     GLuint buffer;
     glGenBuffers(1, &buffer);
 
@@ -75,6 +77,12 @@ IboInfo OpenGLGeometryBuffersStorage::createStaticIndexBuffer(
         std::vector<uint16_t> indices,
         bool isBeingRestored
 ) {
+    if (m_ibos.count(name) > 0) {
+        std::stringstream ss;
+        ss << "IBO " << name << " already exists";
+        throw std::domain_error(ss.str());
+    }
+
     GLuint buffer;
     glGenBuffers(1, &buffer);
 

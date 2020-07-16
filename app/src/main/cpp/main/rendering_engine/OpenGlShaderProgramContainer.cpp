@@ -10,7 +10,7 @@ OpenGlShaderProgramContainer::OpenGlShaderProgramContainer(
         GLuint shaderProgram
 ) : m_openGlErrorDetector(std::move(openGlErrorDetector)),
     m_shaderProgram(shaderProgram),
-    m_positionAttribute(glGetAttribLocation(m_shaderProgram, "vertexCoordinateAttribute")),
+    m_positionAttribute(glGetAttribLocation(m_shaderProgram, "positionAttribute")),
     m_normalAttribute(glGetAttribLocation(shaderProgram, "normalAttribute")),
     m_uvAttribute(glGetAttribLocation(shaderProgram, "uvAttribute")),
     m_mvpMatrixUniform(glGetUniformLocation(shaderProgram, "mvpMatrixUniform")),
