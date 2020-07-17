@@ -14,6 +14,10 @@
 #include <main/Constants.h>
 #include "RenderingEngine.h"
 
+static GLuint vbo;
+static GLuint ibo;
+static int numberOfIndices;
+
 RenderingEngine::RenderingEngine(
         std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
         std::shared_ptr<UnitsConverter> unitsConverter,
@@ -35,6 +39,44 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createVertexShader("unlit", unlitVertexShaderSource);
     shadersRepository->createFragmentShader("unlit", unlitFragmentShaderSource);
     shadersRepository->createShaderProgram("unlit", "unlit", "unlit");
+
+
+
+    float vertexData[] = {
+            -0.5, -0.5, 0,
+            -0.5,  0.5, 0,
+             0.5,  0.5, 0,
+             0.5, -0.5, 0
+    };
+    uint16_t indices[] = {
+            0, 2, 1, 0, 3, 2
+    };
+    numberOfIndices = sizeof(indices) / sizeof(uint16_t);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(
+            GL_ARRAY_BUFFER,
+            sizeof(vertexData),
+            vertexData,
+            GL_STATIC_DRAW
+    );
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(
+            GL_ELEMENT_ARRAY_BUFFER,
+            sizeof(indices),
+            indices,
+            GL_STATIC_DRAW
+    );
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+
+
+    m_openGLErrorDetector->checkOpenGLErrors("RenderingEngine::RenderingEngine");
 }
 
 void RenderingEngine::render(Scene &scene) {
@@ -57,7 +99,51 @@ void RenderingEngine::render(Scene &scene) {
     glEnable(GL_CULL_FACE);
     glEnable(GL_SCISSOR_TEST);
 
-    std::vector<std::shared_ptr<CameraComponent>> activeCameras;
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    auto shaderContainer = m_shadersRepository->getShaderProgramContainer("unlit");
+    glUseProgram(shaderContainer.shaderProgram());
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+    auto vertexPositionAttribute = shaderContainer.positionAttribute();
+    glVertexAttribPointer(
+            vertexPositionAttribute,
+            Vertex::VERTEX_POSITION_COMPONENTS,
+            GL_FLOAT,
+            false,
+            Vertex::VERTEX_POSITION_COMPONENTS * sizeof(float),
+            reinterpret_cast<void*>(0)
+    );
+    glEnableVertexAttribArray(vertexPositionAttribute);
+
+    auto projectionMatrix = glm::perspective(90.0f, 1080.0f / 1920.0f, 0.1f, 1000.0f);
+    auto viewMatrix = glm::lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+    glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix;
+    glUniformMatrix4fv(shaderContainer.mvpMatrixUniform(), 1, false, &mvpMatrix[0][0]);
+    glUniform4f(
+            shaderContainer.diffuseColorUniform(),
+            1,
+            1,
+            1,
+            1
+    );
+    glDrawElements(
+            GL_TRIANGLES,
+            numberOfIndices,
+            GL_UNSIGNED_SHORT,
+            reinterpret_cast<void*>(0)
+    );
+
+    glDisableVertexAttribArray(vertexPositionAttribute);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    m_openGLErrorDetector->checkOpenGLErrors("RenderingEngine::render");
+
+    /*std::vector<std::shared_ptr<CameraComponent>> activeCameras;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
@@ -66,10 +152,6 @@ void RenderingEngine::render(Scene &scene) {
                 activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
             }
         }
-
-        /*if (auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME); camera != nullptr) {
-
-        }*/
 
         if (
                 auto meshRenderer = std::static_pointer_cast<OpenGlMeshRendererComponent>(
@@ -137,7 +219,7 @@ void RenderingEngine::render(Scene &scene) {
         }
 
         popOpenGLState();
-    }
+    }*/
 }
 
 void RenderingEngine::onOpenGlContextRecreated() {
