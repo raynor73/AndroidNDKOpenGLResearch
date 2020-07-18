@@ -88,7 +88,7 @@ void TransformationComponent::calculateFinalTransformation() {
             m_finalScale = m_scale * parentTransform->scale();
 
             m_finalPosition = parentTransform->rotation() * m_position;
-            m_finalPosition += m_position;
+            m_finalPosition += parentTransform->position();
         } else {
             m_finalPosition = m_position;
             m_finalRotation = m_rotation;

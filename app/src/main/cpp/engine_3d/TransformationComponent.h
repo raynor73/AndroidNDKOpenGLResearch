@@ -13,7 +13,7 @@
 
 class TransformationComponent : public GameObjectComponent {
 
-    bool m_isDirty = false;
+    bool m_isDirty = true;
 
     glm::vec3 m_position;
     glm::quat m_rotation;

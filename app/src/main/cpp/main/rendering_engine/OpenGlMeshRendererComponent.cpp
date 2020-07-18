@@ -6,7 +6,7 @@
 #include <memory>
 #include <sstream>
 #include <exception>
-#include <glm/gtx/compatibility.hpp>
+#include <glm/gtx/transform.hpp>
 #include <glm/mat4x4.hpp>
 #include <engine_3d/GameObject.h>
 #include <engine_3d/MeshComponent.h>
@@ -14,11 +14,6 @@
 #include "OpenGlMeshRendererComponent.h"
 
 const std::string OpenGlMeshRendererComponent::TYPE_NAME = "AndroidMeshRendererComponent";
-
-static GLuint vbo2;
-static GLuint ibo2;
-static int numberOfIndices2 = -1;
-
 
 void OpenGlMeshRendererComponent::render(
         const OpenGlShaderProgramContainer& shaderProgramContainer,
@@ -29,102 +24,6 @@ void OpenGlMeshRendererComponent::render(
     if (!m_isEnabled || m_gameObject == nullptr || !m_gameObject->isEnabled()) {
         return;
     }
-
-
-    {
-        if (numberOfIndices2 < 0) {
-            float vertexData[] = {
-                    -5, -5, 0,
-                    -5,  5, 0,
-                    5,  5, 0,
-                    5, -5, 0
-            };
-            uint16_t indices[] = {
-                    0, 2, 1, 0, 3, 2
-            };
-            numberOfIndices2 = sizeof(indices) / sizeof(uint16_t);
-
-            glGenBuffers(1, &vbo2);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-            glBufferData(
-                    GL_ARRAY_BUFFER,
-                    sizeof(vertexData),
-                    vertexData,
-                    GL_STATIC_DRAW
-            );
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            glGenBuffers(1, &ibo2);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo2);
-            glBufferData(
-                    GL_ELEMENT_ARRAY_BUFFER,
-                    sizeof(indices),
-                    indices,
-                    GL_STATIC_DRAW
-            );
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-
-        glFrontFace(GL_CCW);
-        glCullFace(GL_BACK);
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_SCISSOR_TEST);
-
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        /*auto shaderContainer = m_shadersRepository->getShaderProgramContainer("unlit");
-        glUseProgram(shaderContainer.shaderProgram());*/
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo2);
-
-        auto vertexPositionAttribute = shaderProgramContainer.positionAttribute();
-        glVertexAttribPointer(
-                vertexPositionAttribute,
-                Vertex::VERTEX_POSITION_COMPONENTS,
-                GL_FLOAT,
-                false,
-                Vertex::VERTEX_POSITION_COMPONENTS * sizeof(float),
-                reinterpret_cast<void*>(0)
-        );
-        glEnableVertexAttribArray(vertexPositionAttribute);
-
-        auto projectionMatrix2 = glm::ortho(0.0f, 1280.0f, 0.0f, 800.0f, 0.1f, 100.0f);
-        auto viewMatrix2 = glm::lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-        auto modelMatrix2 = glm::identity<glm::mat4x4>();//glm::scale(glm::identity<glm::mat4x4>(), glm::vec3(300.0f, 300.0f, 1.0f));
-        glm::mat4x4 mvpMatrix = projectionMatrix2 * viewMatrix2 * modelMatrix2;
-        glUniformMatrix4fv(shaderProgramContainer.mvpMatrixUniform(), 1, false, &mvpMatrix[0][0]);
-
-        glUniform4f(
-                shaderProgramContainer.diffuseColorUniform(),
-                1,
-                1,
-                1,
-                1
-        );
-        glUniform1i(shaderProgramContainer.useDiffuseColorUniform(), GL_TRUE);
-
-        glUniform1i(shaderProgramContainer.hasSkeletalAnimationUniform(), GL_FALSE);
-
-        glDrawElements(
-                GL_TRIANGLES,
-                numberOfIndices2,
-                GL_UNSIGNED_SHORT,
-                reinterpret_cast<void*>(0)
-        );
-
-        glDisableVertexAttribArray(vertexPositionAttribute);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        m_openGlErrorDetector->checkOpenGLErrors("RenderingEngine::render");
-
-        return;
-    }
-
 
     auto meshComponent = std::static_pointer_cast<MeshComponent>(m_gameObject->findComponent(MeshComponent::TYPE_NAME));
     if (meshComponent == nullptr) {

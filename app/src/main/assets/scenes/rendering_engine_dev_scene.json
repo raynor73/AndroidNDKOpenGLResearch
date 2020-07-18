@@ -1,6 +1,6 @@
 {
   "meshes": [
-    { "name": "quad", "path": "meshes/planeUV.obj" }
+    { "name": "quad", "path": "meshes/vertical_plane.obj" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] }
@@ -15,7 +15,7 @@
     {
       "name": "rectangle",
       "parent": "root",
-      "position" : [0.0, 0.0, 0.0],
+      "position" : [100.0, 100.0, 0.0],
       "rotation" : [0.0, 0.0, 0.0],
       "scale": ["300dp", "300dp", 1],
       "components": [
