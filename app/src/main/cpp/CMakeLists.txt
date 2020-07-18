@@ -86,3 +86,4 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib})
 target_link_libraries(native-lib ${opengl-lib})
 target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libassimp.so)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libfreetype.so)

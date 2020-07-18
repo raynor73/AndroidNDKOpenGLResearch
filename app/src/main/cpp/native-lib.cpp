@@ -1,4 +1,8 @@
 #include <jni.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include <main/Constants.h>
+#include <main/L.h>
 #include "main/GameWrapper.h"
 
 static GameWrapper *gameWrapper = nullptr;
@@ -37,6 +41,11 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceChanged(
                 reinterpret_cast<jclass>(env->NewGlobalRef(env->GetObjectClass(that))),
                 env->NewGlobalRef(that)
         );
+
+        FT_Library ft;
+        if (FT_Init_FreeType(&ft)) {
+            L::e(App::Constants::LOG_TAG, "Could not init FreeType library");
+        }
     }
     gameWrapper->onSurfaceChanged(width, height);
 }
