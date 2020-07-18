@@ -28,6 +28,8 @@ add_library(
         engine_3d/MeshComponent.cpp
         engine_3d/AmbientLightComponent.cpp
         engine_3d/MaterialComponent.cpp
+        engine_3d/TextComponent.cpp
+
         game/touch_screen/TouchScreen.cpp
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -54,6 +56,7 @@ add_library(
         main/rendering_engine/OpenGlShadersRepository.cpp
         main/rendering_engine/OpenGlShaderProgramContainer.cpp
         main/rendering_engine/ShaderSourcePreprocessor.cpp
+        main/rendering_engine/OpenGLFreeTypeTextRendererComponent.cpp
         main/AndroidShaderSourceRepository.cpp
 )
 
