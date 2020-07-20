@@ -23,6 +23,8 @@ public:
 
     unsigned int textSize() const { return m_textSize; }
     const std::string& fontName() const { return m_fontName; }
+
+    bool operator==(const TextAppearance& other) const;
 };
 
 

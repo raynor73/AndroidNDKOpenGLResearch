@@ -29,6 +29,7 @@ add_library(
         engine_3d/AmbientLightComponent.cpp
         engine_3d/MaterialComponent.cpp
         engine_3d/TextComponent.cpp
+        engine_3d/TextAppearance.cpp
 
         game/touch_screen/TouchScreen.cpp
         game/DisplayInfo.cpp

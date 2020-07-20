@@ -4,7 +4,7 @@
 
 #include "TextComponent.h"
 
-const std::string TYPE_NAME = "TextComponent";
+const std::string TextComponent::TYPE_NAME = "TextComponent";
 
 std::shared_ptr<GameObjectComponent> TextComponent::clone() {
     auto clone = std::make_shared<TextComponent>(m_text, m_textColor, m_textAppearance);
