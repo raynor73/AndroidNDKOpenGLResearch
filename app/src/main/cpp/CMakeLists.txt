@@ -41,13 +41,6 @@ add_library(
         game/UnitsConverter.cpp
         game/MeshStorage.cpp
 
-        main/GameWrapper.cpp
-        main/OpenGLErrorDetector.cpp
-        main/L.cpp
-        main/AndroidDisplayInfo.cpp
-        main/AndroidSceneDataLoader.cpp
-        main/AndroidUnitsConverter.cpp
-        main/AndroidMeshLoadingRepository.cpp
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp
         main/rendering_engine/RenderingEngine.cpp
@@ -57,6 +50,15 @@ add_library(
         main/rendering_engine/OpenGlShaderProgramContainer.cpp
         main/rendering_engine/ShaderSourcePreprocessor.cpp
         main/rendering_engine/OpenGLFreeTypeTextRendererComponent.cpp
+        main/rendering_engine/OpenGLFreeTypeCharactersRepository.cpp
+
+        main/GameWrapper.cpp
+        main/OpenGLErrorDetector.cpp
+        main/L.cpp
+        main/AndroidDisplayInfo.cpp
+        main/AndroidSceneDataLoader.cpp
+        main/AndroidUnitsConverter.cpp
+        main/AndroidMeshLoadingRepository.cpp
         main/AndroidShaderSourceRepository.cpp
 )
 

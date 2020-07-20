@@ -9,9 +9,21 @@
 #include <main/rendering_engine/OpenGlShaderProgramContainer.h>
 #include <glm/mat4x4.hpp>
 #include <engine_3d/GameObjectComponent.h>
+#include <utility>
+#include "IboInfo.h"
+#include <engine_3d/Character.h>
 
 class OpenGLFreeTypeTextRendererComponent : public GameObjectComponent {
+
+    GLuint m_rectangleVbo;
+    IboInfo m_rectangleIboInfo;
+
 public:
+    OpenGLFreeTypeTextRendererComponent(
+            GLuint rectangleVbo,
+            IboInfo rectangleIboInfo
+    ) : m_rectangleVbo(rectangleVbo),
+        m_rectangleIboInfo(std::move(rectangleIboInfo)) {}
 
     void render(
             const OpenGlShaderProgramContainer& shaderProgramContainer,

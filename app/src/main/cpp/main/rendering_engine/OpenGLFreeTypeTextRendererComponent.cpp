@@ -2,6 +2,7 @@
 // Created by Igor Lapin on 18/07/2020.
 //
 
+#include <engine_3d/GameObject.h>
 #include "OpenGLFreeTypeTextRendererComponent.h"
 
 void OpenGLFreeTypeTextRendererComponent::render(
