@@ -12,17 +12,17 @@
 class TextAppearance {
 
     unsigned int m_textSize;
-    std::string m_fontName;
+    std::string m_fontPath;
 
 public:
     TextAppearance(
             unsigned int textSize,
-            std::string fontName
+            std::string fontPath
     ) : m_textSize(textSize),
-        m_fontName(std::move(fontName)) {}
+        m_fontPath(std::move(fontPath)) {}
 
     unsigned int textSize() const { return m_textSize; }
-    const std::string& fontName() const { return m_fontName; }
+    const std::string& fontPath() const { return m_fontPath; }
 
     bool operator==(const TextAppearance& other) const;
 };

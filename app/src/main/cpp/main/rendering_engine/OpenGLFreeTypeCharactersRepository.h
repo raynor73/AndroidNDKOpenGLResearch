@@ -9,14 +9,16 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <unordered_map>
+#include <memory>
 #include <game/CharactersRepository.h>
+#include <game/FontDataLoader.h>
 
 namespace std {
     template<> struct hash<TextAppearance> {
         size_t operator()(const TextAppearance& textAppearance) const {
             auto textSizeHash = std::hash<unsigned int>{}(textAppearance.textSize());
-            auto fontNameHash = std::hash<std::string>{}(textAppearance.fontName());
-            return textSizeHash ^ (fontNameHash << 1);
+            auto fontPathHash = std::hash<std::string>{}(textAppearance.fontPath());
+            return textSizeHash ^ (fontPathHash << 1);
         }
     };
 
@@ -33,9 +35,10 @@ class OpenGLFreeTypeCharactersRepository : public CharactersRepository {
 
     FT_Library m_freeType;
     std::unordered_map<std::pair<char, TextAppearance>, Character> m_characterMap;
+    std::shared_ptr<FontDataLoader> m_fontDataLoader;
 
 public:
-    OpenGLFreeTypeCharactersRepository();
+    OpenGLFreeTypeCharactersRepository(std::shared_ptr<FontDataLoader> fontDataLoader);
     OpenGLFreeTypeCharactersRepository(const OpenGLFreeTypeCharactersRepository&) = delete;
     OpenGLFreeTypeCharactersRepository(OpenGLFreeTypeCharactersRepository&&) = delete;
     virtual ~OpenGLFreeTypeCharactersRepository();

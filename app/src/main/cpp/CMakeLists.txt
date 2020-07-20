@@ -61,6 +61,7 @@ add_library(
         main/AndroidUnitsConverter.cpp
         main/AndroidMeshLoadingRepository.cpp
         main/AndroidShaderSourceRepository.cpp
+        main/AndroidFontDataLoader.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

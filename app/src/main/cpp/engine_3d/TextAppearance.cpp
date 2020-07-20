@@ -9,5 +9,5 @@ bool TextAppearance::operator==(const TextAppearance& other) const {
         return true;
     }
 
-    return m_fontName == other.m_fontName && m_textSize == other.m_textSize;
+    return m_fontPath == other.m_fontPath && m_textSize == other.m_textSize;
 }

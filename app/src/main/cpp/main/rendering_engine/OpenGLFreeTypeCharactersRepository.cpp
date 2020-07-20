@@ -6,7 +6,9 @@
 #include <sstream>
 #include "OpenGLFreeTypeCharactersRepository.h"
 
-OpenGLFreeTypeCharactersRepository::OpenGLFreeTypeCharactersRepository() {
+OpenGLFreeTypeCharactersRepository::OpenGLFreeTypeCharactersRepository(
+        std::shared_ptr<FontDataLoader> fontDataLoader
+) : m_fontDataLoader(fontDataLoader) {
     if (FT_Init_FreeType(&m_freeType)){
         throw std::domain_error("Could not init FreeType library");
     }
@@ -25,8 +27,8 @@ const Character& OpenGLFreeTypeCharactersRepository::getCharacter(const TextAppe
             c <<
             "' of size " <<
             textAppearance.textSize() <<
-            " and font name " <<
-            textAppearance.fontName() <<
+            " and font path " <<
+            textAppearance.fontPath() <<
             " not found";
         throw std::domain_error(ss.str());
     }
@@ -35,20 +37,21 @@ const Character& OpenGLFreeTypeCharactersRepository::getCharacter(const TextAppe
 }
 
 void OpenGLFreeTypeCharactersRepository::createCharacters(const TextAppearance& textAppearance) {
+    auto fontData = m_fontDataLoader->loadFontData(textAppearance.fontPath());
     FT_Face face;
-    if (FT_New_Face(ft, "fonts/arial.ttf", 0, &face)) {
+    if (FT_New_Memory_Face(m_freeType, fontData.data(), fontData.size(), 0, &face)) {
         std::stringstream ss;
-        ss << "Failed to load font " << textAppearance.fontName();
+        ss << "Failed to load font " << textAppearance.fontPath();
         throw std::domain_error(ss.str());
     }
-    FT_New_Memory_Face
 
     for (unsigned char c = 0; c < 128; c++) {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-            continue;
+            std::stringstream ss;
+            ss << "Failed to load glyph '" << c << "'";
+            throw std::domain_error(ss.str());
         }
-        // generate texture
+        /*// generate texture
         unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -75,7 +78,15 @@ void OpenGLFreeTypeCharactersRepository::createCharacters(const TextAppearance& 
                 glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
                 face->glyph->advance.x
         };
-        Characters.insert(std::pair<char, Character>(c, character));
+        Characters.insert(std::pair<char, Character>(c, character));*/
+        auto key = std::pair<char, TextAppearance>(c, textAppearance);
+        auto character = Character(
+                "",
+                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                face->glyph->advance.x
+        );
+        m_characterMap.insert({ key, character});
     }
     /*glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 

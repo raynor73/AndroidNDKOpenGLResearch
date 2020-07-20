@@ -5,8 +5,8 @@
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] }
   ],
-  "fonts": [
-    { "name": "arial", "path": "fonts/ArialCE.ttf" }
+  "textAppearances": [
+    { "name": "fpsText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
   ],
   "gameObjects": [
     {

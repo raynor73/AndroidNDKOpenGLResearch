@@ -6,10 +6,13 @@
 #define GAME_FONT_DATA_LOADER_H
 
 
+#include <string>
+#include <vector>
+
 class FontDataLoader {
 
 public:
-    void* loadFontData()
+    virtual std::vector<uint8_t> loadFontData(const std::string& fontPath) = 0;
 };
 
 
