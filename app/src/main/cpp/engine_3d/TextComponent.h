@@ -16,6 +16,7 @@ class TextComponent : public GameObjectComponent {
 
     std::string m_text;
     glm::vec4 m_textColor;
+    // TODO Seems like Text Appearance should be extracted in its own component as Material for Meshes
     TextAppearance m_textAppearance;
 
 public:

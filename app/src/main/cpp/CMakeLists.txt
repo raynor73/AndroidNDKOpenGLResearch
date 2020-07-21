@@ -52,6 +52,7 @@ add_library(
         main/rendering_engine/ShaderSourcePreprocessor.cpp
         main/rendering_engine/OpenGLFreeTypeTextRendererComponent.cpp
         main/rendering_engine/OpenGLFreeTypeCharactersRepository.cpp
+        main/rendering_engine/OpenGLVerticalQuadBuffersRepository.cpp
 
         main/GameWrapper.cpp
         main/OpenGLErrorDetector.cpp
