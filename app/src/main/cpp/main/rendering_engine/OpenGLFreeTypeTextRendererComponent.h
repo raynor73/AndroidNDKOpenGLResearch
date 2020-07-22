@@ -8,23 +8,30 @@
 
 #include <main/rendering_engine/OpenGlShaderProgramContainer.h>
 #include <glm/mat4x4.hpp>
+#include <glm/vec4.hpp>
 #include <engine_3d/GameObjectComponent.h>
 #include <memory>
 #include <utility>
 #include <engine_3d/Character.h>
 #include "OpenGLVerticalQuadBuffersRepository.h"
 #include "OpenGLFreeTypeCharactersRepository.h"
+#include "main/OpenGLErrorDetector.h"
 #include "IboInfo.h"
 
 class OpenGLFreeTypeTextRendererComponent : public GameObjectComponent {
 
     std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
+    std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
 public:
     OpenGLFreeTypeTextRendererComponent(
-            std::shared_ptr<OpenGLVerticalQuadBuffersRepository> verticalQuadBuffersRepository
-    ) : m_verticalQuadBuffersRepository(verticalQuadBuffersRepository) {}
+            std::shared_ptr<OpenGLVerticalQuadBuffersRepository> verticalQuadBuffersRepository,
+            std::shared_ptr<OpenGLFreeTypeCharactersRepository> charactersRepository,
+            std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector
+    ) : m_verticalQuadBuffersRepository(verticalQuadBuffersRepository),
+        m_charactersRepository(charactersRepository),
+        m_openGLErrorDetector(openGLErrorDetector) {}
 
     void render(
             const OpenGlShaderProgramContainer& shaderProgramContainer,
@@ -36,6 +43,7 @@ public:
 private:
     void renderCharacter(
             const Character& character,
+            const glm::vec4& color,
             const OpenGlShaderProgramContainer& shaderProgramContainer,
             const glm::mat4x4& modelMatrix,
             const glm::mat4x4& viewMatrix,

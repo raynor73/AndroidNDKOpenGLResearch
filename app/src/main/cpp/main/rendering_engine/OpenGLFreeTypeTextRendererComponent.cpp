@@ -5,6 +5,7 @@
 #include <sstream>
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/GameObject.h>
+#include <glm/gtx/compatibility.hpp>
 #include "OpenGLFreeTypeTextRendererComponent.h"
 
 void OpenGLFreeTypeTextRendererComponent::render(
@@ -29,13 +30,22 @@ void OpenGLFreeTypeTextRendererComponent::render(
     float positionX = 0;
     for (char c : text) {
         auto character = m_charactersRepository->getCharacter(textAppearance, c);
-        renderCharacter(character, shaderProgramContainer, modelMatrix, viewMatrix, projectionMatrix, positionX);
-        positionX += character.advance();
+        renderCharacter(
+                character,
+                textComponent->textColor(),
+                shaderProgramContainer,
+                modelMatrix,
+                viewMatrix,
+                projectionMatrix,
+                positionX
+        );
+        positionX += character.advance() >> 6;
     }
 }
 
 void OpenGLFreeTypeTextRendererComponent::renderCharacter(
         const Character& character,
+        const glm::vec4& color,
         const OpenGlShaderProgramContainer& shaderProgramContainer,
         const glm::mat4x4& modelMatrix,
         const glm::mat4x4& viewMatrix,
@@ -89,7 +99,34 @@ void OpenGLFreeTypeTextRendererComponent::renderCharacter(
     }
 
     if (auto mvpMatrixUniform = shaderProgramContainer.mvpMatrixUniform(); mvpMatrixUniform >= 0) {
-        glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+        glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * glm::translate(modelMatrix, glm::vec3(positionX, 0, 0));
         glUniformMatrix4fv(mvpMatrixUniform, 1, false, &mvpMatrix[0][0]);
     }
+
+    if (auto diffuseColorUniform = shaderProgramContainer.diffuseColorUniform(); diffuseColorUniform >= 0) {
+        glUniform4f(diffuseColorUniform, color.r, color.g, color.b, color.a);
+    }
+
+    glDrawElements(
+            GL_TRIANGLES,
+            buffers.iboInfo.numberOfIndices,
+            GL_UNSIGNED_SHORT,
+            reinterpret_cast<void*>(0)
+    );
+
+    if (vertexPositionAttribute >= 0) {
+        glDisableVertexAttribArray(vertexPositionAttribute);
+    }
+    if (vertexNormalAttribute >= 0) {
+        glDisableVertexAttribArray(vertexNormalAttribute);
+    }
+    if (vertexUvAttribute >= 0) {
+        glDisableVertexAttribArray(vertexUvAttribute);
+    }
+
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLFreeTypeTextRendererComponent::renderCharacter");
 }

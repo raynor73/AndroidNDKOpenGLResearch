@@ -37,6 +37,16 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createVertexShader("unlit", unlitVertexShaderSource);
     shadersRepository->createFragmentShader("unlit", unlitFragmentShaderSource);
     shadersRepository->createShaderProgram("unlit", "unlit", "unlit");
+
+    auto textVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/text/textVertexShader.glsl"
+    );
+    auto textFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/unlit/textFragmentShader.glsl"
+    );
+    shadersRepository->createVertexShader("text", textVertexShaderSource);
+    shadersRepository->createFragmentShader("text", textFragmentShaderSource);
+    shadersRepository->createShaderProgram("text", "text", "text");
 }
 
 void RenderingEngine::render(Scene &scene) {
