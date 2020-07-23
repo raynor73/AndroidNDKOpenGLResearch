@@ -15,6 +15,7 @@
 #include <engine_3d/AmbientLightComponent.h>
 #include <engine_3d/Material.h>
 #include <engine_3d/MaterialComponent.h>
+#include <engine_3d/TextComponent.h>
 #include "RenderingEngineDevScene.h"
 
 void RenderingEngineDevScene::update(float) {}
@@ -25,6 +26,7 @@ std::string RenderingEngineDevScene::createStateRepresentation() {
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
     std::unordered_map<std::string, Material> materialsMap;
+    std::unordered_map<std::string, TextAppearance> textAppearancesMap;
 
     nlohmann::json sceneJson;
     try {
@@ -64,6 +66,23 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             }
             Material material { parseColor4f(materialJson["diffuseColor"]) };
             materialsMap[nameJson.get<std::string>()] = material;
+        }
+    }
+
+    auto textAppearancesJsonArray = sceneJson["textAppearances"];
+    if (textAppearancesJsonArray.is_array()) {
+        for (auto& textAppearanceJson : textAppearancesJsonArray) {
+            auto nameJson = textAppearanceJson["name"];
+            if (!nameJson.is_string()) {
+                continue;
+            }
+            auto textSize = parseNumber(textAppearanceJson["textSize"], DimensionType::UNDEFINED);
+            auto fontPathJson = textAppearanceJson["fontPath"];
+            if (!fontPathJson.is_string()) {
+                continue;
+            }
+            TextAppearance textAppearance { uint32_t(textSize), fontPathJson.get<std::string>() };
+            textAppearancesMap.insert({ nameJson.get<std::string>(), textAppearance });
         }
     }
 
@@ -148,7 +167,7 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             auto componentsJsonArray = gameObjectJson["components"];
             if (componentsJsonArray.is_array()) {
                 for (auto& componentJson : componentsJsonArray) {
-                    gameObject->addComponent(parseComponent(componentJson, materialsMap));
+                    gameObject->addComponent(parseComponent(componentJson, materialsMap, textAppearancesMap));
                 }
             }
         }
@@ -157,7 +176,8 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
 
 std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(
         const nlohmann::json& componentJson,
-        const std::unordered_map<std::string, Material>& materialsMap
+        const std::unordered_map<std::string, Material>& materialsMap,
+        const std::unordered_map<std::string, TextAppearance>& textAppearancesMap
 ) {
     if (!componentJson.contains("type")) {
         throw std::domain_error("No type found while parsing component");
@@ -202,7 +222,30 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(
                 parseColor3f(componentJson["color"]),
                 parseLayerNames(componentJson["layerNames"])
         );
-    } else {
+    } else if (type == "Text") {
+        auto textAppearanceNameJson = componentJson["textAppearanceName"];
+        if (!textAppearanceNameJson.is_string()) {
+            throw std::domain_error("No Text Appearance Name provided for Text Component");
+        }
+        auto textJson = componentJson["text"];
+        if (!textJson.is_string()) {
+            throw std::domain_error("No Text provided for Text Component");
+        }
+
+        auto textAppearanceName = textAppearanceNameJson.get<std::string>();
+        if (textAppearancesMap.count(textAppearanceName) == 0) {
+            std::stringstream ss;
+            ss << "Can't find Text Appearance " << textAppearanceName;
+            throw std::domain_error(ss.str());
+        }
+        return std::make_shared<TextComponent>(
+                textJson.get<std::string>(),
+                parseColor4f(componentJson["textColor"]),
+                textAppearancesMap.at(textAppearanceName)
+        );
+    } else if (type == "TextRenderer") {
+        return m_textRendererFactory->createTextRenderer(parseLayerNames(componentJson["layerNames"]));
+    }else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
         throw std::domain_error(ss.str());

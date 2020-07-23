@@ -8,6 +8,8 @@
 #include <glm/gtx/compatibility.hpp>
 #include "OpenGLFreeTypeTextRendererComponent.h"
 
+const std::string OpenGLFreeTypeTextRendererComponent::TYPE_NAME = "OpenGLFreeTypeTextRendererComponent";
+
 void OpenGLFreeTypeTextRendererComponent::render(
         const OpenGlShaderProgramContainer& shaderProgramContainer,
         const glm::mat4x4& modelMatrix,
@@ -129,4 +131,15 @@ void OpenGLFreeTypeTextRendererComponent::renderCharacter(
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     m_openGLErrorDetector->checkOpenGLErrors("OpenGLFreeTypeTextRendererComponent::renderCharacter");
+}
+
+std::shared_ptr<GameObjectComponent> OpenGLFreeTypeTextRendererComponent::clone() {
+    auto clone = std::make_shared<OpenGLFreeTypeTextRendererComponent>(
+            m_layerNames,
+            m_charactersRepository,
+            m_verticalQuadBuffersRepository,
+            m_openGLErrorDetector
+    );
+    clone->setEnabled(m_isEnabled);
+    return clone;
 }

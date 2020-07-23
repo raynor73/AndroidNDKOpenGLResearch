@@ -13,13 +13,16 @@
 #include <game/MeshLoadingRepository.h>
 #include <game/MeshStorage.h>
 #include <game/MeshRendererFactory.h>
+#include <game/TextRendererFactory.h>
 #include <engine_3d/Material.h>
+#include <engine_3d/TextAppearance.h>
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<UnitsConverter> m_unitsConverter;
     std::shared_ptr<MeshLoadingRepository> m_meshLoadingRepository;
     std::shared_ptr<MeshRendererFactory> m_meshRendererFactory;
+    std::shared_ptr<TextRendererFactory> m_textRendererFactory;
     MeshStorage m_meshStorage;
 
 public:
@@ -28,11 +31,13 @@ public:
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
-            std::shared_ptr<MeshRendererFactory> meshRendererFactory
+            std::shared_ptr<MeshRendererFactory> meshRendererFactory,
+            std::shared_ptr<TextRendererFactory> textRendererFactory
     ) : Scene(timeProvider, displayInfo),
         m_unitsConverter(unitsConverter),
         m_meshLoadingRepository(meshLoadingRepository),
-        m_meshRendererFactory(meshRendererFactory) {}
+        m_meshRendererFactory(meshRendererFactory),
+        m_textRendererFactory(textRendererFactory) {}
 
     virtual std::string createStateRepresentation() override;
     virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
@@ -48,7 +53,8 @@ private:
     static std::vector<std::string> parseLayerNames(const nlohmann::json& layerNamesJsonArray);
     std::shared_ptr<GameObjectComponent> parseComponent(
             const nlohmann::json& componentJson,
-            const std::unordered_map<std::string, Material>& materialsMap
+            const std::unordered_map<std::string, Material>& materialsMap,
+            const std::unordered_map<std::string, TextAppearance>& textAppearancesMap
     );
     static glm::vec3 parseColor3f(const nlohmann::json& colorJson);
     static glm::vec4 parseColor4f(const nlohmann::json& colorJson);

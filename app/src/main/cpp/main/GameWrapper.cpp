@@ -25,6 +25,11 @@ GameWrapper::GameWrapper(
             bridgeClass,
             bridgeObject
     )),
+    m_fontDataLoader(std::make_shared<AndroidFontDataLoader>(
+            m_javaVm,
+            bridgeClass,
+            bridgeObject
+    )),
     m_shadersRepository(std::make_shared<OpenGlShadersRepository>(m_openGlErrorDetector)),
     m_shaderSourceRepository(std::make_shared<AndroidShaderSourceRepository>(
             m_javaVm,
@@ -32,8 +37,9 @@ GameWrapper::GameWrapper(
             bridgeObject
     )),
     m_shaderSourcePreprocessor(std::make_shared<ShaderSourcePreprocessor>(m_shaderSourceRepository)),
-    m_geometryBuffersStorage(std::make_shared<OpenGLGeometryBuffersStorage>(m_openGlErrorDetector))
-    {}
+    m_geometryBuffersStorage(std::make_shared<OpenGLGeometryBuffersStorage>(m_openGlErrorDetector)),
+    m_verticalQuadBuffersRepository(std::make_shared<OpenGLVerticalQuadBuffersRepository>(m_geometryBuffersStorage)),
+    m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader)) {}
 
 void GameWrapper::onDrawFrame() {
     m_messageQueue.update();
@@ -61,6 +67,11 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_geometryBuffersStorage,
                 m_openGlErrorDetector
         );
+        m_textRendererFactory = std::make_shared<OpenGLTextRendererFactory>(
+                m_openGlErrorDetector,
+                m_verticalQuadBuffersRepository,
+                m_charactersRepository
+        );
     } else {
         m_renderingEngine->onOpenGlContextRecreated();
     }
@@ -71,7 +82,8 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_displayInfo,
                 m_unitsConverter,
                 m_meshLoadingRepository,
-                m_meshRendererFactory
+                m_meshRendererFactory,
+                m_textRendererFactory
         );
         m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
     }

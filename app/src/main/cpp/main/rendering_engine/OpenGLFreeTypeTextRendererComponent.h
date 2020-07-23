@@ -20,18 +20,28 @@
 
 class OpenGLFreeTypeTextRendererComponent : public GameObjectComponent {
 
-    std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
+    std::vector<std::string> m_layerNames;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
+    std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
 public:
+    static const std::string TYPE_NAME;
+
     OpenGLFreeTypeTextRendererComponent(
-            std::shared_ptr<OpenGLVerticalQuadBuffersRepository> verticalQuadBuffersRepository,
+            std::vector<std::string> layerNames,
             std::shared_ptr<OpenGLFreeTypeCharactersRepository> charactersRepository,
+            std::shared_ptr<OpenGLVerticalQuadBuffersRepository> verticalQuadBuffersRepository,
             std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector
-    ) : m_verticalQuadBuffersRepository(verticalQuadBuffersRepository),
+    ) : m_layerNames(std::move(layerNames)),
         m_charactersRepository(charactersRepository),
+        m_verticalQuadBuffersRepository(verticalQuadBuffersRepository),
         m_openGLErrorDetector(openGLErrorDetector) {}
+
+    virtual const std::string& typeName() const override { return TYPE_NAME; }
+
+    const std::vector<std::string>& layerNames() const { return m_layerNames; }
+    void setLayerNames(std::vector<std::string> layerNames) { m_layerNames = std::move(layerNames); }
 
     void render(
             const OpenGlShaderProgramContainer& shaderProgramContainer,
@@ -39,6 +49,8 @@ public:
             const glm::mat4x4& viewMatrix,
             const glm::mat4x4& projectionMatrix
     );
+
+    virtual std::shared_ptr<GameObjectComponent> clone() override;
 
 private:
     void renderCharacter(

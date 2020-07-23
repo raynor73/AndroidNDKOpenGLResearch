@@ -15,9 +15,13 @@
 #include <main/AndroidUnitsConverter.h>
 #include <main/AndroidMeshLoadingRepository.h>
 #include <main/rendering_engine/OpenGlMeshRendererFactory.h>
+#include <main/rendering_engine/OpenGLTextRendererFactory.h>
 #include <main/OpenGLErrorDetector.h>
+#include <main/rendering_engine/OpenGLVerticalQuadBuffersRepository.h>
+#include <main/rendering_engine/OpenGLFreeTypeCharactersRepository.h>
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
+#include "AndroidFontDataLoader.h"
 
 class GameWrapper {
 
@@ -33,11 +37,15 @@ class GameWrapper {
     std::shared_ptr<RenderingEngine> m_renderingEngine;
     std::shared_ptr<AndroidSceneDataLoader> m_sceneDataLoader;
     std::shared_ptr<AndroidMeshLoadingRepository> m_meshLoadingRepository;
+    std::shared_ptr<AndroidFontDataLoader> m_fontDataLoader;
     std::shared_ptr<OpenGlMeshRendererFactory> m_meshRendererFactory;
+    std::shared_ptr<OpenGLTextRendererFactory> m_textRendererFactory;
     std::shared_ptr<OpenGlShadersRepository> m_shadersRepository;
     std::shared_ptr<AndroidShaderSourceRepository> m_shaderSourceRepository;
     std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
+    std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
+    std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
 
 public:
     explicit GameWrapper(

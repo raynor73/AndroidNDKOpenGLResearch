@@ -16,6 +16,17 @@
       "scale": [1.0, 1.0, 1.0]
     },
     {
+      "name": "fpsText",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        { "type": "Text", "text": "FPS: N/A", "textColor": [0, 0.5, 0, 1], "textAppearanceName": "fpsText" },
+        { "type": "TextRenderer", "layerNames": ["ui"] }
+      ]
+    },
+    {
       "name": "rectangle",
       "parent": "root",
       "position" : [100.0, 100.0, 0.0],
