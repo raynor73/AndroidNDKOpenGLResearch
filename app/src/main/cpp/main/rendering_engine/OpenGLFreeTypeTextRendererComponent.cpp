@@ -34,6 +34,7 @@ void OpenGLFreeTypeTextRendererComponent::render(
         auto character = m_charactersRepository->getCharacter(textAppearance, c);
         renderCharacter(
                 character,
+                textAppearance.textSize(),
                 textComponent->textColor(),
                 shaderProgramContainer,
                 modelMatrix,
@@ -47,6 +48,7 @@ void OpenGLFreeTypeTextRendererComponent::render(
 
 void OpenGLFreeTypeTextRendererComponent::renderCharacter(
         const Character& character,
+        float textSize,
         const glm::vec4& color,
         const OpenGlShaderProgramContainer& shaderProgramContainer,
         const glm::mat4x4& modelMatrix,
@@ -101,7 +103,9 @@ void OpenGLFreeTypeTextRendererComponent::renderCharacter(
     }
 
     if (auto mvpMatrixUniform = shaderProgramContainer.mvpMatrixUniform(); mvpMatrixUniform >= 0) {
-        glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * glm::translate(modelMatrix, glm::vec3(positionX, 0, 0));
+        auto textModelMatrix = glm::translate(modelMatrix, glm::vec3(positionX, 0, 0));
+        textModelMatrix = glm::scale(textModelMatrix, glm::vec3(textSize, textSize, 1));
+        glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * textModelMatrix;
         glUniformMatrix4fv(mvpMatrixUniform, 1, false, &mvpMatrix[0][0]);
     }
 

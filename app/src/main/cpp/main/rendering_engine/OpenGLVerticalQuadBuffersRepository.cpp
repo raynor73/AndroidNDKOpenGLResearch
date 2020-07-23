@@ -7,7 +7,7 @@
 const std::string OpenGLVerticalQuadBuffersRepository::VERTICAL_QUAD_BUFFERS_NAME = "VERTICAL_QUAD_BUFFERS_NAME";
 
 const std::vector<float> OpenGLVerticalQuadBuffersRepository::QUAD_VERTEX_DATA = {
-        -0.5, -0.5, 0,
+        /*-0.5, -0.5, 0,
            0,    0, 1,
            0,    0,
 
@@ -21,7 +21,22 @@ const std::vector<float> OpenGLVerticalQuadBuffersRepository::QUAD_VERTEX_DATA =
 
          0.5, -0.5, 0,
            0,    0, 1,
-           1,    0
+           1,    0*/
+        0, 0, 0,
+        0, 0, 1,
+        0, 0,
+
+        0, 1, 0,
+        0, 0, 1,
+        0, 1,
+
+        1, 1, 0,
+        0, 0, 1,
+        1, 1,
+
+        1, 0, 0,
+        0, 0, 1,
+        1, 0
 };
 const std::vector<uint16_t> OpenGLVerticalQuadBuffersRepository::QUAD_INDEX_DATA = {
     0, 3, 2, 2, 1, 0

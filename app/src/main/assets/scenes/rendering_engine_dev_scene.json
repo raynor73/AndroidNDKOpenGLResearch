@@ -29,9 +29,9 @@
     {
       "name": "rectangle",
       "parent": "root",
-      "position" : [100.0, 100.0, 0.0],
+      "position" : [0.0, 300.0, 0.0],
       "rotation" : [0.0, 0.0, 0.0],
-      "scale": ["300dp", "300dp", 1],
+      "scale": ["10dp", "10dp", 1],
       "components": [
         { "type": "Mesh", "meshName": "quad" },
         { "type": "Material", "materialName": "white" },

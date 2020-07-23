@@ -55,6 +55,7 @@ public:
 private:
     void renderCharacter(
             const Character& character,
+            float textSize,
             const glm::vec4& color,
             const OpenGlShaderProgramContainer& shaderProgramContainer,
             const glm::mat4x4& modelMatrix,

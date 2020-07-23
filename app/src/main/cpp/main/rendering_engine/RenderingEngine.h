@@ -10,6 +10,9 @@
 #include <game/Scene.h>
 #include <main/OpenGLErrorDetector.h>
 #include <game/UnitsConverter.h>
+#include <engine_3d/CameraComponent.h>
+#include "OpenGlMeshRendererComponent.h"
+#include "OpenGLFreeTypeTextRendererComponent.h"
 #include "OpenGLState.h"
 #include "OpenGlShadersRepository.h"
 #include "ShaderSourcePreprocessor.h"
@@ -47,6 +50,15 @@ private:
     void traverseSceneHierarchy(GameObject& gameObject, const std::function<void(GameObject&)>& callback);
 
     void putMeshInGeometryBuffersIfNecessary(const std::string& name, const Mesh& mesh);
+
+    void renderMesh(
+            std::shared_ptr<CameraComponent> camera,
+            std::shared_ptr<OpenGlMeshRendererComponent> meshRenderer
+    );
+    void renderText(
+            std::shared_ptr<CameraComponent> camera,
+            std::shared_ptr<OpenGLFreeTypeTextRendererComponent> textRenderer
+    );
 
     void pushOpenGLState(const OpenGLState& state);
     void popOpenGLState();

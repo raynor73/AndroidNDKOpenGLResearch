@@ -6,10 +6,8 @@
 #include <glm/gtx/compatibility.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/mat4x4.hpp>
-#include <engine_3d/CameraComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
 #include <engine_3d/MeshComponent.h>
-#include <main/rendering_engine/OpenGlMeshRendererComponent.h>
 #include <unordered_map>
 #include <main/L.h>
 #include <main/Constants.h>
@@ -42,7 +40,7 @@ RenderingEngine::RenderingEngine(
             "shaders/text/textVertexShader.glsl"
     );
     auto textFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
-            "shaders/unlit/textFragmentShader.glsl"
+            "shaders/text/textFragmentShader.glsl"
     );
     shadersRepository->createVertexShader("text", textVertexShaderSource);
     shadersRepository->createFragmentShader("text", textFragmentShaderSource);
@@ -64,6 +62,7 @@ void RenderingEngine::render(Scene &scene) {
 
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
+    std::unordered_multimap<std::string, std::shared_ptr<OpenGLFreeTypeTextRendererComponent>> layerNameToTextRendererMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
         if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
@@ -80,6 +79,17 @@ void RenderingEngine::render(Scene &scene) {
         ) {
             for (auto& layerName : meshRenderer->layerNames()) {
                 layerNameToMeshRendererMap.insert({layerName, meshRenderer });
+            }
+        }
+
+        if (
+                auto textRenderer = std::static_pointer_cast<OpenGLFreeTypeTextRendererComponent>(
+                        gameObject.findComponent(OpenGLFreeTypeTextRendererComponent::TYPE_NAME)
+                );
+                textRenderer != nullptr
+        ) {
+            for (auto& layerName : textRenderer->layerNames()) {
+                layerNameToTextRendererMap.insert({layerName, textRenderer });
             }
         }
 
@@ -126,40 +136,86 @@ void RenderingEngine::render(Scene &scene) {
                     it != layerNameToMeshRendererMap.end();
                     it++
             ) {
-                auto meshRenderer = it->second;
+                renderMesh(camera, it->second);
+            }
 
-                auto gameObject = meshRenderer->gameObject();
-                if (gameObject == nullptr) {
-                    throw std::domain_error("Mesh renderer is not attached to any game object");
-                }
-
-                auto transform = std::static_pointer_cast<TransformationComponent>(
-                        gameObject->findComponent(TransformationComponent::TYPE_NAME)
-                );
-                if (transform == nullptr) {
-                    std::stringstream ss;
-                    ss << "Being rendered game object " << gameObject->name() << " has no transform component";
-                    throw std::domain_error(ss.str());
-                }
-
-                auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
-                glUseProgram(shaderProgramContainer.shaderProgram());
-
-                auto modelMatrix = glm::translate(glm::identity<glm::mat4>(), transform->position());
-                modelMatrix *= glm::toMat4(transform->rotation());
-                modelMatrix = glm::scale(modelMatrix, transform->scale());
-
-                meshRenderer->render(
-                        shaderProgramContainer,
-                        modelMatrix,
-                        camera->calculateViewMatrix(),
-                        camera->calculateProjectionMatrix()
-                );
+            for (
+                    auto it = layerNameToTextRendererMap.find(layerName);
+                    it != layerNameToTextRendererMap.end();
+                    it++
+            ) {
+                renderText(camera, it->second);
             }
         }
 
         popOpenGLState();
     }
+}
+
+void RenderingEngine::renderMesh(
+        std::shared_ptr<CameraComponent> camera,
+        std::shared_ptr <OpenGlMeshRendererComponent> meshRenderer
+) {
+    auto gameObject = meshRenderer->gameObject();
+    if (gameObject == nullptr) {
+        throw std::domain_error("Mesh renderer is not attached to any game object");
+    }
+
+    auto transform = std::static_pointer_cast<TransformationComponent>(
+            gameObject->findComponent(TransformationComponent::TYPE_NAME)
+    );
+    if (transform == nullptr) {
+        std::stringstream ss;
+        ss << "Being rendered game object " << gameObject->name() << " has no transform component";
+        throw std::domain_error(ss.str());
+    }
+
+    auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
+    glUseProgram(shaderProgramContainer.shaderProgram());
+
+    auto modelMatrix = glm::translate(glm::identity<glm::mat4>(), transform->position());
+    modelMatrix *= glm::toMat4(transform->rotation());
+    modelMatrix = glm::scale(modelMatrix, transform->scale());
+
+    meshRenderer->render(
+            shaderProgramContainer,
+            modelMatrix,
+            camera->calculateViewMatrix(),
+            camera->calculateProjectionMatrix()
+    );
+}
+
+void RenderingEngine::renderText(
+        std::shared_ptr<CameraComponent> camera,
+        std::shared_ptr<OpenGLFreeTypeTextRendererComponent> textRenderer
+) {
+    auto gameObject = textRenderer->gameObject();
+    if (gameObject == nullptr) {
+        throw std::domain_error("Text renderer is not attached to any game object");
+    }
+
+    auto transform = std::static_pointer_cast<TransformationComponent>(
+            gameObject->findComponent(TransformationComponent::TYPE_NAME)
+    );
+    if (transform == nullptr) {
+        std::stringstream ss;
+        ss << "Text's game object " << gameObject->name() << " has no transform component";
+        throw std::domain_error(ss.str());
+    }
+
+    auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("text");
+    glUseProgram(shaderProgramContainer.shaderProgram());
+
+    auto modelMatrix = glm::translate(glm::identity<glm::mat4>(), transform->position());
+    modelMatrix *= glm::toMat4(transform->rotation());
+    modelMatrix = glm::scale(modelMatrix, transform->scale());
+
+    textRenderer->render(
+            shaderProgramContainer,
+            modelMatrix,
+            camera->calculateViewMatrix(),
+            camera->calculateProjectionMatrix()
+    );
 }
 
 void RenderingEngine::onOpenGlContextRecreated() {
