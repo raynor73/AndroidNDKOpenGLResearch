@@ -11,21 +11,25 @@
 #include "OpenGLGeometryBuffersStorage.h"
 #include "OpenGLVerticalQuadBuffersRepository.h"
 #include "OpenGLFreeTypeCharactersRepository.h"
+#include "OpenGLTexturesRepository.h"
 
 class OpenGLTextRendererFactory : public TextRendererFactory {
 
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
     std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
 
 public:
     OpenGLTextRendererFactory(
             std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
             std::shared_ptr<OpenGLVerticalQuadBuffersRepository> verticalQuadBuffersRepository,
-    std::shared_ptr<OpenGLFreeTypeCharactersRepository> charactersRepository
+            std::shared_ptr<OpenGLFreeTypeCharactersRepository> charactersRepository,
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository
     ) : m_openGLErrorDetector(openGLErrorDetector),
         m_verticalQuadBuffersRepository(verticalQuadBuffersRepository),
-        m_charactersRepository(charactersRepository) {}
+        m_charactersRepository(charactersRepository),
+        m_texturesRepository(texturesRepository) {}
     OpenGLTextRendererFactory(const OpenGLTextRendererFactory&) = delete;
     OpenGLTextRendererFactory(OpenGLTextRendererFactory&&) = delete;
 

@@ -20,6 +20,7 @@ class OpenGlShaderProgramContainer {
     GLint m_uvAttribute;
 
     GLint m_mvpMatrixUniform;
+    GLint m_textureUniform;
     GLint m_diffuseColorUniform;
     GLint m_useDiffuseColorUniform;
 
@@ -36,6 +37,7 @@ public:
     GLint uvAttribute() const { return m_uvAttribute; }
 
     GLint mvpMatrixUniform() const { return m_mvpMatrixUniform; }
+    GLint textureUniform() const { return m_textureUniform; }
     GLint diffuseColorUniform() const { return m_diffuseColorUniform; }
 
     GLint useDiffuseColorUniform() const { return m_useDiffuseColorUniform; }

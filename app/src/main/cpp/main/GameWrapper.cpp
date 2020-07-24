@@ -39,7 +39,9 @@ GameWrapper::GameWrapper(
     m_shaderSourcePreprocessor(std::make_shared<ShaderSourcePreprocessor>(m_shaderSourceRepository)),
     m_geometryBuffersStorage(std::make_shared<OpenGLGeometryBuffersStorage>(m_openGlErrorDetector)),
     m_verticalQuadBuffersRepository(std::make_shared<OpenGLVerticalQuadBuffersRepository>(m_geometryBuffersStorage)),
-    m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader)) {}
+    m_texturesRepository(std::make_shared<OpenGLTexturesRepository>(m_openGlErrorDetector)),
+    m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository))
+    {}
 
 void GameWrapper::onDrawFrame() {
     m_messageQueue.update();
@@ -61,7 +63,8 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_unitsConverter,
                 m_shadersRepository,
                 m_shaderSourcePreprocessor,
-                m_geometryBuffersStorage
+                m_geometryBuffersStorage,
+                m_texturesRepository
         );
         m_meshRendererFactory = std::make_shared<OpenGlMeshRendererFactory>(
                 m_geometryBuffersStorage,
@@ -70,7 +73,8 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
         m_textRendererFactory = std::make_shared<OpenGLTextRendererFactory>(
                 m_openGlErrorDetector,
                 m_verticalQuadBuffersRepository,
-                m_charactersRepository
+                m_charactersRepository,
+                m_texturesRepository
         );
     } else {
         m_renderingEngine->onOpenGlContextRecreated();

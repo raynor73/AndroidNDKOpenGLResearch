@@ -9,17 +9,20 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <variant>
+#include <optional>
 #include <game/TexturesRepository.h>
 #include <main/OpenGLErrorDetector.h>
 #include "TextureCreationParams.h"
+#include "TextureInfo.h"
 
 class OpenGLTexturesRepository : public TexturesRepository {
 
-    std::unordered_map<std::string, GLuint> m_textures;
+    std::unordered_map<std::string, TextureInfo> m_textures;
 
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
-    std::vector<std::variant<VertexBufferCreationParams, IndexBufferCreationParams>> m_buffersCreationParams;
+    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams>> m_texturesCreationParams;
 
 public:
     OpenGLTexturesRepository(
@@ -34,6 +37,14 @@ public:
             uint_t height,
             const std::vector<uint8_t>& data
     ) override;
+
+    std::optional<TextureInfo> findTexture(const std::string& name);
+
+    void restoreTextures();
+
+    void removeTexture(const std::string& name);
+
+    void removeAllTextures();
 
     OpenGLTexturesRepository& operator=(const OpenGLTexturesRepository&) = delete;
     OpenGLTexturesRepository& operator=(OpenGLTexturesRepository&&) = delete;

@@ -19,6 +19,7 @@
 #include <main/OpenGLErrorDetector.h>
 #include <main/rendering_engine/OpenGLVerticalQuadBuffersRepository.h>
 #include <main/rendering_engine/OpenGLFreeTypeCharactersRepository.h>
+#include <main/rendering_engine/OpenGLTexturesRepository.h>
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
 #include "AndroidFontDataLoader.h"
@@ -45,6 +46,7 @@ class GameWrapper {
     std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
     std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
 
 public:

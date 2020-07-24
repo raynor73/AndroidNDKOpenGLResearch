@@ -17,6 +17,7 @@
 #include "OpenGlShadersRepository.h"
 #include "ShaderSourcePreprocessor.h"
 #include "OpenGLGeometryBuffersStorage.h"
+#include "OpenGLTexturesRepository.h"
 
 class RenderingEngine {
 
@@ -26,6 +27,7 @@ class RenderingEngine {
     std::shared_ptr<OpenGlShadersRepository> m_shadersRepository;
     std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
 
 public:
     RenderingEngine(
@@ -33,7 +35,8 @@ public:
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<OpenGlShadersRepository> shadersRepository,
             std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor,
-            std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage
+            std::shared_ptr<OpenGLGeometryBuffersStorage> geometryBuffersStorage,
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository
     );
     RenderingEngine(const RenderingEngine&) = delete;
     RenderingEngine(RenderingEngine&&) = delete;

@@ -29,32 +29,76 @@ void OpenGLTexturesRepository::createTexture(
         throw std::domain_error(ss.str());
     }
 
-    texturesCreationParams += TextureCreationParams.FromData(
-            name,
-            width,
-            height,
-            IntArray(data.size) { i -> data[i] }
-    )
+    GLuint texture;
+    glGenTextures(1, &texture);
 
-    GLES20.glGenTextures(1, tmpIntArray, 0)
-    val texture = tmpIntArray[0]
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    val bitmap = Bitmap.createBitmap(data, width, height, Bitmap.Config.ARGB_8888)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture)
-    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
-    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
-    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
+    m_textures[name] = TextureInfo { texture, width, height };
 
-    GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+    glGenerateMipmap(GL_TEXTURE_2D);
 
-    bitmap.recycle()
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-    textures[name] = TextureInfo(texture, width, height)
+    if (!isBeingRestored) {
+        m_texturesCreationParams[name] = TextureFromMemoryCreationParams { name, width, height, data };
+    }
 
-    GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D)
-    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createTexture from memory");
+}
 
-    openGLErrorDetector.dispatchOpenGLErrors("createTexture from data")
+std::optional<TextureInfo> OpenGLTexturesRepository::findTexture(const std::string& name) {
+    if (m_textures.count(name) > 0) {
+        return m_textures[name];
+    } else {
+        return std::optional<TextureInfo>();
+    }
+}
+
+void OpenGLTexturesRepository::removeTexture(const std::string& name) {
+    if (m_textures.count(name) == 0) {
+        std::stringstream ss;
+        ss << "No texture " << name << " to remove";
+        throw std::domain_error(ss.str());
+    }
+
+    auto textureInfo = m_textures[name];
+    glDeleteTextures(1, &textureInfo.texture);
+
+    m_texturesCreationParams.erase(name);
+
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::removeTexture");
+}
+
+void OpenGLTexturesRepository::removeAllTextures() {
+    std::vector<std::string> namesToDelete;
+
+    for (auto& entry : m_textures) {
+        namesToDelete.push_back(entry.first);
+    }
+    for (auto& name : namesToDelete) {
+        removeTexture(name);
+    }
+}
+
+void OpenGLTexturesRepository::restoreTextures() {
+    m_textures.clear();
+    for (auto& entry : m_texturesCreationParams) {
+        if (std::holds_alternative<TextureFromMemoryCreationParams>(entry.second)) {
+            auto textureFromMemoryCreationParams = std::get<TextureFromMemoryCreationParams>(entry.second);
+            createTexture(
+                    textureFromMemoryCreationParams.name,
+                    textureFromMemoryCreationParams.width,
+                    textureFromMemoryCreationParams.height,
+                    textureFromMemoryCreationParams.data
+            );
+        }
+    }
 }

@@ -9,8 +9,10 @@
 #include "OpenGLFreeTypeCharactersRepository.h"
 
 OpenGLFreeTypeCharactersRepository::OpenGLFreeTypeCharactersRepository(
-        std::shared_ptr<FontDataLoader> fontDataLoader
-) : m_fontDataLoader(fontDataLoader) {
+        std::shared_ptr<FontDataLoader> fontDataLoader,
+        std::shared_ptr<OpenGLTexturesRepository> texturesRepository
+) : m_fontDataLoader(std::move(fontDataLoader)),
+    m_texturesRepository(std::move(texturesRepository)) {
     if (FT_Init_FreeType(&m_freeType)){
         throw std::domain_error("Could not init FreeType library");
     }
@@ -56,83 +58,31 @@ void OpenGLFreeTypeCharactersRepository::createCharacters(const TextAppearance& 
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
             std::stringstream ss;
             ss << "Failed to load glyph '" << c << "'";
-            L::w(App::Constants::LOG_TAG, ss.str());
-            //throw std::domain_error(ss.str());
+            //L::w(App::Constants::LOG_TAG, ss.str());
+            throw std::domain_error(ss.str());
         }
-        /*// generate texture
-        unsigned int texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-        );
-        // set texture options
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // now store character for later use
-        Character character = {
-                texture,
-                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                face->glyph->advance.x
-        };
-        Characters.insert(std::pair<char, Character>(c, character));*/
+
+        auto originalBufferSize = face->glyph->bitmap.width * face->glyph->bitmap.rows;
+        std::vector<uint8_t> data(originalBufferSize * COLOR_COMPONENTS);
+        for (size_t i = 0; i < originalBufferSize; i++) {
+            auto colorFactor = float(face->glyph->bitmap.buffer[i]);
+            data[i * COLOR_COMPONENTS + 0] = colorFactor;
+            data[i * COLOR_COMPONENTS + 1] = colorFactor;
+            data[i * COLOR_COMPONENTS + 2] = colorFactor;
+            data[i * COLOR_COMPONENTS + 3] = 1;
+        }
+        std::stringstream nameBuilder;
+        nameBuilder << "glyph_" << int(c) << "_" << textAppearance.fontPath() << "_" << textAppearance.textSize();
+        auto name = nameBuilder.str();
+        m_texturesRepository->createTexture(name, face->glyph->bitmap.width, face->glyph->bitmap.rows, data);
+
         auto key = std::pair<char, TextAppearance>(c, textAppearance);
         auto character = Character(
-                "",
+                name,
                 glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
                 glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
                 face->glyph->advance.x
         );
         m_characterMap.insert({ key, character});
     }
-    /*glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
-
-    for (unsigned char c = 0; c < 128; c++)
-    {
-        // load character glyph
-        if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-        {
-            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-            continue;
-        }
-        // generate texture
-        unsigned int texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-        );
-        // set texture options
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // now store character for later use
-        Character character = {
-                texture,
-                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                face->glyph->advance.x
-        };
-        Characters.insert(std::pair<char, Character>(c, character));
-    }*/
 }

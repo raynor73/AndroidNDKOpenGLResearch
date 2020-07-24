@@ -19,11 +19,13 @@ RenderingEngine::RenderingEngine(
         std::shared_ptr<UnitsConverter> unitsConverter,
         std::shared_ptr<OpenGlShadersRepository> shadersRepository,
         std::shared_ptr<ShaderSourcePreprocessor> shaderSourcePreprocessor,
-        std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage
+        std::shared_ptr<OpenGLGeometryBuffersStorage> geometryBuffersStorage,
+        std::shared_ptr<OpenGLTexturesRepository> texturesRepository
 ) : m_openGLErrorDetector(openGLErrorDetector),
     m_unitsConverter(unitsConverter),
     m_shadersRepository(shadersRepository),
-    m_geometryBuffersStorage(m_geometryBuffersStorage),
+    m_geometryBuffersStorage(geometryBuffersStorage),
+    m_texturesRepository(texturesRepository),
     m_isErrorLogged(false)
 {
     auto unlitVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
@@ -221,6 +223,7 @@ void RenderingEngine::renderText(
 void RenderingEngine::onOpenGlContextRecreated() {
     m_shadersRepository->restoreShaders();
     m_geometryBuffersStorage->restoreBuffers();
+    m_texturesRepository->restoreTextures();
 }
 
 void RenderingEngine::traverseSceneHierarchy(GameObject &gameObject, const std::function<void(GameObject &)>& callback) {

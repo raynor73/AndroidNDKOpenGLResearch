@@ -12,6 +12,7 @@
 #include <memory>
 #include <game/CharactersRepository.h>
 #include <game/FontDataLoader.h>
+#include "OpenGLTexturesRepository.h"
 
 namespace std {
     template<> struct hash<TextAppearance> {
@@ -36,9 +37,13 @@ class OpenGLFreeTypeCharactersRepository : public CharactersRepository {
     FT_Library m_freeType;
     std::unordered_map<std::pair<char, TextAppearance>, Character> m_characterMap;
     std::shared_ptr<FontDataLoader> m_fontDataLoader;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
 
 public:
-    OpenGLFreeTypeCharactersRepository(std::shared_ptr<FontDataLoader> fontDataLoader);
+    OpenGLFreeTypeCharactersRepository(
+            std::shared_ptr<FontDataLoader> fontDataLoader,
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository
+    );
     OpenGLFreeTypeCharactersRepository(const OpenGLFreeTypeCharactersRepository&) = delete;
     OpenGLFreeTypeCharactersRepository(OpenGLFreeTypeCharactersRepository&&) = delete;
     virtual ~OpenGLFreeTypeCharactersRepository();
@@ -49,6 +54,9 @@ public:
 
     OpenGLFreeTypeCharactersRepository& operator=(const OpenGLFreeTypeCharactersRepository&) = delete;
     OpenGLFreeTypeCharactersRepository& operator=(const OpenGLFreeTypeCharactersRepository&&) = delete;
+
+private:
+    static const int COLOR_COMPONENTS = 4;
 };
 
 

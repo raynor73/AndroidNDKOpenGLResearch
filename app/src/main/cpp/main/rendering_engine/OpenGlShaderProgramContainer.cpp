@@ -14,6 +14,7 @@ OpenGlShaderProgramContainer::OpenGlShaderProgramContainer(
     m_normalAttribute(glGetAttribLocation(shaderProgram, "normalAttribute")),
     m_uvAttribute(glGetAttribLocation(shaderProgram, "uvAttribute")),
     m_mvpMatrixUniform(glGetUniformLocation(shaderProgram, "mvpMatrixUniform")),
+    m_textureUniform(glGetUniformLocation(shaderProgram, "textureUniform")),
     m_diffuseColorUniform(glGetUniformLocation(shaderProgram, "diffuseColorUniform")),
     m_useDiffuseColorUniform(glGetUniformLocation(shaderProgram, "useDiffuseColorUniform")),
     m_hasSkeletalAnimationUniform(glGetUniformLocation(shaderProgram, "hasSkeletalAnimationUniform"))

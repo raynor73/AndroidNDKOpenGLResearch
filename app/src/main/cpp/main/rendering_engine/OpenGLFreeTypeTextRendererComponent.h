@@ -15,6 +15,7 @@
 #include <engine_3d/Character.h>
 #include "OpenGLVerticalQuadBuffersRepository.h"
 #include "OpenGLFreeTypeCharactersRepository.h"
+#include "OpenGLTexturesRepository.h"
 #include "main/OpenGLErrorDetector.h"
 #include "IboInfo.h"
 
@@ -23,6 +24,7 @@ class OpenGLFreeTypeTextRendererComponent : public GameObjectComponent {
     std::vector<std::string> m_layerNames;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
     std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
 public:
@@ -32,10 +34,12 @@ public:
             std::vector<std::string> layerNames,
             std::shared_ptr<OpenGLFreeTypeCharactersRepository> charactersRepository,
             std::shared_ptr<OpenGLVerticalQuadBuffersRepository> verticalQuadBuffersRepository,
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository,
             std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector
     ) : m_layerNames(std::move(layerNames)),
         m_charactersRepository(charactersRepository),
         m_verticalQuadBuffersRepository(verticalQuadBuffersRepository),
+        m_texturesRepository(texturesRepository),
         m_openGLErrorDetector(openGLErrorDetector) {}
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }

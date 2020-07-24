@@ -12,6 +12,7 @@ std::shared_ptr<GameObjectComponent> OpenGLTextRendererFactory::createTextRender
             layerNames,
             m_charactersRepository,
             m_verticalQuadBuffersRepository,
+            m_texturesRepository,
             m_openGLErrorDetector
     );
 }

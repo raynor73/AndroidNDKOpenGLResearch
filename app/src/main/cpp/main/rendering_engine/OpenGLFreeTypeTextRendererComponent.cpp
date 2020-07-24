@@ -109,6 +109,19 @@ void OpenGLFreeTypeTextRendererComponent::renderCharacter(
         glUniformMatrix4fv(mvpMatrixUniform, 1, false, &mvpMatrix[0][0]);
     }
 
+    auto textureInfoOptional = m_texturesRepository->findTexture(character.textureName());
+    if (textureInfoOptional) {
+        if (auto textureUniform = shaderProgramContainer.textureUniform(); textureUniform >= 0) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureInfoOptional.value().texture);
+            glUniform1i(textureUniform, 0);
+        }
+    } else {
+        std::stringstream ss;
+        ss << "Character texture " << character.textureName() << " not found";
+        throw std::domain_error(ss.str());
+    }
+
     if (auto diffuseColorUniform = shaderProgramContainer.diffuseColorUniform(); diffuseColorUniform >= 0) {
         glUniform4f(diffuseColorUniform, color.r, color.g, color.b, color.a);
     }
@@ -142,6 +155,7 @@ std::shared_ptr<GameObjectComponent> OpenGLFreeTypeTextRendererComponent::clone(
             m_layerNames,
             m_charactersRepository,
             m_verticalQuadBuffersRepository,
+            m_texturesRepository,
             m_openGLErrorDetector
     );
     clone->setEnabled(m_isEnabled);

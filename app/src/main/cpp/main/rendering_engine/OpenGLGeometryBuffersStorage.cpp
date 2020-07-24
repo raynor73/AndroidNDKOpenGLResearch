@@ -132,6 +132,8 @@ void OpenGLGeometryBuffersStorage::removeStaticVertexBuffer(const std::string &n
     auto buffer = m_vbos[name];
     glDeleteBuffers(1, &buffer);
 
+    // TODO Remove from creation params
+
     m_openGlErrorDetector->checkOpenGLErrors("removeStaticVertexBuffer");
 }
 
