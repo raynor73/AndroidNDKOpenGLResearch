@@ -220,6 +220,7 @@ void RenderingEngine::renderText(
 
 void RenderingEngine::onOpenGlContextRecreated() {
     m_shadersRepository->restoreShaders();
+    m_geometryBuffersStorage->restoreBuffers();
 }
 
 void RenderingEngine::traverseSceneHierarchy(GameObject &gameObject, const std::function<void(GameObject &)>& callback) {
