@@ -24,19 +24,19 @@ const std::vector<float> OpenGLVerticalQuadBuffersRepository::QUAD_VERTEX_DATA =
            1,    0*/
         0, 0, 0,
         0, 0, 1,
-        0, 0,
+        0, 1,
 
         0, 1, 0,
         0, 0, 1,
-        0, 1,
+        0, 0,
 
         1, 1, 0,
         0, 0, 1,
-        1, 1,
+        1, 0,
 
         1, 0, 0,
         0, 0, 1,
-        1, 0
+        1, 1
 };
 const std::vector<uint16_t> OpenGLVerticalQuadBuffersRepository::QUAD_INDEX_DATA = {
     0, 3, 2, 2, 1, 0

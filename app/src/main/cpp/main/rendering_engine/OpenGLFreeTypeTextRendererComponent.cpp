@@ -103,8 +103,11 @@ void OpenGLFreeTypeTextRendererComponent::renderCharacter(
     }
 
     if (auto mvpMatrixUniform = shaderProgramContainer.mvpMatrixUniform(); mvpMatrixUniform >= 0) {
-        auto textModelMatrix = glm::translate(modelMatrix, glm::vec3(positionX, 0, 0));
-        textModelMatrix = glm::scale(textModelMatrix, glm::vec3(textSize, textSize, 1));
+        auto textModelMatrix = glm::translate(
+                modelMatrix,
+                glm::vec3(positionX + character.bearing().x, character.bearing().y - character.size().y, 0)
+        );
+        textModelMatrix = glm::scale(textModelMatrix, glm::vec3(character.size().x, character.size().y, 1));
         glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * textModelMatrix;
         glUniformMatrix4fv(mvpMatrixUniform, 1, false, &mvpMatrix[0][0]);
     }
