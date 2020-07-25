@@ -42,6 +42,7 @@ add_library(
         game/UnitsConverter.cpp
         game/MeshStorage.cpp
         game/LocalTimeRepository.cpp
+        game/FpsCalculator.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

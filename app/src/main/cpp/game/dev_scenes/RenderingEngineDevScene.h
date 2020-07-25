@@ -16,6 +16,7 @@
 #include <game/TextRendererFactory.h>
 #include <engine_3d/Material.h>
 #include <engine_3d/TextAppearance.h>
+#include <game/FpsCalculator.h>
 
 class RenderingEngineDevScene : public Scene {
 
@@ -24,6 +25,8 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<MeshRendererFactory> m_meshRendererFactory;
     std::shared_ptr<TextRendererFactory> m_textRendererFactory;
     MeshStorage m_meshStorage;
+
+    FpsCalculator m_fpsCalculator;
 
 public:
     RenderingEngineDevScene(

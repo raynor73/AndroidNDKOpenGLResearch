@@ -20,11 +20,14 @@
 #include "RenderingEngineDevScene.h"
 
 void RenderingEngineDevScene::update(float dt) {
+    m_fpsCalculator.update(dt);
+
     auto fpsText = std::static_pointer_cast<TextComponent>(
             m_gameObjectsMap["fpsText"]->findComponent(TextComponent::TYPE_NAME)
     );
+
     std::stringstream ss;
-    ss  << "FPS: " << std::setprecision(3) << 1 / dt;
+    ss  << "FPS: " << int(m_fpsCalculator.fps());
     fpsText->setText(ss.str());
 }
 
