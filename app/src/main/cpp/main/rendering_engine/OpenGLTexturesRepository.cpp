@@ -3,6 +3,7 @@
 //
 
 #include <GLES2/gl2.h>
+
 #include <exception>
 #include <sstream>
 #include "OpenGLTexturesRepository.h"
@@ -15,6 +16,15 @@ void OpenGLTexturesRepository::createTexture(
 ) {
     createTexture(name, width, height, data, false);
 }
+
+/*void OpenGLTexturesRepository::createGlyphTexture(
+        const std::string& name,
+        uint_t width,
+        uint_t height,
+        const std::vector<uint8_t>& data
+) {
+    createGlyphTexture(name, width, height, data, false);
+}*/
 
 void OpenGLTexturesRepository::createTexture(
         const std::string& name,
@@ -53,6 +63,44 @@ void OpenGLTexturesRepository::createTexture(
 
     m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createTexture from memory");
 }
+
+/*void OpenGLTexturesRepository::createGlyphTexture(
+        const std::string& name,
+        uint_t width,
+        uint_t height,
+        const std::vector<uint8_t>& data,
+        bool isBeingRestored
+) {
+    if (m_textures.count(name) > 0) {
+        std::stringstream ss;
+        ss << "Texture " << name << " already exists";
+        throw std::domain_error(ss.str());
+    }
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data.data());
+
+    m_textures[name] = TextureInfo { texture, width, height };
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (!isBeingRestored) {
+        m_texturesCreationParams[name] = GlyphTextureCreationParams { name, width, height, data };
+    }
+
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createGlyphTexture");
+}*/
 
 std::optional<TextureInfo> OpenGLTexturesRepository::findTexture(const std::string& name) {
     if (m_textures.count(name) > 0) {
@@ -100,5 +148,15 @@ void OpenGLTexturesRepository::restoreTextures() {
                     textureFromMemoryCreationParams.data
             );
         }
+
+        /*if (std::holds_alternative<GlyphTextureCreationParams>(entry.second)) {
+            auto glyphTextureCreationParams = std::get<GlyphTextureCreationParams>(entry.second);
+            createGlyphTexture(
+                    glyphTextureCreationParams.name,
+                    glyphTextureCreationParams.width,
+                    glyphTextureCreationParams.height,
+                    glyphTextureCreationParams.data
+            );
+        }*/
     }
 }

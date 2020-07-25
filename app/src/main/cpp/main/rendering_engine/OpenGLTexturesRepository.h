@@ -22,7 +22,7 @@ class OpenGLTexturesRepository : public TexturesRepository {
 
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
-    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams>> m_texturesCreationParams;
+    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams/*, GlyphTextureCreationParams*/>> m_texturesCreationParams;
 
 public:
     OpenGLTexturesRepository(
@@ -37,6 +37,13 @@ public:
             uint_t height,
             const std::vector<uint8_t>& data
     ) override;
+
+    /*virtual void createGlyphTexture(
+            const std::string& name,
+            uint_t width,
+            uint_t height,
+            const std::vector<uint8_t>& data
+    ) override;*/
 
     std::optional<TextureInfo> findTexture(const std::string& name);
 
@@ -57,6 +64,14 @@ private:
             const std::vector<uint8_t>& data,
             bool isBeingRestored
     );
+
+    /*void createGlyphTexture(
+            const std::string& name,
+            uint_t width,
+            uint_t height,
+            const std::vector<uint8_t>& data,
+            bool isBeingRestored
+    );*/
 };
 
 

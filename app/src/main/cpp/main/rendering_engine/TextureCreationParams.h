@@ -20,5 +20,7 @@ struct TextureFromMemoryCreationParams : public TextureCreationParams {
     std::vector<uint8_t> data;
 };
 
+//struct GlyphTextureCreationParams : public TextureFromMemoryCreationParams {};
+
 
 #endif //RENDERING_ENGINE_TEXTURE_CREATION_PARAMS_H

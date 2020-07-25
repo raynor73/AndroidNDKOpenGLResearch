@@ -6,5 +6,5 @@ uniform vec4 diffuseColorUniform;
 varying vec2 uvVarying;
 
 void main() {
-    gl_FragColor = texture2D(textureUniform, uvVarying) * diffuseColorUniform;
+    gl_FragColor = vec4(diffuseColorUniform.xyz, texture2D(textureUniform, uvVarying).r * diffuseColorUniform.w);
 }

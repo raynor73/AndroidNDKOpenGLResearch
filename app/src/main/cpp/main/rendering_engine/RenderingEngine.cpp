@@ -118,15 +118,14 @@ void RenderingEngine::render(Scene &scene) {
         int viewportY =  m_unitsConverter->heightPercentToPixels(camera->viewportY() * 100);
         int viewportWidth = m_unitsConverter->widthPercentToPixels(camera->viewportWidth() * 100);
         int viewportHeight = m_unitsConverter->heightPercentToPixels(camera->viewportHeight() * 100);
-        OpenGLState openGlState {
+        pushOpenGLState({
             {viewportX, viewportY, viewportWidth, viewportHeight},
             {viewportX, viewportY, viewportWidth, viewportHeight},
             false,
             {GL_ONE, GL_ONE},
             true,
             GL_LESS
-        };
-        pushOpenGLState(openGlState);
+        });
 
         auto clearColor = camera->clearColor();
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
@@ -141,6 +140,15 @@ void RenderingEngine::render(Scene &scene) {
                 renderMesh(camera, it->second);
             }
 
+            pushOpenGLState({
+                {viewportX, viewportY, viewportWidth, viewportHeight},
+                {viewportX, viewportY, viewportWidth, viewportHeight},
+                true,
+                {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
+                true,
+                GL_LESS
+            });
+
             for (
                     auto it = layerNameToTextRendererMap.find(layerName);
                     it != layerNameToTextRendererMap.end();
@@ -148,6 +156,8 @@ void RenderingEngine::render(Scene &scene) {
             ) {
                 renderText(camera, it->second);
             }
+
+            popOpenGLState();
         }
 
         popOpenGLState();
