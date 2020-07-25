@@ -41,6 +41,7 @@ add_library(
         game/MessageQueue.cpp
         game/UnitsConverter.cpp
         game/MeshStorage.cpp
+        game/LocalTimeRepository.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

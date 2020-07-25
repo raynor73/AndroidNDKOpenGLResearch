@@ -3,6 +3,7 @@
 //
 
 #include <exception>
+#include <iomanip>
 #include <nlohmann/json.hpp>
 #include <main/L.h>
 #include <glm/vec3.hpp>
@@ -18,7 +19,14 @@
 #include <engine_3d/TextComponent.h>
 #include "RenderingEngineDevScene.h"
 
-void RenderingEngineDevScene::update(float) {}
+void RenderingEngineDevScene::update(float dt) {
+    auto fpsText = std::static_pointer_cast<TextComponent>(
+            m_gameObjectsMap["fpsText"]->findComponent(TextComponent::TYPE_NAME)
+    );
+    std::stringstream ss;
+    ss  << "FPS: " << std::setprecision(3) << 1 / dt;
+    fpsText->setText(ss.str());
+}
 
 std::string RenderingEngineDevScene::createStateRepresentation() {
     throw std::domain_error("Not implemented");
