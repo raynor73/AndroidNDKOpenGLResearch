@@ -5,6 +5,7 @@
 #ifndef GAME_TOUCHEVENT_H
 #define GAME_TOUCHEVENT_H
 
+
 #include "TouchEventType.h"
 
 struct TouchEvent {
@@ -12,5 +13,6 @@ struct TouchEvent {
     float x, y;
     TouchEventType type;
 };
+
 
 #endif //GAME_TOUCHEVENT_H

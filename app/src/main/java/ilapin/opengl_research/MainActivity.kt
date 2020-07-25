@@ -1,8 +1,10 @@
 package ilapin.opengl_research
 
+import android.annotation.SuppressLint
 import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -10,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var renderer: GLSurfaceViewRenderer
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -17,6 +20,49 @@ class MainActivity : AppCompatActivity() {
         renderer = GLSurfaceViewRenderer(this, resources.displayMetrics.density)
 
         val glView = GLSurfaceView(this)
+        glView.setOnTouchListener { _, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                    renderer.putMessage(TouchEvent(
+                        event.getPointerId(event.actionIndex),
+                        TouchEvent.Action.DOWN,
+                        event.getX(event.actionIndex).toInt(),
+                        glView.height - event.getY(event.actionIndex).toInt()
+                    ))
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    repeat(event.pointerCount) { i ->
+                        renderer.putMessage(TouchEvent(
+                            event.getPointerId(i),
+                            TouchEvent.Action.MOVE,
+                            event.getX(i).toInt(),
+                            glView.height - event.getY(i).toInt()
+                        ))
+                    }
+                }
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                    renderer.putMessage(TouchEvent(
+                        event.getPointerId(event.actionIndex),
+                        TouchEvent.Action.UP,
+                        event.getX(event.actionIndex).toInt(),
+                        glView.height - event.getY(event.actionIndex).toInt()
+                    ))
+                }
+
+                else -> {
+                    renderer.putMessage(TouchEvent(
+                        event.getPointerId(event.actionIndex),
+                        TouchEvent.Action.CANCEL,
+                        event.getX(event.actionIndex).toInt(),
+                        glView.height - event.getY(event.actionIndex).toInt()
+                    ))
+                }
+            }
+
+            true
+        }
         glView.setEGLContextClientVersion(2)
         glView.setRenderer(renderer)
         glView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY

@@ -12,6 +12,8 @@
 class TouchScreen {
 
 public:
+    virtual ~TouchScreen() = default;
+
     virtual std::vector<TouchEvent> events() const = 0;
 };
 

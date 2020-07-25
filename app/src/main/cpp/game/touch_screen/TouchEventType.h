@@ -6,8 +6,8 @@
 #define GAME_TOUCHEVENTTYPE_H
 
 
-enum TouchEventType {
-    TOUCH_EVENT_DOWN, TOUCH_EVENT_MOVE, TOUCH_EVENT_UP
+enum class TouchEventType {
+    DOWN, MOVE, UP, CANCEL
 };
 
 
