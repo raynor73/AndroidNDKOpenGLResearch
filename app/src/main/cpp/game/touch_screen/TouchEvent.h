@@ -12,6 +12,9 @@ struct TouchEvent {
     int id;
     float x, y;
     TouchEventType type;
+
+    TouchEvent() = default;
+    TouchEvent(int id, float x, float y, TouchEventType type) : id(id), x(x), y(y), type(type) {}
 };
 
 

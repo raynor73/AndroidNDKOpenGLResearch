@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                     renderer.putMessage(TouchEvent(
                         event.getPointerId(event.actionIndex),
-                        TouchEvent.Action.DOWN,
+                        TouchEvent.DOWN,
                         event.getX(event.actionIndex).toInt(),
                         glView.height - event.getY(event.actionIndex).toInt()
                     ))
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                     repeat(event.pointerCount) { i ->
                         renderer.putMessage(TouchEvent(
                             event.getPointerId(i),
-                            TouchEvent.Action.MOVE,
+                            TouchEvent.MOVE,
                             event.getX(i).toInt(),
                             glView.height - event.getY(i).toInt()
                         ))
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                     renderer.putMessage(TouchEvent(
                         event.getPointerId(event.actionIndex),
-                        TouchEvent.Action.UP,
+                        TouchEvent.UP,
                         event.getX(event.actionIndex).toInt(),
                         glView.height - event.getY(event.actionIndex).toInt()
                     ))
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 else -> {
                     renderer.putMessage(TouchEvent(
                         event.getPointerId(event.actionIndex),
-                        TouchEvent.Action.CANCEL,
+                        TouchEvent.CANCEL,
                         event.getX(event.actionIndex).toInt(),
                         glView.height - event.getY(event.actionIndex).toInt()
                     ))
@@ -87,6 +87,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+
+        const val LOG_TAG = "AndroidNDKOpenGLResearch"
 
         init {
             System.loadLibrary("freetype")

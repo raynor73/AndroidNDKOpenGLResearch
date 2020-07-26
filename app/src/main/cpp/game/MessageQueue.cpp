@@ -4,29 +4,33 @@
 
 #include "MessageQueue.h"
 
-void MessageQueue::putMessage(const std::shared_ptr<void> &message) {
-    const std::lock_guard<std::mutex> lock(m_mutex);
+namespace MessageQueue {
 
-    m_messageQueue.push(message);
-}
+    void Queue::putMessage(Message message) {
+        const std::lock_guard<std::mutex> lock(m_mutex);
 
-void MessageQueue::putMessageAndWaitForExecution(const std::shared_ptr<void> &message) {
-    const std::lock_guard<std::mutex> lock(m_mutex);
+        m_messageQueue.push(message);
+    }
 
-    m_messageQueue.push(message);
+    void Queue::putMessageAndWaitForExecution(Message message) {
+        const std::lock_guard<std::mutex> lock(m_mutex);
 
-    update();
-}
+        m_messageQueue.push(message);
 
-void MessageQueue::update() {
-    const std::lock_guard<std::mutex> lock(m_mutex);
+        update();
+    }
 
-    while (!m_messageQueue.empty()) {
-        auto message = m_messageQueue.front();
-        if (m_listener != nullptr) {
-            m_listener(message);
+    void Queue::update() {
+        const std::lock_guard<std::mutex> lock(m_mutex);
+
+        while (!m_messageQueue.empty()) {
+            auto message = m_messageQueue.front();
+            if (m_listener != nullptr) {
+                m_listener(message);
+            }
+            m_messageQueue.pop();
         }
-        m_messageQueue.pop();
     }
 }
+
 

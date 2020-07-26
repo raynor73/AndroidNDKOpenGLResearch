@@ -1,7 +1,10 @@
 package ilapin.opengl_research
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.util.Log
+import ilapin.opengl_research.MainActivity.Companion.LOG_TAG
 import java.nio.charset.Charset
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -41,7 +44,16 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         return fileContent
     }
 
+    @SuppressLint("LongLogTag")
+    fun putMessage(message: Any) {
+        when (message) {
+            is TouchEvent -> gameWrapperPutTouchEventIntoQueue(message)
+            else -> Log.e(LOG_TAG, "Unexpected message type ${message.javaClass.simpleName}")
+        }
+    }
+
     private external fun gameWrapperInit(displayDensityFactor: Float)
+    private external fun gameWrapperPutTouchEventIntoQueue(touchEvent: TouchEvent)
     private external fun gameWrapperOnDrawFrame()
     private external fun gameWrapperOnSurfaceChanged(width: Int, height: Int)
     private external fun gameWrapperOnSurfaceCreated()

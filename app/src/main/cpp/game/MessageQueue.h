@@ -10,20 +10,28 @@
 #include <queue>
 #include <mutex>
 
-class MessageQueue {
+namespace MessageQueue {
 
-public:
-    void putMessage(const std::shared_ptr<void> &message);
-    void putMessageAndWaitForExecution(const std::shared_ptr<void> &message);
-    void update();
+    struct Message {
+        std::string type;
+        std::shared_ptr<void> data;
+    };
 
-    void setListener(void (*listener)(const std::shared_ptr<void> &message)) { m_listener = listener; }
+    class Queue {
 
-private:
-    std::queue<std::shared_ptr<void>> m_messageQueue;
-    std::mutex m_mutex;
-    void (*m_listener)(const std::shared_ptr<void> &message);
-};
+    public:
+        void putMessage(Message message);
+        void putMessageAndWaitForExecution(Message message);
+        void update();
+
+        void setListener(void (*listener)(Message message)) { m_listener = listener; }
+
+    private:
+        std::queue<Message> m_messageQueue;
+        std::mutex m_mutex;
+        void (*m_listener)(Message message);
+    };
+}
 
 
 #endif //GAME_MESSAGEQUEUE_H

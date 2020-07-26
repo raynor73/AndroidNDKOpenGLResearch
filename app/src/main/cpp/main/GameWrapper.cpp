@@ -43,6 +43,10 @@ GameWrapper::GameWrapper(
     m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository))
     {}
 
+void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent) {
+    m_messageQueue.putMessage({ "TouchEvent", touchEvent });
+}
+
 void GameWrapper::onDrawFrame() {
     m_messageQueue.update();
     m_scene->update();

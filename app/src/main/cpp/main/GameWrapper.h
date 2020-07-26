@@ -20,13 +20,14 @@
 #include <main/rendering_engine/OpenGLVerticalQuadBuffersRepository.h>
 #include <main/rendering_engine/OpenGLFreeTypeCharactersRepository.h>
 #include <main/rendering_engine/OpenGLTexturesRepository.h>
+#include <game/touch_screen/TouchEvent.h>
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
 #include "AndroidFontDataLoader.h"
 
 class GameWrapper {
 
-    MessageQueue m_messageQueue;
+    MessageQueue::Queue m_messageQueue;
     float m_displayDensityFactor;
     JavaVM* m_javaVm;
     jclass m_bridgeClass;
@@ -59,6 +60,7 @@ public:
     GameWrapper(const GameWrapper&) = delete;
     GameWrapper(GameWrapper&&) = delete;
 
+    void putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent);
     void onDrawFrame();
     void onSurfaceChanged(int width, int height);
     void onSurfaceCreated();

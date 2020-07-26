@@ -18,6 +18,54 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperInit(
 
 extern "C"
 JNIEXPORT void JNICALL
+Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperPutTouchEventIntoQueue(
+        JNIEnv* env,
+        jobject that,
+        jobject touch_event
+) {
+    jclass touchEventClass = env->GetObjectClass(touch_event);
+
+    jfieldID idFieldID = env->GetFieldID(touchEventClass, "id", "I");
+    jfieldID actionFieldID = env->GetFieldID(touchEventClass, "action", "I");
+    jfieldID xFieldID = env->GetFieldID(touchEventClass, "x", "I");
+    jfieldID yFieldID = env->GetFieldID(touchEventClass, "y", "I");
+
+    jint id = env->GetIntField(touch_event, idFieldID);
+
+    jint actionOrdinalValue = env->GetIntField(touch_event, actionFieldID);
+    TouchEventType touchEventType;
+    switch (actionOrdinalValue) {
+        case 0:
+            touchEventType = TouchEventType::DOWN;
+            break;
+
+        case 1:
+            touchEventType = TouchEventType::MOVE;
+            break;
+
+        case 2:
+            touchEventType = TouchEventType::UP;
+            break;
+
+        case 3:
+            touchEventType = TouchEventType::CANCEL;
+            break;
+
+        default: {
+            std::stringstream ss;
+            ss << "Unexpected Action Ordinal value: " << actionOrdinalValue;
+            throw std::domain_error(ss.str());
+        }
+    }
+
+    jint x = env->GetIntField(touch_event, xFieldID);
+    jint y = env->GetIntField(touch_event, yFieldID);
+
+    gameWrapper->putTouchEventIntoQueue(std::make_shared<TouchEvent>(id, float(x), float(y), touchEventType));
+}
+
+extern "C"
+JNIEXPORT void JNICALL
 Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnDrawFrame(JNIEnv *env, jobject that) {
     gameWrapper->onDrawFrame();
 }
