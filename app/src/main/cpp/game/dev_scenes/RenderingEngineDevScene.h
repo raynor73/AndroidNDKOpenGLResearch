@@ -18,6 +18,7 @@
 #include <engine_3d/TextAppearance.h>
 #include <game/touch_screen/TouchScreen.h>
 #include <game/FpsCalculator.h>
+#include <game/touch_screen/GesturesDispatcher.h>
 
 class RenderingEngineDevScene : public Scene {
 
@@ -28,6 +29,7 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<TouchScreen> m_touchScreen;
 
     MeshStorage m_meshStorage;
+    GesturesDispatcher m_gesturesDispatcher;
 
     FpsCalculator m_fpsCalculator;
 

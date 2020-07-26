@@ -11,33 +11,33 @@
 
 class ViewBoundsComponent : public GameObjectComponent {
 
-    uint m_left;
-    uint m_top;
-    uint m_right;
-    uint m_bottom;
+    int m_left;
+    int m_top;
+    int m_right;
+    int m_bottom;
 
 public:
     ViewBoundsComponent(
-            uint left,
-            uint top,
-            uint right,
-            uint bottom
+            int left,
+            int top,
+            int right,
+            int bottom
     ) : m_left(left),
         m_top(top),
         m_right(right),
         m_bottom(bottom) {}
 
-    uint left() const { return m_left; }
-    void setLeft(uint left) { m_left = left; }
+    int left() const { return m_left; }
+    void setLeft(int left) { m_left = left; }
 
-    uint top() const { return m_top; }
-    void setTop(uint top) { m_top = top; }
+    int top() const { return m_top; }
+    void setTop(int top) { m_top = top; }
 
-    uint right() const { return m_right; }
-    void setRight(uint right) { m_right = right; }
+    int right() const { return m_right; }
+    void setRight(int right) { m_right = right; }
 
-    uint bottom() const { return m_bottom; }
-    void setBottom(uint bottom) { m_bottom = bottom; }
+    int bottom() const { return m_bottom; }
+    void setBottom(int bottom) { m_bottom = bottom; }
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }
 

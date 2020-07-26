@@ -32,6 +32,7 @@ add_library(
         engine_3d/TextAppearance.cpp
         engine_3d/LayoutComponent.cpp
         engine_3d/ViewBoundsComponent.cpp
+        game/touch_screen/GestureConsumerComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -44,6 +45,7 @@ add_library(
         game/MeshStorage.cpp
         game/LocalTimeRepository.cpp
         game/FpsCalculator.cpp
+        game/touch_screen/GesturesDispatcher.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp
