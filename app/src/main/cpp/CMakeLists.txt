@@ -30,6 +30,8 @@ add_library(
         engine_3d/MaterialComponent.cpp
         engine_3d/TextComponent.cpp
         engine_3d/TextAppearance.cpp
+        engine_3d/LayoutComponent.cpp
+        engine_3d/ViewBoundsComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

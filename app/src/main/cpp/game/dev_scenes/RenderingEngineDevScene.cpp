@@ -31,17 +31,6 @@ void RenderingEngineDevScene::update(float dt) {
         ss  << "FPS: " << int(m_fpsCalculator.fps());
         fpsText->setText(ss.str());
     }
-
-    {
-        for (auto& event : m_touchScreen->events()) {
-            std::stringstream ss;
-            ss << "Touch event detected: " << event.id;
-            L::d("!@£", ss.str());
-        }
-        if (!m_touchScreen->events().empty()) {
-            L::d("!@£", "===");
-        }
-    }
 }
 
 std::string RenderingEngineDevScene::createStateRepresentation() {
