@@ -24,10 +24,11 @@
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
 #include "AndroidFontDataLoader.h"
+#include "AndroidTouchScreen.h"
 
 class GameWrapper {
 
-    MessageQueue::Queue m_messageQueue;
+    std::shared_ptr<MessageQueue::Queue> m_messageQueue;
     float m_displayDensityFactor;
     JavaVM* m_javaVm;
     jclass m_bridgeClass;
@@ -49,6 +50,7 @@ class GameWrapper {
     std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
     std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
+    std::shared_ptr<AndroidTouchScreen> m_touchScreen;
 
 public:
     explicit GameWrapper(
@@ -67,6 +69,8 @@ public:
 
     GameWrapper& operator=(const GameWrapper&) = delete;
     GameWrapper& operator=(GameWrapper&&) = delete;
+
+    static const std::string TOUCH_EVENT_MESSAGE_TYPE_NAME;
 };
 
 

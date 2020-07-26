@@ -9,6 +9,7 @@
 #include <memory>
 #include <queue>
 #include <mutex>
+#include <functional>
 
 namespace MessageQueue {
 
@@ -24,12 +25,12 @@ namespace MessageQueue {
         void putMessageAndWaitForExecution(Message message);
         void update();
 
-        void setListener(void (*listener)(Message message)) { m_listener = listener; }
+        void setListener(const std::function<void(Message)>& listener) { m_listener = listener; }
 
     private:
         std::queue<Message> m_messageQueue;
         std::mutex m_mutex;
-        void (*m_listener)(Message message);
+        std::function<void(Message)> m_listener;
     };
 }
 

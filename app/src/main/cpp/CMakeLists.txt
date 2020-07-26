@@ -31,7 +31,6 @@ add_library(
         engine_3d/TextComponent.cpp
         engine_3d/TextAppearance.cpp
 
-        game/touch_screen/TouchScreen.cpp
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
         game/Scene.cpp
@@ -67,6 +66,7 @@ add_library(
         main/AndroidMeshLoadingRepository.cpp
         main/AndroidShaderSourceRepository.cpp
         main/AndroidFontDataLoader.cpp
+        main/AndroidTouchScreen.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

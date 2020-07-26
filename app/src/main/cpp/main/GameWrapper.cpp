@@ -5,12 +5,15 @@
 #include <game/dev_scenes/RenderingEngineDevScene.h>
 #include "GameWrapper.h"
 
+const std::string GameWrapper::TOUCH_EVENT_MESSAGE_TYPE_NAME = "TouchEvent";
+
 GameWrapper::GameWrapper(
         float displayDensityFactor,
         JavaVM* javaVm,
         jclass bridgeClass,
         jobject bridgeObject
-) : m_displayDensityFactor(displayDensityFactor),
+) : m_messageQueue(std::make_shared<MessageQueue::Queue>()),
+    m_displayDensityFactor(displayDensityFactor),
     m_javaVm(javaVm),
     m_bridgeClass(bridgeClass),
     m_bridgeObject(bridgeObject),
@@ -40,15 +43,17 @@ GameWrapper::GameWrapper(
     m_geometryBuffersStorage(std::make_shared<OpenGLGeometryBuffersStorage>(m_openGlErrorDetector)),
     m_verticalQuadBuffersRepository(std::make_shared<OpenGLVerticalQuadBuffersRepository>(m_geometryBuffersStorage)),
     m_texturesRepository(std::make_shared<OpenGLTexturesRepository>(m_openGlErrorDetector)),
-    m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository))
+    m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository)),
+    m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue))
     {}
 
 void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent) {
-    m_messageQueue.putMessage({ "TouchEvent", touchEvent });
+    m_messageQueue->putMessage({ TOUCH_EVENT_MESSAGE_TYPE_NAME, touchEvent });
 }
 
 void GameWrapper::onDrawFrame() {
-    m_messageQueue.update();
+    m_touchScreen->update();
+    m_messageQueue->update();
     m_scene->update();
     m_renderingEngine->render(*m_scene);
 }
@@ -91,7 +96,8 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
                 m_unitsConverter,
                 m_meshLoadingRepository,
                 m_meshRendererFactory,
-                m_textRendererFactory
+                m_textRendererFactory,
+                m_touchScreen
         );
         m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
     }

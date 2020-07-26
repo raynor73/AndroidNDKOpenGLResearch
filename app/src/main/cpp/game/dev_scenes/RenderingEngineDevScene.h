@@ -16,6 +16,7 @@
 #include <game/TextRendererFactory.h>
 #include <engine_3d/Material.h>
 #include <engine_3d/TextAppearance.h>
+#include <game/touch_screen/TouchScreen.h>
 #include <game/FpsCalculator.h>
 
 class RenderingEngineDevScene : public Scene {
@@ -24,6 +25,8 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<MeshLoadingRepository> m_meshLoadingRepository;
     std::shared_ptr<MeshRendererFactory> m_meshRendererFactory;
     std::shared_ptr<TextRendererFactory> m_textRendererFactory;
+    std::shared_ptr<TouchScreen> m_touchScreen;
+
     MeshStorage m_meshStorage;
 
     FpsCalculator m_fpsCalculator;
@@ -35,12 +38,14 @@ public:
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
-            std::shared_ptr<TextRendererFactory> textRendererFactory
+            std::shared_ptr<TextRendererFactory> textRendererFactory,
+            std::shared_ptr<TouchScreen> touchScreen
     ) : Scene(timeProvider, displayInfo),
         m_unitsConverter(unitsConverter),
         m_meshLoadingRepository(meshLoadingRepository),
         m_meshRendererFactory(meshRendererFactory),
-        m_textRendererFactory(textRendererFactory) {}
+        m_textRendererFactory(textRendererFactory),
+        m_touchScreen(touchScreen) {}
 
     virtual std::string createStateRepresentation() override;
     virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;

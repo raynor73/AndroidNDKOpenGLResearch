@@ -26,9 +26,22 @@ void RenderingEngineDevScene::update(float dt) {
             m_gameObjectsMap["fpsText"]->findComponent(TextComponent::TYPE_NAME)
     );
 
-    std::stringstream ss;
-    ss  << "FPS: " << int(m_fpsCalculator.fps());
-    fpsText->setText(ss.str());
+    {
+        std::stringstream ss;
+        ss  << "FPS: " << int(m_fpsCalculator.fps());
+        fpsText->setText(ss.str());
+    }
+
+    {
+        for (auto& event : m_touchScreen->events()) {
+            std::stringstream ss;
+            ss << "Touch event detected: " << event.id;
+            L::d("!@£", ss.str());
+        }
+        if (!m_touchScreen->events().empty()) {
+            L::d("!@£", "===");
+        }
+    }
 }
 
 std::string RenderingEngineDevScene::createStateRepresentation() {
