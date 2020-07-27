@@ -13,7 +13,10 @@
       "name": "root",
       "position" : [0.0, 0.0, 0.0],
       "rotation" : [0.0, 0.0, 0.0],
-      "scale": [1.0, 1.0, 1.0]
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        { "type": "ViewBounds", "left": 0, "right": "100%", "top": "100%", "bottom": 0 }
+      ]
     },
     {
       "name": "leftControllerArea",
@@ -38,12 +41,22 @@
     {
       "name": "fpsText",
       "parent": "root",
-      "position" : ["8dp", "8dp", 0.0],
+      "position" : [0.0, 0.0, 0.0],
       "rotation" : [0.0, 0.0, 0.0],
       "scale": [1.0, 1.0, 1.0],
       "components": [
         { "type": "Text", "text": "FPS: N/A", "textColor": [0, 0.5, 0, 1], "textAppearanceName": "fpsText" },
-        { "type": "TextRenderer", "layerNames": ["ui"] }
+        { "type": "TextRenderer", "layerNames": ["ui"] },
+        { "type": "ViewBounds", "left": 0, "right": "50%", "top": "50dp", "bottom": 0 },
+        {
+          "type": "Layout",
+          "padding": ["8dp", 0, 0, "8dp"],
+          "verticalLayout": "BOTTOM_INSIDE",
+          "horizontalLayout": "LEFT_INSIDE",
+          "originVerticalLayout": "BOTTOM",
+          "originHorizontalLayout": "LEFT",
+          "referenceViewBoundsName": "root"
+        }
       ]
     },
     {

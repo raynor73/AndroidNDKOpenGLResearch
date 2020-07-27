@@ -4,6 +4,7 @@
 
 #include <game/dev_scenes/RenderingEngineDevScene.h>
 #include "GameWrapper.h"
+#include <game/SceneManager.h>
 
 const std::string GameWrapper::TOUCH_EVENT_MESSAGE_TYPE_NAME = "TouchEvent";
 

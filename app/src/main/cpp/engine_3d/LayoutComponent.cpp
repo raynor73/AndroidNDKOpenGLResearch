@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "LayoutComponent.h"
 #include "ViewBoundsComponent.h"
+#include "TransformationComponent.h"
 
 const std::string LayoutComponent::TYPE_NAME = "LayoutComponent";
 
@@ -100,6 +101,50 @@ void LayoutComponent::update() {
             viewBounds->setBottom(viewBounds->top() - height);
             break;
     }
+
+    float originPositionY;
+    switch (m_layoutParams.originVerticalLayoutType) {
+
+        case OriginVerticalLayoutType::TOP:
+            originPositionY = viewBounds->top();
+            break;
+
+        case OriginVerticalLayoutType::CENTER:
+            originPositionY = (viewBounds->top() - viewBounds->bottom()) / 2;
+            break;
+
+        case OriginVerticalLayoutType::BOTTOM:
+            originPositionY = viewBounds->bottom();
+            break;
+    }
+
+    float originPositionX;
+    switch (m_layoutParams.originHorizontalLayoutType) {
+
+        case OriginHorizontalLayoutType::LEFT:
+            originPositionX = viewBounds->left();
+            break;
+
+        case OriginHorizontalLayoutType::CENTER:
+            originPositionX = (viewBounds->right() - viewBounds->left()) / 2;
+            break;
+
+        case OriginHorizontalLayoutType::RIGHT:
+            originPositionX = viewBounds->right();
+            break;
+    }
+
+    auto transform = std::static_pointer_cast<TransformationComponent>(
+            m_gameObject->findComponent(TransformationComponent::TYPE_NAME)
+    );
+    if (transform == nullptr) {
+        throw std::domain_error("No transform found for laying out game object");
+    }
+
+    auto originPosition = transform->position();
+    originPosition.x = originPositionX;
+    originPosition.y = originPositionY;
+    transform->setPosition(originPosition);
 }
 
 std::shared_ptr <GameObjectComponent> LayoutComponent::clone() {

@@ -17,6 +17,14 @@ enum class HorizontalLayoutType {
     LEFT_INSIDE, LEFT_OUTSIDE, CENTER, RIGHT_INSIDE, RIGHT_OUTSIDE
 };
 
+enum class OriginVerticalLayoutType {
+    TOP, CENTER, BOTTOM
+};
+
+enum class OriginHorizontalLayoutType {
+    LEFT, CENTER, RIGHT
+};
+
 struct LayoutParams {
     int paddingLeft;
     int paddingTop;
@@ -24,6 +32,8 @@ struct LayoutParams {
     int paddingBottom;
     VerticalLayoutType verticalLayoutType;
     HorizontalLayoutType horizontalLayoutType;
+    OriginVerticalLayoutType originVerticalLayoutType;
+    OriginHorizontalLayoutType originHorizontalLayoutType;
     std::shared_ptr<ViewBoundsComponent> referenceViewBounds;
 };
 

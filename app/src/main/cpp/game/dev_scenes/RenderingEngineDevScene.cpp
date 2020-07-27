@@ -18,6 +18,7 @@
 #include <engine_3d/MaterialComponent.h>
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/ViewBoundsComponent.h>
+#include <engine_3d/LayoutComponent.h>
 #include "RenderingEngineDevScene.h"
 
 void RenderingEngineDevScene::update(float dt) {
@@ -270,10 +271,13 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(
         auto top = parseNumber(componentJson["top"], DimensionType::HEIGHT);
         auto bottom = parseNumber(componentJson["bottom"], DimensionType::HEIGHT);
         return std::make_shared<ViewBoundsComponent>(left, top, right, bottom);
+    } else if (type == "Layout") {
+
     } else {
-        std::stringstream ss;
-        ss << "Unknown component type " << type;
-        throw std::domain_error(ss.str());
+            std::stringstream ss;
+            ss << "Unknown component type " << type;
+            throw std::domain_error(ss.str());
+        }
     }
 }
 
