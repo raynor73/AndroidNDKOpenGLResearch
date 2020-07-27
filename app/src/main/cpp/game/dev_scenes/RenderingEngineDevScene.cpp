@@ -38,6 +38,8 @@ void RenderingEngineDevScene::update(float dt) {
         ss  << "FPS: " << int(m_fpsCalculator.fps());
         fpsText->setText(ss.str());
     }
+
+    m_rootGameObject->update();
 }
 
 std::string RenderingEngineDevScene::createStateRepresentation() {
@@ -272,12 +274,125 @@ std::shared_ptr<GameObjectComponent> RenderingEngineDevScene::parseComponent(
         auto bottom = parseNumber(componentJson["bottom"], DimensionType::HEIGHT);
         return std::make_shared<ViewBoundsComponent>(left, top, right, bottom);
     } else if (type == "Layout") {
+        auto padding = parseVec4(componentJson["padding"]);
 
-    } else {
+        auto verticalLayoutJson = componentJson["verticalLayout"];
+        if (!verticalLayoutJson.is_string()) {
+            throw std::domain_error("Vertical layout parameter not found");
+        }
+        auto horizontalLayoutJson = componentJson["horizontalLayout"];
+        if (!horizontalLayoutJson.is_string()) {
+            throw std::domain_error("Horizontal layout parameter not found");
+        }
+        auto originVerticalLayoutJson = componentJson["originVerticalLayout"];
+        if (!originVerticalLayoutJson.is_string()) {
+            throw std::domain_error("Origin vertical layout parameter not found");
+        }
+        auto originHorizontalLayoutJson = componentJson["originHorizontalLayout"];
+        if (!originHorizontalLayoutJson.is_string()) {
+            throw std::domain_error("Origin horizontal layout parameter not found");
+        }
+
+        auto referenceViewBoundsNameJson = componentJson["referenceViewBoundsName"];
+        if (!referenceViewBoundsNameJson.is_string()) {
+            throw std::domain_error("No reference view bounds name found");
+        }
+        auto referenceGameObjectName = referenceViewBoundsNameJson.get<std::string>();
+        auto referenceGameObject = m_gameObjectsMap.at(referenceGameObjectName);
+        if (referenceGameObject == nullptr) {
             std::stringstream ss;
-            ss << "Unknown component type " << type;
+            ss << "Reference game object " << referenceGameObjectName << " not found";
             throw std::domain_error(ss.str());
         }
+        auto referenceViewBounds = std::static_pointer_cast<ViewBoundsComponent>(
+                referenceGameObject->findComponent(ViewBoundsComponent::TYPE_NAME)
+        );
+        if (referenceViewBounds == nullptr) {
+            std::stringstream ss;
+            ss << "Reference view bounds " << referenceGameObjectName << " not found";
+            throw std::domain_error(ss.str());
+        }
+
+        auto verticalLayoutString = verticalLayoutJson.get<std::string>();
+        auto horizontalLayoutString = horizontalLayoutJson.get<std::string>();
+        auto originVerticalLayoutString = originVerticalLayoutJson.get<std::string>();
+        auto originHorizontalLayoutString = originHorizontalLayoutJson.get<std::string>();
+
+        VerticalLayoutType verticalLayoutType;
+        if (verticalLayoutString == "TOP_INSIDE") {
+            verticalLayoutType = VerticalLayoutType::TOP_INSIDE;
+        } else if (verticalLayoutString == "TOP_OUTSIDE") {
+            verticalLayoutType = VerticalLayoutType::TOP_OUTSIDE;
+        } else if (verticalLayoutString == "CENTER") {
+            verticalLayoutType = VerticalLayoutType::CENTER;
+        } else if (verticalLayoutString == "BOTTOM_INSIDE") {
+            verticalLayoutType = VerticalLayoutType::BOTTOM_INSIDE;
+        } else if (verticalLayoutString == "BOTTOM_OUTSIDE") {
+            verticalLayoutType = VerticalLayoutType::BOTTOM_OUTSIDE;
+        } else {
+            std::stringstream ss;
+            ss << "Unknown vertical layout " << verticalLayoutString;
+            throw std::domain_error(ss.str());
+        }
+
+        HorizontalLayoutType horizontalLayoutType;
+        if (horizontalLayoutString == "LEFT_INSIDE") {
+            horizontalLayoutType = HorizontalLayoutType::LEFT_INSIDE;
+        } else if (horizontalLayoutString == "LEFT_OUTSIDE") {
+            horizontalLayoutType = HorizontalLayoutType::LEFT_OUTSIDE;
+        } else if (horizontalLayoutString == "CENTER") {
+            horizontalLayoutType = HorizontalLayoutType::CENTER;
+        } else if (horizontalLayoutString == "RIGHT_INSIDE") {
+            horizontalLayoutType = HorizontalLayoutType::RIGHT_INSIDE;
+        } else if (horizontalLayoutString == "RIGHT_OUTSIDE") {
+            horizontalLayoutType = HorizontalLayoutType::RIGHT_OUTSIDE;
+        } else {
+            std::stringstream ss;
+            ss << "Unknown horizontal layout " << verticalLayoutString;
+            throw std::domain_error(ss.str());
+        }
+
+        OriginVerticalLayoutType originVerticalLayoutType;
+        if (originVerticalLayoutString == "TOP") {
+            originVerticalLayoutType = OriginVerticalLayoutType::TOP;
+        } else if (originVerticalLayoutString == "CENTER") {
+            originVerticalLayoutType = OriginVerticalLayoutType::CENTER;
+        } else if (originVerticalLayoutString == "BOTTOM") {
+            originVerticalLayoutType = OriginVerticalLayoutType::BOTTOM;
+        } else {
+            std::stringstream ss;
+            ss << "Unknown origin vertical layout " << verticalLayoutString;
+            throw std::domain_error(ss.str());
+        }
+
+        OriginHorizontalLayoutType originHorizontalLayoutType;
+        if (originHorizontalLayoutString == "LEFT") {
+            originHorizontalLayoutType = OriginHorizontalLayoutType::LEFT;
+        } else if (originHorizontalLayoutString == "CENTER") {
+            originHorizontalLayoutType = OriginHorizontalLayoutType::CENTER;
+        } else if (originHorizontalLayoutString == "RIGHT") {
+            originHorizontalLayoutType = OriginHorizontalLayoutType::RIGHT;
+        } else {
+            std::stringstream ss;
+            ss << "Unknown origin horizontal layout " << verticalLayoutString;
+            throw std::domain_error(ss.str());
+        }
+
+        return std::make_shared<LayoutComponent>(LayoutParams {
+            int(padding.x),
+            int(padding.y),
+            int(padding.z),
+            int(padding.w),
+            verticalLayoutType,
+            horizontalLayoutType,
+            originVerticalLayoutType,
+            originHorizontalLayoutType,
+            referenceViewBounds
+        });
+    } else {
+        std::stringstream ss;
+        ss << "Unknown component type " << type;
+        throw std::domain_error(ss.str());
     }
 }
 
@@ -286,6 +401,19 @@ float RenderingEngineDevScene::parseFloatNumber(const nlohmann::json& jsonValue)
         throw std::domain_error("Float number has invalid format or missing");
     }
     return jsonValue.get<float>();
+}
+
+glm::vec4 RenderingEngineDevScene::parseVec4(const nlohmann::json& jsonValue) {
+    if (!jsonValue.is_array() || jsonValue.size() != 4) {
+        throw std::domain_error("Invalid or missing vec4 component");
+    }
+
+    return glm::vec4(
+            parseNumber(jsonValue[0], DimensionType::WIDTH),
+            parseNumber(jsonValue[1], DimensionType::HEIGHT),
+            parseNumber(jsonValue[2], DimensionType::WIDTH),
+            parseNumber(jsonValue[3], DimensionType::HEIGHT)
+    );
 }
 
 glm::vec3 RenderingEngineDevScene::parseColor3f(const nlohmann::json &colorJson) {

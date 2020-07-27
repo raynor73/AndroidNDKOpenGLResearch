@@ -68,6 +68,7 @@ private:
     );
     static glm::vec3 parseColor3f(const nlohmann::json& colorJson);
     static glm::vec4 parseColor4f(const nlohmann::json& colorJson);
+    glm::vec4 parseVec4(const nlohmann::json& jsonValue);
     static float parseFloatNumber(const nlohmann::json& jsonValue);
 };
 
