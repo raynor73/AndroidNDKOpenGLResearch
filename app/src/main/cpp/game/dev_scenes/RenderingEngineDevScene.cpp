@@ -38,8 +38,6 @@ void RenderingEngineDevScene::update(float dt) {
         ss  << "FPS: " << int(m_fpsCalculator.fps());
         fpsText->setText(ss.str());
     }
-
-    m_rootGameObject->update();
 }
 
 std::string RenderingEngineDevScene::createStateRepresentation() {

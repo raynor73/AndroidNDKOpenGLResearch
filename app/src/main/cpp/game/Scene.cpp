@@ -18,6 +18,8 @@ Scene::Scene(std::shared_ptr<TimeProvider> timeProvider, std::shared_ptr<Display
 }
 
 void Scene::update() {
+    m_rootGameObject->update();
+
     auto currentTimestamp = m_timeProvider->getTimestamp();
 
     float dt;

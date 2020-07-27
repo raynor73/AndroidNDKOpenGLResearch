@@ -87,7 +87,11 @@ void GameObject::onDetachedFromParent() {
 }
 
 std::shared_ptr<GameObjectComponent> GameObject::findComponent(const std::string &name) {
-    return m_components[name];
+    if (m_components.count(name) > 0) {
+        return m_components.at(name);
+    } else {
+        return nullptr;
+    }
 }
 
 std::shared_ptr<GameObject> GameObject::clone() {
