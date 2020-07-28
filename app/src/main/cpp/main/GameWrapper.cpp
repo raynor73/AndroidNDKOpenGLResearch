@@ -53,10 +53,34 @@ void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent)
 }
 
 void GameWrapper::onDrawFrame() {
+    if (m_requestedSceneTypeOptional) {
+        switch (m_requestedSceneTypeOptional.value()) {
+
+            case SceneType::RENDERING_ENGINE_DEV_SCENE:
+                m_scene = std::make_shared<RenderingEngineDevScene>(
+                        std::make_shared<TimeProvider>(),
+                        m_displayInfo,
+                        m_unitsConverter,
+                        m_meshLoadingRepository,
+                        m_meshRendererFactory,
+                        m_textRendererFactory,
+                        m_touchScreen
+                );
+                m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
+                break;
+
+            case SceneType::SCREEN_BLINKING_SCENE:
+                break;
+        }
+        m_requestedSceneTypeOptional.reset();
+    }
+
     m_touchScreen->update();
     m_messageQueue->update();
-    m_scene->update();
-    m_renderingEngine->render(*m_scene);
+    if (m_scene != nullptr) {
+        m_scene->update();
+        m_renderingEngine->render(*m_scene);
+    }
 }
 
 void GameWrapper::onSurfaceChanged(int width, int height) {
@@ -89,22 +113,13 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
     } else {
         m_renderingEngine->onOpenGlContextRecreated();
     }
-
-    if (m_scene == nullptr) {
-        m_scene = std::make_shared<RenderingEngineDevScene>(
-                std::make_shared<TimeProvider>(),
-                m_displayInfo,
-                m_unitsConverter,
-                m_meshLoadingRepository,
-                m_meshRendererFactory,
-                m_textRendererFactory,
-                m_touchScreen
-        );
-        m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
-    }
 }
 
 void GameWrapper::onSurfaceCreated() {
     // do nothing
+}
+
+void GameWrapper::requestSceneLoadAndStart(SceneType type) {
+    m_requestedSceneTypeOptional = type;
 }
 

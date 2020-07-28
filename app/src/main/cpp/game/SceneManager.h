@@ -15,7 +15,7 @@ class SceneManager {
 public:
     virtual ~SceneManager() = default;
 
-    virtual void loadAndStartScene(SceneType type) = 0;
+    virtual void requestSceneLoadAndStart(SceneType type) = 0;
 };
 
 

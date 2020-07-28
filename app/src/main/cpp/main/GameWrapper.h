@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <jni.h>
+#include <optional>
 #include <game/MessageQueue.h>
 #include <main/rendering_engine/RenderingEngine.h>
 #include <main/rendering_engine/OpenGLGeometryBuffersStorage.h>
@@ -21,12 +22,13 @@
 #include <main/rendering_engine/OpenGLFreeTypeCharactersRepository.h>
 #include <main/rendering_engine/OpenGLTexturesRepository.h>
 #include <game/touch_screen/TouchEvent.h>
+#include <game/SceneManager.h>
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
 #include "AndroidFontDataLoader.h"
 #include "AndroidTouchScreen.h"
 
-class GameWrapper {
+class GameWrapper : public SceneManager {
 
     std::shared_ptr<MessageQueue::Queue> m_messageQueue;
     float m_displayDensityFactor;
@@ -52,6 +54,8 @@ class GameWrapper {
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
     std::shared_ptr<AndroidTouchScreen> m_touchScreen;
 
+    std::optional<SceneType> m_requestedSceneTypeOptional;
+
 public:
     explicit GameWrapper(
             float displayDensityFactor,
@@ -66,6 +70,8 @@ public:
     void onDrawFrame();
     void onSurfaceChanged(int width, int height);
     void onSurfaceCreated();
+
+    virtual void requestSceneLoadAndStart(SceneType type) override;
 
     GameWrapper& operator=(const GameWrapper&) = delete;
     GameWrapper& operator=(GameWrapper&&) = delete;
