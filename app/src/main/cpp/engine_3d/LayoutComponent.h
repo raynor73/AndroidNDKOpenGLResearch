@@ -13,7 +13,7 @@
 
 class LayoutComponent : public GameObjectComponent {
 
-    bool m_isLayoutRequired;
+    bool m_isLayoutRequired = true;
     LayoutParams m_layoutParams;
 
 public:
