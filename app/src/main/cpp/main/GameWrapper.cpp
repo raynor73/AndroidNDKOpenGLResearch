@@ -54,6 +54,9 @@ void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent)
 
 void GameWrapper::onDrawFrame() {
     if (m_requestedSceneTypeOptional) {
+        m_texturesRepository->removeAllTextures();
+        m_geometryBuffersStorage->removeAllBuffers();
+
         switch (m_requestedSceneTypeOptional.value()) {
 
             case SceneType::RENDERING_ENGINE_DEV_SCENE:
