@@ -88,7 +88,7 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceChanged(
                 env->NewGlobalRef(that)
         );
 
-        gameWrapper->requestSceneLoadAndStart(SceneType::RENDERING_ENGINE_DEV_SCENE);
+        gameWrapper->requestSceneLoadAndStart(SceneType::SCENES_SELECTION_SCENE);
     }
     gameWrapper->onSurfaceChanged(width, height);
 }

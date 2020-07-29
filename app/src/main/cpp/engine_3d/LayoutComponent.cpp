@@ -18,7 +18,7 @@ void LayoutComponent::update() {
     if (!m_isLayoutRequired || !m_isEnabled) {
         return;
     }
-    m_isLayoutRequired = false;
+    //m_isLayoutRequired = false;
 
     if (m_layoutParams.referenceViewBounds == nullptr) {
         throw std::domain_error("Can't layout without reference view bounds provided");

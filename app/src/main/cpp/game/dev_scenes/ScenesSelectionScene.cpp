@@ -3,3 +3,5 @@
 //
 
 #include "ScenesSelectionScene.h"
+
+void ScenesSelectionScene::update(float) {}

@@ -3,6 +3,7 @@
 //
 
 #include <game/dev_scenes/RenderingEngineDevScene.h>
+#include <game/dev_scenes/ScenesSelectionScene.h>
 #include "GameWrapper.h"
 #include <game/SceneManager.h>
 
@@ -58,6 +59,19 @@ void GameWrapper::onDrawFrame() {
         m_geometryBuffersStorage->removeAllBuffers();
 
         switch (m_requestedSceneTypeOptional.value()) {
+
+            case SceneType::SCENES_SELECTION_SCENE:
+                m_scene = std::make_shared<ScenesSelectionScene>(
+                        std::make_shared<TimeProvider>(),
+                        m_displayInfo,
+                        m_unitsConverter,
+                        m_meshLoadingRepository,
+                        m_meshRendererFactory,
+                        m_textRendererFactory,
+                        m_touchScreen
+                );
+                m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
+                break;
 
             case SceneType::RENDERING_ENGINE_DEV_SCENE:
                 m_scene = std::make_shared<RenderingEngineDevScene>(
