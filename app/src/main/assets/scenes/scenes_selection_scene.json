@@ -1,0 +1,65 @@
+{
+  "meshes": [],
+  "materials": [],
+  "textAppearances": [
+    { "name": "menuItemText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
+  ],
+  "gameObjects": [
+    {
+      "name": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        { "type": "ViewBounds", "left": 0, "right": "100%", "top": "100%", "bottom": 0 }
+      ]
+    },
+    {
+      "name": "renderingEngineDevSceneMenuItem",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        {
+          "type": "Text",
+          "text": "1. Rendering Engine Dev Scene",
+          "textColor": [1, 1, 1, 1],
+          "textAppearanceName": "menuItemText"
+        },
+        { "type": "TextRenderer", "layerNames": ["ui"] },
+        { "type": "ViewBounds", "left": 0, "right": "50%", "top": "50dp", "bottom": 0 },
+        {
+          "type": "Layout",
+          "padding": ["8dp", "8dp", 0, 0],
+          "verticalLayout": "TOP_INSIDE",
+          "horizontalLayout": "LEFT_INSIDE",
+          "originVerticalLayout": "BOTTOM",
+          "originHorizontalLayout": "LEFT",
+          "referenceViewBoundsName": "root"
+        }
+      ]
+    },
+    {
+      "name": "uiCamera",
+      "parent": "root",
+      "position" : [0.0, 0.0, 1.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        {
+          "type": "OrthoCamera",
+          "clearColor": [0, 0, 0, 0],
+          "left": 0,
+          "right": "100%",
+          "bottom": 0,
+          "top": "100%",
+          "zNear": 0,
+          "zFar": 1000,
+          "layerNames": ["ui"]
+        },
+        { "type": "AmbientLight", "color": [0.1, 0.1, 0.1], "layerNames": ["ui"] }
+      ]
+    }
+  ]
+}

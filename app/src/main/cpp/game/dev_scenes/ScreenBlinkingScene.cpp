@@ -3,14 +3,29 @@
 //
 
 #include <GLES2/gl2.h>
+
+#include <utility>
 #include "ScreenBlinkingScene.h"
 
 ScreenBlinkingScene::ScreenBlinkingScene(
         std::shared_ptr<TimeProvider> timeProvider,
-        std::shared_ptr<DisplayInfo> displayInfo
+        std::shared_ptr<DisplayInfo> displayInfo,
+        std::shared_ptr<UnitsConverter> unitsConverter,
+        std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
+        std::shared_ptr<MeshRendererFactory> meshRendererFactory,
+        std::shared_ptr<TextRendererFactory> textRendererFactory,
+        std::shared_ptr<TouchScreen> touchScreen
 ) : m_elapsed(0),
     m_isWhite(true),
-    Scene(std::move(timeProvider), std::move(displayInfo))
+    Scene(
+            std::move(timeProvider),
+            std::move(displayInfo),
+            std::move(unitsConverter),
+            std::move(meshLoadingRepository),
+            std::move(meshRendererFactory),
+            std::move(textRendererFactory),
+            std::move(touchScreen)
+    )
 {
     // do nothing
 }
