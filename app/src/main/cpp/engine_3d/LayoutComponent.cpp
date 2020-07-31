@@ -15,14 +15,30 @@ const std::string LayoutComponent::TYPE_NAME = "LayoutComponent";
 void LayoutComponent::update() {
     GameObjectComponent::update();
 
-    if (!m_isLayoutRequired || !m_isEnabled) {
+    if (!m_isEnabled) {
         return;
     }
-    //m_isLayoutRequired = false;
 
     if (m_layoutParams.referenceViewBounds == nullptr) {
         throw std::domain_error("Can't layout without reference view bounds provided");
     }
+
+    int currentReferenceLeftViewBound = m_layoutParams.referenceViewBounds->left();
+    int currentReferenceTopViewBound = m_layoutParams.referenceViewBounds->top();
+    int currentReferenceRightViewBound = m_layoutParams.referenceViewBounds->right();
+    int currentReferenceBottomViewBound = m_layoutParams.referenceViewBounds->bottom();
+    if (
+            currentReferenceLeftViewBound == m_prevReferenceLeftViewBound &&
+            currentReferenceTopViewBound == m_prevReferenceTopViewBound &&
+            currentReferenceRightViewBound == m_prevReferenceRightViewBound &&
+            currentReferenceBottomViewBound == m_prevReferenceBottomViewBound
+    ) {
+        return;
+    }
+    m_prevReferenceLeftViewBound = currentReferenceLeftViewBound;
+    m_prevReferenceTopViewBound = currentReferenceTopViewBound;
+    m_prevReferenceRightViewBound = currentReferenceRightViewBound;
+    m_prevReferenceBottomViewBound = currentReferenceBottomViewBound;
 
     if (m_gameObject == nullptr) {
         throw std::domain_error("Layout component has no game object");
@@ -41,18 +57,17 @@ void LayoutComponent::update() {
     switch (m_layoutParams.horizontalLayoutType) {
 
         case HorizontalLayoutType::LEFT_INSIDE:
-            viewBounds->setLeft(m_layoutParams.referenceViewBounds->left() + m_layoutParams.paddingLeft);
+            viewBounds->setLeft(currentReferenceLeftViewBound + m_layoutParams.paddingLeft);
             viewBounds->setRight(viewBounds->left() + width);
             break;
 
         case HorizontalLayoutType::LEFT_OUTSIDE:
-            viewBounds->setRight(m_layoutParams.referenceViewBounds->left() - m_layoutParams.paddingRight);
+            viewBounds->setRight(currentReferenceLeftViewBound - m_layoutParams.paddingRight);
             viewBounds->setLeft(viewBounds->right() - width);
             break;
 
         case HorizontalLayoutType::CENTER: {
-            auto referenceCenter =
-                    (m_layoutParams.referenceViewBounds->left() + m_layoutParams.referenceViewBounds->right()) / 2;
+            auto referenceCenter = (currentReferenceLeftViewBound + currentReferenceRightViewBound) / 2;
             auto halfWidth = width / 2;
             viewBounds->setLeft(referenceCenter - halfWidth + m_layoutParams.paddingLeft);
             viewBounds->setRight(viewBounds->left() + width);
@@ -60,12 +75,12 @@ void LayoutComponent::update() {
         }
 
         case HorizontalLayoutType::RIGHT_INSIDE:
-            viewBounds->setRight(m_layoutParams.referenceViewBounds->right() - m_layoutParams.paddingRight);
+            viewBounds->setRight(currentReferenceRightViewBound - m_layoutParams.paddingRight);
             viewBounds->setLeft(viewBounds->right() - width);
             break;
 
         case HorizontalLayoutType::RIGHT_OUTSIDE:
-            viewBounds->setLeft(m_layoutParams.referenceViewBounds->right() + m_layoutParams.paddingLeft);
+            viewBounds->setLeft(currentReferenceRightViewBound + m_layoutParams.paddingLeft);
             viewBounds->setRight(viewBounds->left() + width);
             break;
     }
@@ -73,18 +88,17 @@ void LayoutComponent::update() {
     switch (m_layoutParams.verticalLayoutType) {
 
         case VerticalLayoutType::TOP_INSIDE:
-            viewBounds->setTop(m_layoutParams.referenceViewBounds->top() - m_layoutParams.paddingTop);
+            viewBounds->setTop(currentReferenceTopViewBound - m_layoutParams.paddingTop);
             viewBounds->setBottom(viewBounds->top() - height);
             break;
 
         case VerticalLayoutType::TOP_OUTSIDE:
-            viewBounds->setBottom(m_layoutParams.referenceViewBounds->bottom() + m_layoutParams.paddingBottom);
+            viewBounds->setBottom(currentReferenceBottomViewBound + m_layoutParams.paddingBottom);
             viewBounds->setTop(viewBounds->bottom() + height);
             break;
 
         case VerticalLayoutType::CENTER: {
-            auto referenceCenter =
-                    (m_layoutParams.referenceViewBounds->top() + m_layoutParams.referenceViewBounds->bottom()) / 2;
+            auto referenceCenter = (currentReferenceTopViewBound + currentReferenceBottomViewBound) / 2;
             auto halfHeight = height / 2;
             viewBounds->setBottom(referenceCenter - halfHeight + m_layoutParams.paddingBottom);
             viewBounds->setTop(viewBounds->bottom() + height);
@@ -92,12 +106,12 @@ void LayoutComponent::update() {
         }
 
         case VerticalLayoutType::BOTTOM_INSIDE:
-            viewBounds->setBottom(m_layoutParams.referenceViewBounds->bottom() + m_layoutParams.paddingBottom);
+            viewBounds->setBottom(currentReferenceBottomViewBound + m_layoutParams.paddingBottom);
             viewBounds->setTop(viewBounds->bottom() + height);
             break;
 
         case VerticalLayoutType::BOTTOM_OUTSIDE:
-            viewBounds->setTop(m_layoutParams.referenceViewBounds->bottom() - m_layoutParams.paddingTop);
+            viewBounds->setTop(currentReferenceBottomViewBound - m_layoutParams.paddingTop);
             viewBounds->setBottom(viewBounds->top() - height);
             break;
     }
@@ -151,9 +165,4 @@ std::shared_ptr <GameObjectComponent> LayoutComponent::clone() {
     auto clone = std::make_shared<LayoutComponent>(m_layoutParams);
     clone->setEnabled(m_isEnabled);
     return clone;
-}
-
-void LayoutComponent::setLayoutParams(const LayoutParams& layoutParams) {
-    m_layoutParams = layoutParams;
-    m_isLayoutRequired = true;
 }
