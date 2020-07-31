@@ -34,6 +34,7 @@ struct LayoutParams {
     HorizontalLayoutType horizontalLayoutType;
     OriginVerticalLayoutType originVerticalLayoutType;
     OriginHorizontalLayoutType originHorizontalLayoutType;
+    std::shared_ptr<ViewBoundsComponent> referenceViewBounds;
 };
 
 

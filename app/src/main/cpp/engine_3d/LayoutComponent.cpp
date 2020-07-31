@@ -18,16 +18,11 @@ void LayoutComponent::update() {
     if (!m_isLayoutRequired || !m_isEnabled) {
         return;
     }
-    m_isLayoutRequired = false;
-    for (auto& child : m_childrenLayouts) {
-        child->requestLayout();
-    }
+    //m_isLayoutRequired = false;
 
-    if (m_parentLayout == nullptr) {
-        throw std::domain_error("Can't layout without parent layout component");
+    if (m_layoutParams.referenceViewBounds == nullptr) {
+        throw std::domain_error("Can't layout without reference view bounds provided");
     }
-    auto parentLayoutGameObject = m_parentLayout->gameObject();
-    auto referenceViewBounds = m_parentLayout
 
     if (m_gameObject == nullptr) {
         throw std::domain_error("Layout component has no game object");
@@ -155,33 +150,10 @@ void LayoutComponent::update() {
 std::shared_ptr <GameObjectComponent> LayoutComponent::clone() {
     auto clone = std::make_shared<LayoutComponent>(m_layoutParams);
     clone->setEnabled(m_isEnabled);
-    // TODO Decide what to do with cloning component which already be cloned while game object clone(?)
     return clone;
 }
 
 void LayoutComponent::setLayoutParams(const LayoutParams& layoutParams) {
     m_layoutParams = layoutParams;
-    m_isLayoutRequired = true;
-}
-
-void LayoutComponent::addChildLayout(const std::shared_ptr<LayoutComponent>& child) {
-    if (m_childrenLayouts.count(child) > 0) {
-        throw std::domain_error("Trying to add layout component second time");
-    }
-
-    m_childrenLayouts.insert(child);
-    child->m_parentLayout = std::shared_ptr<LayoutComponent>(this);
-}
-
-void LayoutComponent::removeChildLayout(const std::shared_ptr<LayoutComponent>& child) {
-    if (m_childrenLayouts.count(child) == 0) {
-        throw std::domain_error("Child layout component not found while removal attempt");
-    }
-
-    m_childrenLayouts.erase(child);
-    child->m_parentLayout.reset();
-}
-
-void LayoutComponent::requestLayout() {
     m_isLayoutRequired = true;
 }

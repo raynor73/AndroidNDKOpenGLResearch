@@ -28,25 +28,22 @@ public:
         m_bottom(bottom) {}
 
     int left() const { return m_left; }
-    void setLeft(int left);
+    void setLeft(int left) { m_left = left; }
 
     int top() const { return m_top; }
-    void setTop(int top);
+    void setTop(int top) { m_top = top; }
 
     int right() const { return m_right; }
-    void setRight(int right);
+    void setRight(int right) { m_right = right; }
 
     int bottom() const { return m_bottom; }
-    void setBottom(int bottom);
+    void setBottom(int bottom) { m_bottom = bottom; }
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }
 
     virtual std::shared_ptr<GameObjectComponent> clone() override;
 
     static const std::string TYPE_NAME;
-
-private:
-    void requestLayoutIfNecessary();
 };
 
 

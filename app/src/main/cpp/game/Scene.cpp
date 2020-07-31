@@ -340,23 +340,23 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             throw std::domain_error("Origin horizontal layout parameter not found");
         }
 
-        auto parentLayoutNameJson = componentJson["parentLayout"];
-        if (!parentLayoutNameJson.is_string()) {
-            throw std::domain_error("No parent layout name found");
+        auto referenceViewBoundsNameJson = componentJson["referenceViewBoundsName"];
+        if (!referenceViewBoundsNameJson.is_string()) {
+            throw std::domain_error("No reference view bounds name found");
         }
-        auto parentLayoutGameObjectName = parentLayoutNameJson.get<std::string>();
-        auto parentLayoutGameObject = m_gameObjectsMap.at(parentLayoutGameObjectName);
-        if (parentLayoutGameObject == nullptr) {
+        auto referenceGameObjectName = referenceViewBoundsNameJson.get<std::string>();
+        auto referenceGameObject = m_gameObjectsMap.at(referenceGameObjectName);
+        if (referenceGameObject == nullptr) {
             std::stringstream ss;
-            ss << "Parent layout game object " << parentLayoutGameObjectName << " not found";
+            ss << "Reference game object " << referenceGameObjectName << " not found";
             throw std::domain_error(ss.str());
         }
         auto referenceViewBounds = std::static_pointer_cast<ViewBoundsComponent>(
-                parentLayoutGameObject->findComponent(ViewBoundsComponent::TYPE_NAME)
+                referenceGameObject->findComponent(ViewBoundsComponent::TYPE_NAME)
         );
         if (referenceViewBounds == nullptr) {
             std::stringstream ss;
-            ss << "Reference view bounds " << parentLayoutGameObjectName << " not found";
+            ss << "Reference view bounds " << referenceGameObjectName << " not found";
             throw std::domain_error(ss.str());
         }
 

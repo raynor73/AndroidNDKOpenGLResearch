@@ -36,7 +36,7 @@
           "horizontalLayout": "LEFT_INSIDE",
           "originVerticalLayout": "BOTTOM",
           "originHorizontalLayout": "LEFT",
-          "parentLayout": "root"
+          "referenceViewBoundsName": "root"
         }
       ]
     },
@@ -62,7 +62,7 @@
           "horizontalLayout": "LEFT_INSIDE",
           "originVerticalLayout": "BOTTOM",
           "originHorizontalLayout": "LEFT",
-          "parentLayout": "renderingEngineDevSceneMenuItem"
+          "referenceViewBoundsName": "renderingEngineDevSceneMenuItem"
         }
       ]
     },
