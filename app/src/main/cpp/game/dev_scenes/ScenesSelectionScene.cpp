@@ -10,20 +10,12 @@ using namespace Engine3D::Utils;
 
 void ScenesSelectionScene::update(float) {
     if (m_renderingEngineDevSceneMenuItemClickDetector->isClickDetected()) {
-        L::d("!@£", "Click!!!");
+        m_sceneManager->requestSceneLoadAndStart(SceneType::RENDERING_ENGINE_DEV_SCENE);
     }
 
-    /*if (m_renderingEngineDevSceneMenuItemClickDetector->isPressDetected()) {
-        m_renderingEngineDevSceneMenuItemTextComponent->setTextColor(glm::vec4(1, 1, 1, 1));
-    } else {
-        m_renderingEngineDevSceneMenuItemTextComponent->setTextColor(glm::vec4(0.5, 0.5, 1, 1));
+    if (m_screenBlinkingSceneMenuItemClickDetector->isClickDetected()) {
+        m_sceneManager->requestSceneLoadAndStart(SceneType::SCREEN_BLINKING_SCENE);
     }
-
-    if (m_screenBlinkingSceneMenuItemClickDetector->isPressDetected()) {
-        m_screenBlinkingSceneMenuItemTextComponent->setTextColor(glm::vec4(1, 1, 1, 1));
-    } else {
-        m_screenBlinkingSceneMenuItemTextComponent->setTextColor(glm::vec4(0.5, 0.5, 1, 1));
-    }*/
 }
 
 void ScenesSelectionScene::restoreFromStateRepresentation(const std::string stateRepresentation) {

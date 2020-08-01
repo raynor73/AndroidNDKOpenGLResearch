@@ -47,7 +47,9 @@ GameWrapper::GameWrapper(
     m_texturesRepository(std::make_shared<OpenGLTexturesRepository>(m_openGlErrorDetector)),
     m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository)),
     m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue))
-    {}
+    {
+        m_sceneManager = std::shared_ptr<SceneManager>(this);
+    }
 
 void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent) {
     m_messageQueue->putMessage({ TOUCH_EVENT_MESSAGE_TYPE_NAME, touchEvent });
@@ -68,7 +70,8 @@ void GameWrapper::onDrawFrame() {
                         m_meshLoadingRepository,
                         m_meshRendererFactory,
                         m_textRendererFactory,
-                        m_touchScreen
+                        m_touchScreen,
+                        m_sceneManager
                 );
                 m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
                 break;

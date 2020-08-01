@@ -9,11 +9,14 @@
 #include <game/Scene.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
 #include <engine_3d/TextComponent.h>
+#include <game/SceneManager.h>
 
 class ScenesSelectionScene : public Scene {
 
     std::shared_ptr<ClickDetectorComponent> m_renderingEngineDevSceneMenuItemClickDetector;
     std::shared_ptr<ClickDetectorComponent> m_screenBlinkingSceneMenuItemClickDetector;
+
+    std::shared_ptr<SceneManager> m_sceneManager;
 
 public:
     ScenesSelectionScene(
@@ -23,7 +26,8 @@ public:
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
             std::shared_ptr<TextRendererFactory> textRendererFactory,
-            std::shared_ptr<TouchScreen> touchScreen
+            std::shared_ptr<TouchScreen> touchScreen,
+            std::shared_ptr<SceneManager> sceneManager
     ) : Scene(
             timeProvider,
             displayInfo,
@@ -32,7 +36,7 @@ public:
             meshRendererFactory,
             textRendererFactory,
             touchScreen
-    ) {}
+    ), m_sceneManager(sceneManager) {}
 
     virtual void update(float dt) override;
 

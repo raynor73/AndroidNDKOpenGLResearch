@@ -53,6 +53,7 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
     std::shared_ptr<AndroidTouchScreen> m_touchScreen;
+    std::shared_ptr<SceneManager> m_sceneManager;
 
     std::optional<SceneType> m_requestedSceneTypeOptional;
 
