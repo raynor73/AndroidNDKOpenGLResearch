@@ -44,7 +44,12 @@ GameWrapper::GameWrapper(
     m_shaderSourcePreprocessor(std::make_shared<ShaderSourcePreprocessor>(m_shaderSourceRepository)),
     m_geometryBuffersStorage(std::make_shared<OpenGLGeometryBuffersStorage>(m_openGlErrorDetector)),
     m_verticalQuadBuffersRepository(std::make_shared<OpenGLVerticalQuadBuffersRepository>(m_geometryBuffersStorage)),
-    m_texturesRepository(std::make_shared<OpenGLTexturesRepository>(m_openGlErrorDetector)),
+    m_bitmapDataLoader(std::make_shared<AndroidBitmapDataLoader>(
+            m_javaVm,
+            bridgeClass,
+            bridgeObject
+    )),
+    m_texturesRepository(std::make_shared<OpenGLTexturesRepository>(m_displayInfo, m_bitmapDataLoader, m_openGlErrorDetector)),
     m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository)),
     m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue))
     {

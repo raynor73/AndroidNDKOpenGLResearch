@@ -8,6 +8,10 @@
 #include <sstream>
 #include "OpenGLTexturesRepository.h"
 
+const std::vector<float> OpenGLTexturesRepository::AVAILABLE_BITMAP_DENSITIES = {
+        1, 2, 3, 4
+};
+
 void OpenGLTexturesRepository::createTexture(
         const std::string& name,
         uint_t width,
@@ -15,6 +19,10 @@ void OpenGLTexturesRepository::createTexture(
         const std::vector<uint8_t>& data
 ) {
     createTexture(name, width, height, data, false);
+}
+
+void OpenGLTexturesRepository::createDisplayDensityFactorAwareTexture(const std::string& name, const std::string& path) {
+    createDisplayDensityFactorAwareTexture(name, path, false);
 }
 
 /*void OpenGLTexturesRepository::createGlyphTexture(
@@ -33,11 +41,7 @@ void OpenGLTexturesRepository::createTexture(
         const std::vector<uint8_t>& data,
         bool isBeingRestored
 ) {
-    if (m_textures.count(name) > 0) {
-        std::stringstream ss;
-        ss << "Texture " << name << " already exists";
-        throw std::domain_error(ss.str());
-    }
+    throwIfTextureAlreadyExists(name);
 
     GLuint texture;
     glGenTextures(1, &texture);
@@ -59,6 +63,52 @@ void OpenGLTexturesRepository::createTexture(
 
     if (!isBeingRestored) {
         m_texturesCreationParams[name] = TextureFromMemoryCreationParams { name, width, height, data };
+    }
+
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createTexture from memory");
+}
+
+void OpenGLTexturesRepository::createDisplayDensityFactorAwareTexture(
+        const std::string& name,
+        const std::string& path,
+        bool isBeingRestored
+) {
+    throwIfTextureAlreadyExists(name);
+
+    std::stringstream ss;
+    ss << buildDensityPathSegment() << path;
+    auto bitmapInfo = m_bitmapDataLoader->loadBitmap(ss.str());
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGBA,
+            bitmapInfo.width,
+            bitmapInfo.height,
+            0,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            bitmapInfo.data.data()
+    );
+
+    m_textures[name] = TextureInfo { texture, bitmapInfo.width, bitmapInfo.height };
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (!isBeingRestored) {
+        m_texturesCreationParams[name] = DisplayDensityFactorAwareTextureFromFileCreationParams { name, path };
     }
 
     m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createTexture from memory");
@@ -146,7 +196,8 @@ void OpenGLTexturesRepository::restoreTextures() {
                     textureFromMemoryCreationParams.name,
                     textureFromMemoryCreationParams.width,
                     textureFromMemoryCreationParams.height,
-                    textureFromMemoryCreationParams.data
+                    textureFromMemoryCreationParams.data,
+                    true
             );
         }
 
@@ -159,5 +210,25 @@ void OpenGLTexturesRepository::restoreTextures() {
                     glyphTextureCreationParams.data
             );
         }*/
+
+        if (std::holds_alternative<DisplayDensityFactorAwareTextureFromFileCreationParams>(entry.second)) {
+            auto textureCreationParams = std::get<DisplayDensityFactorAwareTextureFromFileCreationParams>(entry.second);
+            createDisplayDensityFactorAwareTexture(textureCreationParams.name, textureCreationParams.path, true);
+        }
     }
+}
+
+std::string OpenGLTexturesRepository::buildDensityPathSegment() {
+    std::stringstream ss;
+    int roundedDensityFactor = std::ceil(m_displayInfo->densityFactor());
+
+    for (auto availableBitmapDensity : AVAILABLE_BITMAP_DENSITIES) {
+        if (availableBitmapDensity >= roundedDensityFactor) {
+            ss << availableBitmapDensity << 'x';
+            return ss.str();
+        }
+    }
+
+    ss << AVAILABLE_BITMAP_DENSITIES.back() << 'x';
+    return ss.str();
 }

@@ -13,6 +13,8 @@
 #include <optional>
 #include <game/TexturesRepository.h>
 #include <main/OpenGLErrorDetector.h>
+#include <main/AndroidBitmapDataLoader.h>
+#include <game/DisplayInfo.h>
 #include "TextureCreationParams.h"
 #include "TextureInfo.h"
 
@@ -20,14 +22,20 @@ class OpenGLTexturesRepository : public TexturesRepository {
 
     std::unordered_map<std::string, TextureInfo> m_textures;
 
+    std::shared_ptr<DisplayInfo> m_displayInfo;
+    std::shared_ptr<BitmapDataLoader> m_bitmapDataLoader;
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
-    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams/*, GlyphTextureCreationParams*/>> m_texturesCreationParams;
+    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams/*, GlyphTextureCreationParams*/, DisplayDensityFactorAwareTextureFromFileCreationParams>> m_texturesCreationParams;
 
 public:
     OpenGLTexturesRepository(
+            std::shared_ptr<DisplayInfo> displayInfo,
+            std::shared_ptr<BitmapDataLoader> bitmapDataLoader,
             std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector
-    ) : m_openGLErrorDetector(openGLErrorDetector) {}
+    ) : m_displayInfo(displayInfo),
+        m_bitmapDataLoader(bitmapDataLoader),
+        m_openGLErrorDetector(openGLErrorDetector) {}
     OpenGLTexturesRepository(const OpenGLTexturesRepository&) = delete;
     OpenGLTexturesRepository(OpenGLTexturesRepository&&) = delete;
 
@@ -37,6 +45,8 @@ public:
             uint_t height,
             const std::vector<uint8_t>& data
     ) override;
+
+    virtual void createDisplayDensityFactorAwareTexture(const std::string& name, const std::string& path) override;
 
     /*virtual void createGlyphTexture(
             const std::string& name,
@@ -57,6 +67,14 @@ public:
     OpenGLTexturesRepository& operator=(OpenGLTexturesRepository&&) = delete;
 
 private:
+    inline void throwIfTextureAlreadyExists(const std::string& name) {
+        if (m_textures.count(name) > 0) {
+            std::stringstream ss;
+            ss << "Texture " << name << " already exists";
+            throw std::domain_error(ss.str());
+        }
+    }
+
     void createTexture(
             const std::string& name,
             uint_t width,
@@ -65,6 +83,8 @@ private:
             bool isBeingRestored
     );
 
+    void createDisplayDensityFactorAwareTexture(const std::string& name, const std::string& path, bool isBeingRestored);
+
     /*void createGlyphTexture(
             const std::string& name,
             uint_t width,
@@ -72,6 +92,10 @@ private:
             const std::vector<uint8_t>& data,
             bool isBeingRestored
     );*/
+
+    std::string buildDensityPathSegment();
+
+    static const std::vector<float> AVAILABLE_BITMAP_DENSITIES;
 };
 
 

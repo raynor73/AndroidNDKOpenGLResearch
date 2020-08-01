@@ -74,6 +74,7 @@ add_library(
         main/AndroidShaderSourceRepository.cpp
         main/AndroidFontDataLoader.cpp
         main/AndroidTouchScreen.cpp
+        main/AndroidBitmapDataLoader.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

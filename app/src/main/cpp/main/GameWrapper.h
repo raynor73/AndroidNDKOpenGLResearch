@@ -23,6 +23,7 @@
 #include <main/rendering_engine/OpenGLTexturesRepository.h>
 #include <game/touch_screen/TouchEvent.h>
 #include <game/SceneManager.h>
+#include "AndroidBitmapDataLoader.h"
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
 #include "AndroidFontDataLoader.h"
@@ -50,6 +51,7 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<ShaderSourcePreprocessor> m_shaderSourcePreprocessor;
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
     std::shared_ptr<OpenGLVerticalQuadBuffersRepository> m_verticalQuadBuffersRepository;
+    std::shared_ptr<AndroidBitmapDataLoader> m_bitmapDataLoader;
     std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
     std::shared_ptr<AndroidTouchScreen> m_touchScreen;

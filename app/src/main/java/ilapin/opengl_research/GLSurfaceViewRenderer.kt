@@ -2,9 +2,11 @@ package ilapin.opengl_research
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
 import android.util.Log
 import ilapin.opengl_research.MainActivity.Companion.LOG_TAG
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -42,6 +44,15 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         val fileContent = inputStream.readBytes()
         inputStream.close()
         return fileContent
+    }
+
+    fun loadBitmapFileFromAssets(path: String): BitmapInfo {
+        val inputStream = context.assets.open(path)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        val byteBuffer = ByteBuffer.allocateDirect(bitmap.width * bitmap.height * 4);
+        bitmap.copyPixelsToBuffer(byteBuffer)
+        inputStream.close()
+        return BitmapInfo(byteBuffer.array(), bitmap.width, bitmap.height)
     }
 
     @SuppressLint("LongLogTag")

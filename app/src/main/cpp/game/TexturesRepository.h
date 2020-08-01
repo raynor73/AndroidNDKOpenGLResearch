@@ -19,6 +19,8 @@ public:
             const std::vector<uint8_t>& data
     ) = 0;
 
+    virtual void createDisplayDensityFactorAwareTexture(const std::string& name, const std::string& path) = 0;
+
     /*virtual void createGlyphTexture(
             const std::string& name,
             uint_t width,

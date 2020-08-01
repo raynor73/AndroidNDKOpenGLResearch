@@ -20,6 +20,10 @@ struct TextureFromMemoryCreationParams : public TextureCreationParams {
     std::vector<uint8_t> data;
 };
 
+struct DisplayDensityFactorAwareTextureFromFileCreationParams : public TextureCreationParams {
+    std::string path;
+};
+
 //struct GlyphTextureCreationParams : public TextureFromMemoryCreationParams {};
 
 
