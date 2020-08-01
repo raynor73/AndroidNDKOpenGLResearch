@@ -23,6 +23,7 @@
 #include <engine_3d/LayoutComponent.h>
 #include <game/touch_screen/GestureConsumerComponent.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
+#include <engine_3d/TextButtonComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -457,6 +458,10 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         return gestureConsumer;
     } else if (type == "ClickDetector") {
         return std::make_shared<ClickDetectorComponent>();
+    } else if (type == "TextButton") {
+        auto textColor = parseColor4f(componentJson["textColor"]);
+        auto pressedTextColor = parseColor4f(componentJson["pressedTextColor"]);
+        return std::make_shared<TextButtonComponent>(textColor, pressedTextColor);
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

@@ -39,7 +39,8 @@
           "referenceViewBoundsName": "root"
         },
         { "type": "GestureConsumer", "priority": 10 },
-        { "type": "ClickDetector" }
+        { "type": "ClickDetector" },
+        { "type": "TextButton", "textColor": [0.5, 0.5, 1, 1], "pressedTextColor": [1, 1, 1, 1] }
       ]
     },
     {
@@ -67,7 +68,8 @@
           "referenceViewBoundsName": "renderingEngineDevSceneMenuItem"
         },
         { "type": "GestureConsumer", "priority": 10 },
-        { "type": "ClickDetector" }
+        { "type": "ClickDetector" },
+        { "type": "TextButton", "textColor": [0.5, 0.5, 1, 1], "pressedTextColor": [1, 1, 1, 1] }
       ]
     },
     {

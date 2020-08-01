@@ -32,6 +32,7 @@ add_library(
         engine_3d/TextAppearance.cpp
         engine_3d/LayoutComponent.cpp
         engine_3d/ViewBoundsComponent.cpp
+        engine_3d/TextButtonComponent.cpp
         game/touch_screen/GestureConsumerComponent.cpp
 
         game/DisplayInfo.cpp
