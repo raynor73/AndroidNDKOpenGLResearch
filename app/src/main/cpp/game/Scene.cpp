@@ -245,7 +245,12 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
             auto componentsJsonArray = gameObjectJson["components"];
             if (componentsJsonArray.is_array()) {
                 for (auto& componentJson : componentsJsonArray) {
-                    gameObject->addComponent(parseComponent(componentJson, materialsMap, textAppearancesMap));
+                    auto ptr = gameObject.get();
+                    auto component = parseComponent(componentJson, materialsMap, textAppearancesMap);
+                    if (ptr != gameObject.get()) {
+                        throw std::domain_error("WTF");
+                    }
+                    gameObject->addComponent(component);
                 }
             }
         }

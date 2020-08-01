@@ -42,9 +42,7 @@ void GestureConsumerComponent::prepare() {
 }
 
 std::shared_ptr<ViewBoundsComponent> GestureConsumerComponent::findViewBounds() const {
-    if (m_gameObject == nullptr) {
-        throw std::domain_error("Gesture Consumer has no Game Object");
-    }
+    throwErrorIfNoGameObject();
 
     auto viewBounds = std::static_pointer_cast<ViewBoundsComponent>(
             m_gameObject->findComponent(ViewBoundsComponent::TYPE_NAME)

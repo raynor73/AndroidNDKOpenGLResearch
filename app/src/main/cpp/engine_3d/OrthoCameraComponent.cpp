@@ -12,11 +12,7 @@
 const std::string OrthoCameraComponent::TYPE_NAME = "OrthoCameraComponent";
 
 glm::mat4 OrthoCameraComponent::calculateViewMatrix() {
-    if (m_gameObject == nullptr) {
-        std::stringstream ss;
-        ss << "Component " << typeName() << " has no game object";
-        throw std::domain_error(ss.str());
-    }
+    throwErrorIfNoGameObject();
 
     auto transform = std::static_pointer_cast<TransformationComponent>(
             m_gameObject->findComponent(TransformationComponent::TYPE_NAME)

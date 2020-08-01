@@ -18,9 +18,9 @@ class GameObjectComponent {
 
 protected:
     bool m_isEnabled;
-    std::shared_ptr<GameObject> m_gameObject;
+    GameObject* m_gameObject = nullptr;
 
-    void throwErrorIfNoGameObject() {
+    void throwErrorIfNoGameObject() const {
         if (m_gameObject == nullptr) {
             std::stringstream ss;
             ss << "No game object for component of type " << typeName();
@@ -47,8 +47,10 @@ public:
 
     virtual const std::string& typeName() const = 0;
 
-    std::shared_ptr<GameObject> gameObject() { return m_gameObject; }
-    void setGameObject(const std::shared_ptr<GameObject>& gameObject) { m_gameObject = gameObject; }
+    /*std::shared_ptr<GameObject> gameObject() { return m_gameObject.lock(); }
+    void setGameObject(const std::shared_ptr<GameObject>& gameObject) { m_gameObject = gameObject; }*/
+    GameObject* gameObject() { return m_gameObject; }
+    void setGameObject(GameObject* gameObject) { m_gameObject = gameObject; }
 
     virtual void update() {};
     virtual void onAttachedToGameObject() {};

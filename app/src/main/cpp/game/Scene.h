@@ -19,6 +19,7 @@
 #include <game/TextRendererFactory.h>
 #include <game/touch_screen/TouchScreen.h>
 #include <game/touch_screen/GesturesDispatcher.h>
+#include <main/L.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
 
@@ -38,7 +39,9 @@ public:
             std::shared_ptr<TextRendererFactory> textRendererFactory,
             std::shared_ptr<TouchScreen> touchScreen
     );
-    virtual ~Scene() = default;
+    virtual ~Scene() {
+        L::d("!@£", "Scene::~Scene");
+    }
 
     std::shared_ptr<GameObject> rootGameObject() { return m_rootGameObject; }
 

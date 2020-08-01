@@ -14,12 +14,12 @@
 #include <sstream>
 #include "GameObjectComponent.h"
 
-class GameObject : public std::enable_shared_from_this<GameObject> {
+class GameObject /*: public std::enable_shared_from_this<GameObject>*/ {
 
     bool m_isEnabled;
     std::string m_name;
 
-    std::shared_ptr<GameObject> m_parent;
+    GameObject* m_parent = nullptr;
     std::unordered_map<std::string, std::shared_ptr<GameObject>> m_children;
     std::unordered_map<std::string, std::shared_ptr<GameObjectComponent>> m_components;
 
@@ -36,7 +36,8 @@ public:
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
-    std::shared_ptr<GameObject> parent() { return m_parent; }
+    //std::shared_ptr<GameObject> parent() { return m_parent.lock(); }
+    GameObject* parent() { return m_parent; }
     const std::unordered_map<std::string, std::shared_ptr<GameObject>>& children() const { return m_children; }
 
     void addChild(const std::shared_ptr<GameObject>& child);

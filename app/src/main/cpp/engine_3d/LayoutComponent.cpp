@@ -40,9 +40,7 @@ void LayoutComponent::update() {
     m_prevReferenceRightViewBound = currentReferenceRightViewBound;
     m_prevReferenceBottomViewBound = currentReferenceBottomViewBound;
 
-    if (m_gameObject == nullptr) {
-        throw std::domain_error("Layout component has no game object");
-    }
+    throwErrorIfNoGameObject();
 
     auto viewBounds = std::static_pointer_cast<ViewBoundsComponent>(
             m_gameObject->findComponent(ViewBoundsComponent::TYPE_NAME)

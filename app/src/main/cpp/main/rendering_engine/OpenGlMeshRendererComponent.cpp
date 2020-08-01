@@ -21,7 +21,9 @@ void OpenGlMeshRendererComponent::render(
         const glm::mat4x4& viewMatrix,
         const glm::mat4x4& projectionMatrix
 ) {
-    if (!m_isEnabled || m_gameObject == nullptr || !m_gameObject->isEnabled()) {
+    throwErrorIfNoGameObject();
+
+    if (!m_isEnabled || !m_gameObject->isEnabled()) {
         return;
     }
 

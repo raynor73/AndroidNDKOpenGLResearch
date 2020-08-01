@@ -20,8 +20,12 @@ GameObject::~GameObject() {
     ss << "GameObject::~GameObject: " << m_name;
     L::d("!@£", ss.str());
 
-    m_children.clear();
-    m_components.clear();
+    for (auto& entry : m_children) {
+        removeChild(entry.second);
+    }
+    for (auto& entry : m_components) {
+        removeComponent(entry.second);
+    }
 }
 
 void GameObject::addChild(const std::shared_ptr<GameObject>& child) {
@@ -33,7 +37,7 @@ void GameObject::addChild(const std::shared_ptr<GameObject>& child) {
     }
 
     m_children[childName] = child;
-    child->m_parent = shared_from_this();// std::shared_ptr<GameObject>(this);
+    child->m_parent = this;
     child->onAttachedToParent();
 }
 
@@ -46,7 +50,7 @@ void GameObject::removeChild(const std::shared_ptr<GameObject>& child) {
     }
 
     m_children.erase(childName);
-    child->m_parent.reset();
+    child->m_parent = nullptr;
     child->onDetachedFromParent();
 }
 
@@ -59,7 +63,7 @@ void GameObject::addComponent(const std::shared_ptr<GameObjectComponent>& compon
     }
 
     m_components[componentName] = component;
-    component->setGameObject(std::shared_ptr<GameObject>(this));
+    component->setGameObject(this);
     component->onAttachedToGameObject();
 }
 
@@ -72,7 +76,7 @@ void GameObject::removeComponent(const std::shared_ptr<GameObjectComponent>& com
     }
 
     m_components.erase(componentName);
-    component->setGameObject(std::shared_ptr<GameObject>());
+    component->setGameObject(nullptr);
     component->onDetachedFromGameObject();
 }
 

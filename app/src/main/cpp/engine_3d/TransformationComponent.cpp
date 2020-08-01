@@ -43,11 +43,7 @@ void TransformationComponent::setScale(const glm::vec3 &scale) {
 }
 
 void TransformationComponent::setDirty() {
-    if (m_gameObject == nullptr) {
-        std::stringstream ss;
-        ss << "Component " << typeName() << " has no parent game object";
-        throw domain_error(ss.str());
-    }
+    throwErrorIfNoGameObject();
 
     auto children = m_gameObject->children();
     for (auto& entry : children) {
@@ -67,11 +63,7 @@ void TransformationComponent::setDirty() {
 
 void TransformationComponent::calculateFinalTransformation() {
     if (m_isDirty) {
-        if (m_gameObject == nullptr) {
-            std::stringstream msgBuilder;
-            msgBuilder << "Component " << TYPE_NAME << " has no parent game object";
-            throw domain_error(msgBuilder.str());
-        }
+        throwErrorIfNoGameObject();
         auto parentGameObject = m_gameObject->parent();
         if (parentGameObject != nullptr) {
             auto parentTransform = std::static_pointer_cast<TransformationComponent>(
