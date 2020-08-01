@@ -22,7 +22,6 @@ void ClickDetectorComponent::update() {
     throwErrorIfNull(m_gestureConsumer, "No gesture consumer for click detector");
 
     m_isClickDetected = false;
-    m_isPressDetected = false;
 
     auto touchEvents = m_gestureConsumer->touchEvents();
 
@@ -46,8 +45,9 @@ void ClickDetectorComponent::update() {
             }
         } else {
             m_prevTouchEventOptional = touchEvent;
-            m_isPressDetected = true;
         }
+
+        m_isPressDetected = !(touchEvent.type == TouchEventType::UP || touchEvent.type == TouchEventType::CANCEL);
     }
 }
 

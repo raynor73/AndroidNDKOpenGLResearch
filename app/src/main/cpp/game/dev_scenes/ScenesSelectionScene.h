@@ -8,11 +8,15 @@
 
 #include <game/Scene.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
+#include <engine_3d/TextComponent.h>
 
 class ScenesSelectionScene : public Scene {
 
     std::shared_ptr<ClickDetectorComponent> m_renderingEngineDevSceneMenuItemClickDetector;
+    std::shared_ptr<TextComponent> m_renderingEngineDevSceneMenuItemTextComponent;
+
     std::shared_ptr<ClickDetectorComponent> m_screenBlinkingSceneMenuItemClickDetector;
+    std::shared_ptr<TextComponent> m_screenBlinkingSceneMenuItemTextComponent;
 
 public:
     ScenesSelectionScene(
