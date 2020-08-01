@@ -37,7 +37,9 @@
           "originVerticalLayout": "BOTTOM",
           "originHorizontalLayout": "LEFT",
           "referenceViewBoundsName": "root"
-        }
+        },
+        { "type": "GestureConsumer", "priority": 10 },
+        { "type": "ClickDetector" }
       ]
     },
     {
@@ -63,7 +65,9 @@
           "originVerticalLayout": "BOTTOM",
           "originHorizontalLayout": "LEFT",
           "referenceViewBoundsName": "renderingEngineDevSceneMenuItem"
-        }
+        },
+        { "type": "GestureConsumer", "priority": 10 },
+        { "type": "ClickDetector" }
       ]
     },
     {

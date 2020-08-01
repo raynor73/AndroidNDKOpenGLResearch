@@ -8,6 +8,8 @@
 
 #include <memory>
 #include <string>
+#include <exception>
+#include <sstream>
 
 class GameObject;
 
@@ -16,6 +18,14 @@ class GameObjectComponent {
 protected:
     bool m_isEnabled;
     std::shared_ptr<GameObject> m_gameObject;
+
+    void throwErrorIfNoGameObject() {
+        if (m_gameObject == nullptr) {
+            std::stringstream ss;
+            ss << "No game object for component of type " << typeName();
+            throw std::domain_error(ss.str());
+        }
+    }
 
 public:
     GameObjectComponent() : m_isEnabled(true) {}

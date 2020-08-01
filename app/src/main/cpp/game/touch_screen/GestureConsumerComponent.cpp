@@ -4,14 +4,16 @@
 
 #include <memory>
 #include <exception>
+#include <game/touch_screen/GesturesDispatcher.h>
 #include "engine_3d/GameObject.h"
 #include "GestureConsumerComponent.h"
 
 const std::string GestureConsumerComponent::TYPE_NAME = "GestureConsumerComponent";
 
 std::shared_ptr<GameObjectComponent> GestureConsumerComponent::clone() {
-    auto clone = std::make_shared<GestureConsumerComponent>(m_priority);
+    auto clone = std::make_shared<GestureConsumerComponent>(m_gesturesDispatcher, m_priority);
     clone->setEnabled(m_isEnabled);
+    m_gesturesDispatcher->addGestureConsumer(clone);
     return clone;
 }
 

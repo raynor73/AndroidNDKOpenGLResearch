@@ -27,6 +27,7 @@ class Scene {
     float m_prevTimestamp;
     bool m_hasPrevTimestamp;
 
+
 public:
     explicit Scene(
             std::shared_ptr<TimeProvider> timeProvider,
@@ -54,7 +55,7 @@ protected:
     std::shared_ptr<TouchScreen> m_touchScreen;
 
     MeshStorage m_meshStorage;
-    GesturesDispatcher m_gesturesDispatcher;
+    std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;
 
     std::shared_ptr<GameObject> m_rootGameObject;
     std::unordered_map<std::string, std::shared_ptr<GameObject>> m_gameObjectsMap;

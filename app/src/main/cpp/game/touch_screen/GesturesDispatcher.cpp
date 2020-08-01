@@ -7,25 +7,32 @@
 #include "GesturesDispatcher.h"
 
 void GesturesDispatcher::addGestureConsumer(std::shared_ptr<GestureConsumerComponent> gestureConsumer) {
-    if (m_gestureConsumers.count(gestureConsumer) > 0) {
-        throw std::domain_error("Trying to add gesture consumer twice");
+    for (auto& existingGestureConsumer : m_gestureConsumers) {
+        if (existingGestureConsumer == gestureConsumer) {
+            throw std::domain_error("Trying to add gesture consumer twice");
+        }
     }
 
-    m_gestureConsumers.insert(gestureConsumer);
+    m_gestureConsumers.push_back(gestureConsumer);
+
+    updateOrder();
 }
 
 void GesturesDispatcher::removeGestureConsumer(std::shared_ptr<GestureConsumerComponent> gestureConsumer) {
-    if (m_gestureConsumers.count(gestureConsumer) == 0) {
-        throw std::domain_error("Gesture consumer not found");
+    for (auto it = m_gestureConsumers.begin(); it != m_gestureConsumers.end(); it++) {
+        if (*it == gestureConsumer) {
+            m_gestureConsumers.erase(it);
+            if (m_gestureOwnerToEventIdMap.count(gestureConsumer) > 0) {
+                auto eventId = m_gestureOwnerToEventIdMap.at(gestureConsumer);
+                m_gestureOwnerToEventIdMap.erase(gestureConsumer);
+                m_eventIdToGestureOwnerMap.erase(eventId);
+            }
+            updateOrder();
+            return;
+        }
     }
 
-    m_gestureConsumers.erase(gestureConsumer);
-
-    if (m_gestureOwnerToEventIdMap.count(gestureConsumer) > 0) {
-        auto eventId = m_gestureOwnerToEventIdMap.at(gestureConsumer);
-        m_gestureOwnerToEventIdMap.erase(gestureConsumer);
-        m_eventIdToGestureOwnerMap.erase(eventId);
-    }
+    throw std::domain_error("Gesture consumer not found");
 }
 
 void GesturesDispatcher::removeAllGestureConsumers() {
@@ -74,6 +81,16 @@ std::shared_ptr<GestureConsumerComponent> GesturesDispatcher::findMatchingGestur
     }
 
     return nullptr;
+}
+
+void GesturesDispatcher::updateOrder() {
+    std::sort(
+            m_gestureConsumers.begin(),
+            m_gestureConsumers.end(),
+            [](const std::shared_ptr<GestureConsumerComponent>& lhs, const std::shared_ptr<GestureConsumerComponent>& rhs) {
+                return lhs->priority() > rhs->priority();
+            }
+    );
 }
 
 

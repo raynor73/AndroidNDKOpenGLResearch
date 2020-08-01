@@ -8,17 +8,25 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <engine_3d/GameObjectComponent.h>
 #include <engine_3d/ViewBoundsComponent.h>
 #include "TouchEvent.h"
+
+class GesturesDispatcher;
 
 class GestureConsumerComponent : public GameObjectComponent {
 
     int m_priority;
     std::vector<TouchEvent> m_touchEvents;
+    std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;
 
 public:
-    GestureConsumerComponent(uint priority) : m_priority(priority) {}
+    GestureConsumerComponent(
+            const std::shared_ptr<GesturesDispatcher>& gesturesDispatcher,
+            int priority
+    ) : m_gesturesDispatcher(gesturesDispatcher),
+        m_priority(priority) {}
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }
 

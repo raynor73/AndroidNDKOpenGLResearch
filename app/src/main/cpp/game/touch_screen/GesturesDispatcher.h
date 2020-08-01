@@ -7,20 +7,13 @@
 
 
 #include <memory>
-#include <set>
+#include <vector>
 #include <unordered_map>
 #include <game/touch_screen/GestureConsumerComponent.h>
 
-static bool gestureConsumerComponentsComparator(
-        const std::shared_ptr<GestureConsumerComponent>& lhs,
-        const std::shared_ptr<GestureConsumerComponent>& rhs
-) {
-    return lhs->priority() > rhs->priority();
-}
-
 class GesturesDispatcher {
 
-    std::set<std::shared_ptr<GestureConsumerComponent>, bool(*)(const std::shared_ptr<GestureConsumerComponent>&, const std::shared_ptr<GestureConsumerComponent>&)> m_gestureConsumers { &gestureConsumerComponentsComparator };
+    std::vector<std::shared_ptr<GestureConsumerComponent>> m_gestureConsumers;
     std::unordered_map<int, std::shared_ptr<GestureConsumerComponent>> m_eventIdToGestureOwnerMap;
     std::unordered_map<std::shared_ptr<GestureConsumerComponent>, int> m_gestureOwnerToEventIdMap;
 
@@ -41,6 +34,7 @@ public:
 
 private:
     std::shared_ptr<GestureConsumerComponent> findMatchingGestureConsumer(const TouchEvent& touchEvent);
+    void updateOrder();
 };
 
 

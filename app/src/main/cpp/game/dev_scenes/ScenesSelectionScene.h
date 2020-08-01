@@ -7,8 +7,12 @@
 
 
 #include <game/Scene.h>
+#include <game/touch_screen/ClickDetectorComponent.h>
 
 class ScenesSelectionScene : public Scene {
+
+    std::shared_ptr<ClickDetectorComponent> m_renderingEngineDevSceneMenuItemClickDetector;
+    std::shared_ptr<ClickDetectorComponent> m_screenBlinkingSceneMenuItemClickDetector;
 
 public:
     ScenesSelectionScene(
@@ -30,6 +34,8 @@ public:
     ) {}
 
     virtual void update(float dt) override;
+
+    virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
 };
 
 

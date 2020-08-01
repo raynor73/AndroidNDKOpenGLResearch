@@ -6,11 +6,6 @@
 #include "RenderingEngineDevScene.h"
 
 void RenderingEngineDevScene::update(float dt) {
-    m_gesturesDispatcher.prepare();
-    for (auto& touchEvent : m_touchScreen->events()) {
-        m_gesturesDispatcher.onTouchEvent(touchEvent);
-    }
-
     m_fpsCalculator.update(dt);
 
     auto fpsText = std::static_pointer_cast<TextComponent>(

@@ -47,6 +47,7 @@ add_library(
         game/FpsCalculator.cpp
         game/touch_screen/GesturesDispatcher.cpp
         game/dev_scenes/ScenesSelectionScene.cpp
+        game/touch_screen/ClickDetectorComponent.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

@@ -21,6 +21,8 @@
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/ViewBoundsComponent.h>
 #include <engine_3d/LayoutComponent.h>
+#include <game/touch_screen/GestureConsumerComponent.h>
+#include <game/touch_screen/ClickDetectorComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -41,12 +43,18 @@ Scene::Scene(
     m_meshLoadingRepository(meshLoadingRepository),
     m_meshRendererFactory(meshRendererFactory),
     m_textRendererFactory(textRendererFactory),
-    m_touchScreen(touchScreen)
+    m_touchScreen(touchScreen),
+    m_gesturesDispatcher(std::make_shared<GesturesDispatcher>())
 {
     m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
 }
 
 void Scene::update() {
+    m_gesturesDispatcher->prepare();
+    for (auto& event : m_touchScreen->events()) {
+        m_gesturesDispatcher->onTouchEvent(event);
+    }
+
     m_rootGameObject->update();
 
     auto currentTimestamp = m_timeProvider->getTimestamp();
@@ -436,6 +444,19 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 originHorizontalLayoutType,
                 referenceViewBounds
         });
+    } else if (type == "GestureConsumer") {
+        auto priorityJson = componentJson["priority"];
+        if (!priorityJson.is_number()) {
+            throw std::domain_error("Can't find priority for gesture consumer");
+        }
+        auto gestureConsumer = std::make_shared<GestureConsumerComponent>(
+                m_gesturesDispatcher,
+                priorityJson.get<int>()
+        );
+        m_gesturesDispatcher->addGestureConsumer(gestureConsumer);
+        return gestureConsumer;
+    } else if (type == "ClickDetector") {
+        return std::make_shared<ClickDetectorComponent>();
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
