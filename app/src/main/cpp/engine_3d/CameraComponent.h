@@ -31,6 +31,7 @@ protected:
 
 public:
     CameraComponent(const glm::vec4& clearColor, const std::vector<std::string>& layerNames, float zNear, float zFar) :
+        m_clearColor(clearColor),
         m_layerNames(layerNames),
         m_zNear(zNear),
         m_zFar(zFar) {}
