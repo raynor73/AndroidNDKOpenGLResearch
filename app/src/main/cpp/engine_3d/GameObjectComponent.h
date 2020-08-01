@@ -10,6 +10,7 @@
 #include <string>
 #include <exception>
 #include <sstream>
+#include <main/L.h>
 
 class GameObject;
 
@@ -28,10 +29,18 @@ protected:
     }
 
 public:
-    GameObjectComponent() : m_isEnabled(true) {}
+    GameObjectComponent() : m_isEnabled(true) {
+        std::stringstream ss;
+        ss << "GameObjectComponent::GameObjectComponent";
+        L::d("!@£", ss.str());
+    }
     GameObjectComponent(const GameObjectComponent&) = delete;
     GameObjectComponent(GameObjectComponent&&) = delete;
-    virtual ~GameObjectComponent() = default;
+    virtual ~GameObjectComponent() {
+        std::stringstream ss;
+        ss << "GameObjectComponent::~GameObjectComponent";
+        L::d("!@£", ss.str());
+    };
 
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }

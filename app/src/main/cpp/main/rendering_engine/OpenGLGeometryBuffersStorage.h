@@ -26,7 +26,7 @@ class OpenGLGeometryBuffersStorage {
     std::unordered_map<std::string, GLuint> m_vbos;
     std::unordered_map<std::string, IboInfo> m_ibos;
 
-    std::vector<std::variant<VertexBufferCreationParams, IndexBufferCreationParams>> m_buffersCreationParams;
+    std::unordered_map<std::string, std::variant<VertexBufferCreationParams, IndexBufferCreationParams>> m_buffersCreationParams;
 
 public:
     OpenGLGeometryBuffersStorage(std::shared_ptr<OpenGLErrorDetector> openGlErrorDetector) :

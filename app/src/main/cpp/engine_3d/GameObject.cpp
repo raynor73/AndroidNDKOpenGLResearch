@@ -3,13 +3,23 @@
 //
 
 #include <utility>
+#include <main/L.h>
+#include <sstream>
 #include "GameObject.h"
 
 using namespace std;
 
-GameObject::GameObject(std::string name) : m_name(std::move(name)), m_isEnabled(true) {}
+GameObject::GameObject(std::string name) : m_name(std::move(name)), m_isEnabled(true) {
+    std::stringstream ss;
+    ss << "GameObject::GameObject: " << m_name;
+    L::d("!@£", ss.str());
+}
 
 GameObject::~GameObject() {
+    std::stringstream ss;
+    ss << "GameObject::~GameObject: " << m_name;
+    L::d("!@£", ss.str());
+
     m_children.clear();
     m_components.clear();
 }
@@ -23,7 +33,7 @@ void GameObject::addChild(const std::shared_ptr<GameObject>& child) {
     }
 
     m_children[childName] = child;
-    child->m_parent = std::shared_ptr<GameObject>(this);
+    child->m_parent = shared_from_this();// std::shared_ptr<GameObject>(this);
     child->onAttachedToParent();
 }
 

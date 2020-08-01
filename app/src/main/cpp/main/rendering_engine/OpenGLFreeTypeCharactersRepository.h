@@ -51,6 +51,7 @@ public:
     virtual const Character& getCharacter(const TextAppearance& textAppearance, char c) override;
 
     void createCharacters(const TextAppearance& textAppearance);
+    void removeAllCharacters();
 
     OpenGLFreeTypeCharactersRepository& operator=(const OpenGLFreeTypeCharactersRepository&) = delete;
     OpenGLFreeTypeCharactersRepository& operator=(const OpenGLFreeTypeCharactersRepository&&) = delete;

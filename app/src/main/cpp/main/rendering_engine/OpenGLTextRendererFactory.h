@@ -34,6 +34,7 @@ public:
     OpenGLTextRendererFactory(OpenGLTextRendererFactory&&) = delete;
 
     virtual std::shared_ptr<GameObjectComponent> createTextRenderer(std::vector<std::string> layerNames) override;
+    void removeAllCharacters();
 
     OpenGLTextRendererFactory& operator=(const OpenGLTextRendererFactory&) = delete;
     OpenGLTextRendererFactory& operator=(OpenGLTextRendererFactory&&) = delete;

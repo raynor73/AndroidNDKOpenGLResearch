@@ -10,9 +10,9 @@
 
 class FpsCalculator {
 
-    float m_fps;
-    float m_internalFps;
-    float m_elapsedTime;
+    float m_fps = 0;
+    float m_internalFps = 0;
+    float m_elapsedTime = 0;
     std::list<float> m_buffer;
 
 public:

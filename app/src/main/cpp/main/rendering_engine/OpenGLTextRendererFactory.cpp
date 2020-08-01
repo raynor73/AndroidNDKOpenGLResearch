@@ -16,3 +16,7 @@ std::shared_ptr<GameObjectComponent> OpenGLTextRendererFactory::createTextRender
             m_openGLErrorDetector
     );
 }
+
+void OpenGLTextRendererFactory::removeAllCharacters() {
+    m_charactersRepository->removeAllCharacters();
+}

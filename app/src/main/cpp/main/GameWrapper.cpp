@@ -48,6 +48,7 @@ GameWrapper::GameWrapper(
     m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository)),
     m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue))
     {
+        // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
         m_sceneManager = std::shared_ptr<SceneManager>(this);
     }
 
@@ -57,6 +58,7 @@ void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent)
 
 void GameWrapper::onDrawFrame() {
     if (m_requestedSceneTypeOptional) {
+        m_textRendererFactory->removeAllCharacters();
         m_texturesRepository->removeAllTextures();
         m_geometryBuffersStorage->removeAllBuffers();
 

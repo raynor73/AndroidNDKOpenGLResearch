@@ -86,3 +86,10 @@ void OpenGLFreeTypeCharactersRepository::createCharacters(const TextAppearance& 
         m_characterMap.insert({ key, character});
     }
 }
+
+void OpenGLFreeTypeCharactersRepository::removeAllCharacters() {
+    for (auto& entry : m_characterMap) {
+        m_texturesRepository->removeTexture(entry.second.textureName());
+    }
+    m_characterMap.clear();
+}

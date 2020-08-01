@@ -14,7 +14,7 @@
 #include <sstream>
 #include "GameObjectComponent.h"
 
-class GameObject {
+class GameObject : public std::enable_shared_from_this<GameObject> {
 
     bool m_isEnabled;
     std::string m_name;

@@ -64,7 +64,7 @@ GLuint OpenGLGeometryBuffersStorage::createStaticVertexBuffer(
 
     m_vbos[name] = buffer;
     if (!isBeingRestored) {
-        m_buffersCreationParams.emplace_back(VertexBufferCreationParams { name, vertexData });
+        m_buffersCreationParams[name] = VertexBufferCreationParams { name, vertexData };
     }
 
     m_openGlErrorDetector->checkOpenGLErrors("createStaticVertexBuffer");
@@ -99,7 +99,7 @@ IboInfo OpenGLGeometryBuffersStorage::createStaticIndexBuffer(
     auto iboInfo = IboInfo { buffer, indices.size() };
     m_ibos[name] = iboInfo;
     if (!isBeingRestored) {
-        m_buffersCreationParams.emplace_back(IndexBufferCreationParams { name, indices });
+        m_buffersCreationParams[name] = IndexBufferCreationParams { name, indices };
     }
 
     m_openGlErrorDetector->checkOpenGLErrors("createStaticIndexBuffer");
@@ -111,12 +111,12 @@ void OpenGLGeometryBuffersStorage::restoreBuffers() {
     m_vbos.clear();
     m_ibos.clear();
 
-    for (auto& bufferCreationParams : m_buffersCreationParams) {
-        if (std::holds_alternative<VertexBufferCreationParams>(bufferCreationParams)) {
-            auto vertexBufferCreationParams = std::get<VertexBufferCreationParams>(bufferCreationParams);
+    for (auto& entry : m_buffersCreationParams) {
+        if (std::holds_alternative<VertexBufferCreationParams>(entry.second)) {
+            auto vertexBufferCreationParams = std::get<VertexBufferCreationParams>(entry.second);
             createStaticVertexBuffer(vertexBufferCreationParams.name, vertexBufferCreationParams.vertexData, true);
-        } else if (std::holds_alternative<IndexBufferCreationParams>(bufferCreationParams)) {
-            auto indexBufferCreationParams = std::get<IndexBufferCreationParams>(bufferCreationParams);
+        } else if (std::holds_alternative<IndexBufferCreationParams>(entry.second)) {
+            auto indexBufferCreationParams = std::get<IndexBufferCreationParams>(entry.second   );
             createStaticIndexBuffer(indexBufferCreationParams.name, indexBufferCreationParams.indices, true);
         }
     }
@@ -131,8 +131,9 @@ void OpenGLGeometryBuffersStorage::removeStaticVertexBuffer(const std::string &n
 
     auto buffer = m_vbos[name];
     glDeleteBuffers(1, &buffer);
+    m_vbos.erase(name);
 
-    // TODO Remove from creation params
+    m_buffersCreationParams.erase(name);
 
     m_openGlErrorDetector->checkOpenGLErrors("removeStaticVertexBuffer");
 }
@@ -146,6 +147,9 @@ void OpenGLGeometryBuffersStorage::removeStaticIndexBuffer(const std::string &na
 
     auto bufferInfo = m_ibos[name];
     glDeleteBuffers(1, &bufferInfo.ibo);
+    m_ibos.erase(name);
+
+    m_buffersCreationParams.erase(name);
 
     m_openGlErrorDetector->checkOpenGLErrors("removeStaticIndexBuffer");
 }

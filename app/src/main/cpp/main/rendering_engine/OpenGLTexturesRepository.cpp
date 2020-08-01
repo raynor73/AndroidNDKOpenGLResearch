@@ -119,6 +119,7 @@ void OpenGLTexturesRepository::removeTexture(const std::string& name) {
 
     auto textureInfo = m_textures[name];
     glDeleteTextures(1, &textureInfo.texture);
+    m_textures.erase(name);
 
     m_texturesCreationParams.erase(name);
 
