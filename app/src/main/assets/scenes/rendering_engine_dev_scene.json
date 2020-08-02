@@ -3,10 +3,16 @@
     { "name": "quad", "path": "meshes/vertical_plane.obj" }
   ],
   "materials": [
-    { "name": "white", "diffuseColor": [1, 1, 1, 1] }
+    { "name": "white", "diffuseColor": [1, 1, 1, 1] },
+    { "name": "close", "textureName": "close" },
+    { "name": "cancel", "textureName": "cancel" }
   ],
   "textAppearances": [
     { "name": "fpsText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
+  ],
+  "textures": [
+    { "name": "close", "path": "baseline_close_white_48.png", "displayDensityFactorAware": true },
+    { "name": "cancel", "path": "outline_cancel_white_48.png", "displayDensityFactorAware": true }
   ],
   "gameObjects": [
     {

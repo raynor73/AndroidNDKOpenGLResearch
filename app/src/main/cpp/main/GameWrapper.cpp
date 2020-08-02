@@ -49,8 +49,6 @@ GameWrapper::GameWrapper(
             bridgeClass,
             bridgeObject
     )),
-    m_texturesRepository(std::make_shared<OpenGLTexturesRepository>(m_displayInfo, m_bitmapDataLoader, m_openGlErrorDetector)),
-    m_charactersRepository(std::make_shared<OpenGLFreeTypeCharactersRepository>(m_fontDataLoader, m_texturesRepository)),
     m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue))
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
@@ -78,7 +76,8 @@ void GameWrapper::onDrawFrame() {
                         m_meshRendererFactory,
                         m_textRendererFactory,
                         m_touchScreen,
-                        m_sceneManager
+                        m_sceneManager,
+                        m_texturesRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
                 break;
@@ -91,7 +90,8 @@ void GameWrapper::onDrawFrame() {
                         m_meshLoadingRepository,
                         m_meshRendererFactory,
                         m_textRendererFactory,
-                        m_touchScreen
+                        m_touchScreen,
+                        m_texturesRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
                 break;
@@ -114,6 +114,15 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
     if (m_displayInfo == nullptr) {
         m_displayInfo = std::make_shared<AndroidDisplayInfo>(width, height, m_displayDensityFactor);
         m_unitsConverter = std::make_shared<AndroidUnitsConverter>(m_displayInfo);
+        m_texturesRepository = std::make_shared<OpenGLTexturesRepository>(
+                m_displayInfo,
+                m_bitmapDataLoader,
+                m_openGlErrorDetector
+        );
+        m_charactersRepository = std::make_shared<OpenGLFreeTypeCharactersRepository>(
+                m_fontDataLoader,
+                m_texturesRepository
+        );
     }
     m_displayInfo->setWidth(width);
     m_displayInfo->setHeight(height);

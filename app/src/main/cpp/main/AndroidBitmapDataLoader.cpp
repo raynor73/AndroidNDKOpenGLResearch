@@ -10,7 +10,7 @@ BitmapInfo AndroidBitmapDataLoader::loadBitmap(const std::string& path) {
     jmethodID method = env->GetMethodID(
             m_binaryDataLoaderClass,
             "loadBitmapFileFromAssets",
-            "(Ljava/lang/String;)[B"
+            "(Ljava/lang/String;)Lilapin/opengl_research/BitmapInfo;"
     );
     jstring pathJString = env->NewStringUTF(path.c_str());
     auto result = env->CallObjectMethod(

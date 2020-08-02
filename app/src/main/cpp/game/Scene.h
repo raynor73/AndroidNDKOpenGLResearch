@@ -19,6 +19,7 @@
 #include <game/TextRendererFactory.h>
 #include <game/touch_screen/TouchScreen.h>
 #include <game/touch_screen/GesturesDispatcher.h>
+#include <game/TexturesRepository.h>
 #include <main/L.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
@@ -37,7 +38,8 @@ public:
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
             std::shared_ptr<TextRendererFactory> textRendererFactory,
-            std::shared_ptr<TouchScreen> touchScreen
+            std::shared_ptr<TouchScreen> touchScreen,
+            std::shared_ptr<TexturesRepository> texturesRepository
     );
     virtual ~Scene() {
         L::d("!@£", "Scene::~Scene");
@@ -56,6 +58,7 @@ protected:
     std::shared_ptr<MeshRendererFactory> m_meshRendererFactory;
     std::shared_ptr<TextRendererFactory> m_textRendererFactory;
     std::shared_ptr<TouchScreen> m_touchScreen;
+    std::shared_ptr<TexturesRepository> m_texturesRepository;
 
     MeshStorage m_meshStorage;
     std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;

@@ -22,7 +22,8 @@ public:
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
             std::shared_ptr<TextRendererFactory> textRendererFactory,
-            std::shared_ptr<TouchScreen> touchScreen
+            std::shared_ptr<TouchScreen> touchScreen,
+            std::shared_ptr<TexturesRepository> texturesRepository
     );
 
 protected:

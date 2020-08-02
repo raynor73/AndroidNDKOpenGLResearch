@@ -10,6 +10,8 @@
 
 struct Material {
     glm::vec4 diffuseColor;
+    std::string textureName;
+    bool useDiffuseColor;
 };
 
 

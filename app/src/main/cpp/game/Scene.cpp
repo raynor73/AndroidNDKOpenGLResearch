@@ -33,7 +33,8 @@ Scene::Scene(
         std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
         std::shared_ptr<MeshRendererFactory> meshRendererFactory,
         std::shared_ptr<TextRendererFactory> textRendererFactory,
-        std::shared_ptr<TouchScreen> touchScreen
+        std::shared_ptr<TouchScreen> touchScreen,
+        std::shared_ptr<TexturesRepository> texturesRepository
 ) :
     m_rootGameObject(std::make_shared<GameObject>("root")),
     m_timeProvider(std::move(timeProvider)),
@@ -45,6 +46,7 @@ Scene::Scene(
     m_meshRendererFactory(meshRendererFactory),
     m_textRendererFactory(textRendererFactory),
     m_touchScreen(touchScreen),
+    m_texturesRepository(std::move(texturesRepository)),
     m_gesturesDispatcher(std::make_shared<GesturesDispatcher>())
 {
     m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
@@ -135,6 +137,32 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
         }
     }
 
+    auto texturesJsonArray = sceneJson["textures"];
+    if (texturesJsonArray.is_array()) {
+        for (auto& textureJson : texturesJsonArray) {
+            auto nameJson = textureJson["name"];
+            if (!nameJson.is_string()) {
+                continue;
+            }
+            auto pathJson = textureJson["path"];
+            if (!pathJson.is_string()) {
+                continue;
+            }
+            auto displayDensityFactorAwareJson = textureJson["displayDensityFactorAware"];
+            bool displayDensityFactorAware =
+                    displayDensityFactorAwareJson.is_boolean() &&
+                    displayDensityFactorAwareJson.get<bool>();
+            if (displayDensityFactorAware) {
+                auto name = nameJson.get<std::string>();
+                m_texturesRepository->createDisplayDensityFactorAwareTexture(
+                        name, pathJson.get<std::string>()
+                );
+            } else {
+                // TODO Implement later
+            }
+        }
+    }
+
     auto materialsJsonArray = sceneJson["materials"];
     if (materialsJsonArray.is_array()) {
         for (auto& materialJson : materialsJsonArray) {
@@ -142,8 +170,18 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
             if (nameJson.is_null()) {
                 continue;
             }
-            Material material { parseColor4f(materialJson["diffuseColor"]) };
-            materialsMap[nameJson.get<std::string>()] = material;
+            auto diffuseColorJson = materialJson["diffuseColor"];
+            if (diffuseColorJson.is_array()) {
+                Material material { parseColor4f(materialJson["diffuseColor"]), "", true };
+                materialsMap[nameJson.get<std::string>()] = material;
+            } else {
+                auto textureNameJson = materialJson["textureName"];
+                if (!textureNameJson.is_string()) {
+                    continue;
+                }
+                Material material { glm::vec4(0), textureNameJson.get<std::string>(), false };
+                materialsMap[nameJson.get<std::string>()] = material;
+            }
         }
     }
 

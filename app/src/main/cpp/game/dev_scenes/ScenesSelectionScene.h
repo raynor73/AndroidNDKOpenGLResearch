@@ -27,7 +27,8 @@ public:
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
             std::shared_ptr<TextRendererFactory> textRendererFactory,
             std::shared_ptr<TouchScreen> touchScreen,
-            std::shared_ptr<SceneManager> sceneManager
+            std::shared_ptr<SceneManager> sceneManager,
+            std::shared_ptr<TexturesRepository> texturesRepository
     ) : Scene(
             timeProvider,
             displayInfo,
@@ -35,7 +36,8 @@ public:
             meshLoadingRepository,
             meshRendererFactory,
             textRendererFactory,
-            touchScreen
+            touchScreen,
+            texturesRepository
     ), m_sceneManager(sceneManager) {}
 
     virtual void update(float dt) override;

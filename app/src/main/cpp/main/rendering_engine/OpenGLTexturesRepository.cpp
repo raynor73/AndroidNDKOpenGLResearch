@@ -224,11 +224,11 @@ std::string OpenGLTexturesRepository::buildDensityPathSegment() {
 
     for (auto availableBitmapDensity : AVAILABLE_BITMAP_DENSITIES) {
         if (availableBitmapDensity >= roundedDensityFactor) {
-            ss << availableBitmapDensity << 'x';
+            ss << "bitmaps/" << availableBitmapDensity << "x/";
             return ss.str();
         }
     }
 
-    ss << AVAILABLE_BITMAP_DENSITIES.back() << 'x';
+    ss << AVAILABLE_BITMAP_DENSITIES.back() << "x/";
     return ss.str();
 }
