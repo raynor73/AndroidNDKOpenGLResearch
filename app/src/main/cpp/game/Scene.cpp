@@ -368,10 +368,19 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         return m_textRendererFactory->createTextRenderer(parseLayerNames(componentJson["layerNames"]));
     } else if (type == "ViewBounds") {
         auto left = parseNumber(componentJson["left"], DimensionType::WIDTH);
-        auto right = parseNumber(componentJson["right"], DimensionType::WIDTH);
-        auto top = parseNumber(componentJson["top"], DimensionType::HEIGHT);
         auto bottom = parseNumber(componentJson["bottom"], DimensionType::HEIGHT);
-        return std::make_shared<ViewBoundsComponent>(left, top, right, bottom);
+
+        if (componentJson.contains("right") && componentJson.contains("top")) {
+            auto right = parseNumber(componentJson["right"], DimensionType::WIDTH);
+            auto top = parseNumber(componentJson["top"], DimensionType::HEIGHT);
+            return std::make_shared<ViewBoundsComponent>(left, top, right, bottom);
+        } else if (componentJson.contains("width") && componentJson.contains("height")) {
+            auto width = parseNumber(componentJson["width"], DimensionType::WIDTH);
+            auto height = parseNumber(componentJson["height"], DimensionType::HEIGHT);
+            return std::make_shared<ViewBoundsComponent>(left, bottom + height, left + width, bottom);
+        } else {
+            throw std::domain_error("Insufficient params set for view bounds");
+        }
     } else if (type == "Layout") {
         auto padding = parseVec4(componentJson["padding"]);
 

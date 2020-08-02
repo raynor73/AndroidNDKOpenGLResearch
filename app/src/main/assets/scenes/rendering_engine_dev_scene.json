@@ -45,6 +45,28 @@
       ]
     },
     {
+      "name": "closeButton",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": ["48dp", "48dp", 1.0],
+      "components": [
+        { "type": "Mesh", "meshName": "quad" },
+        { "type": "Material", "materialName": "white" },
+        { "type": "MeshRenderer", "layerNames": ["ui"] },
+        { "type": "ViewBounds", "left": 0, "bottom": 0, "width": "48dp", "height": "48dp" },
+        {
+          "type": "Layout",
+          "padding": [0, 0, 0, 0],
+          "verticalLayout": "TOP_INSIDE",
+          "horizontalLayout": "RIGHT_INSIDE",
+          "originVerticalLayout": "CENTER",
+          "originHorizontalLayout": "CENTER",
+          "referenceViewBoundsName": "root"
+        }
+      ]
+    },
+    {
       "name": "fpsText",
       "parent": "root",
       "position" : [0.0, 0.0, 0.0],

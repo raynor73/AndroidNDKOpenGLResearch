@@ -122,7 +122,7 @@ void LayoutComponent::update() {
             break;
 
         case OriginVerticalLayoutType::CENTER:
-            originPositionY = (viewBounds->top() - viewBounds->bottom()) / 2;
+            originPositionY = (viewBounds->top() + viewBounds->bottom()) / 2;
             break;
 
         case OriginVerticalLayoutType::BOTTOM:
@@ -138,7 +138,7 @@ void LayoutComponent::update() {
             break;
 
         case OriginHorizontalLayoutType::CENTER:
-            originPositionX = (viewBounds->right() - viewBounds->left()) / 2;
+            originPositionX = (viewBounds->right() + viewBounds->left()) / 2;
             break;
 
         case OriginHorizontalLayoutType::RIGHT:
