@@ -12,7 +12,11 @@
 #include <main/L.h>
 #include <main/Constants.h>
 #include <engine_3d/TransformationComponent.h>
+#include <engine_3d/MaterialComponent.h>
+#include <engine_3d/Utils.h>
 #include "RenderingEngine.h"
+
+using namespace Engine3D::Utils;
 
 RenderingEngine::RenderingEngine(
         std::shared_ptr<OpenGLErrorDetector> openGLErrorDetector,
@@ -64,6 +68,7 @@ void RenderingEngine::render(Scene &scene) {
 
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
+    std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToTranslucentMeshRendererMap;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGLFreeTypeTextRendererComponent>> layerNameToTextRendererMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
@@ -80,7 +85,15 @@ void RenderingEngine::render(Scene &scene) {
                 meshRenderer != nullptr
         ) {
             for (auto& layerName : meshRenderer->layerNames()) {
-                layerNameToMeshRendererMap.insert({layerName, meshRenderer });
+                auto materialComponent = std::static_pointer_cast<MaterialComponent>(
+                        gameObject.findComponent(MaterialComponent::TYPE_NAME)
+                );
+                throwErrorIfNull(materialComponent, "Can't find material component for mesh renderer while rendering");
+                if (materialComponent->material().isTranslucent) {
+                    layerNameToTranslucentMeshRendererMap.insert({ layerName, meshRenderer });
+                } else {
+                    layerNameToMeshRendererMap.insert({ layerName, meshRenderer });
+                }
             }
         }
 
