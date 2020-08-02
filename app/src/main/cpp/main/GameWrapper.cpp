@@ -138,6 +138,7 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
         );
         m_meshRendererFactory = std::make_shared<OpenGlMeshRendererFactory>(
                 m_geometryBuffersStorage,
+                m_texturesRepository,
                 m_openGlErrorDetector
         );
         m_textRendererFactory = std::make_shared<OpenGLTextRendererFactory>(

@@ -7,17 +7,21 @@
 
 
 #include <game/MeshRendererFactory.h>
+#include "OpenGLTexturesRepository.h"
 
 class OpenGlMeshRendererFactory : public MeshRendererFactory {
 
     std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
 
 public:
     OpenGlMeshRendererFactory(
             std::shared_ptr<OpenGLGeometryBuffersStorage> geometryBuffersStorage,
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository,
             std::shared_ptr<OpenGLErrorDetector> openGlErrorDetector
     ) : m_geometryBuffersStorage(geometryBuffersStorage),
+        m_texturesRepository(texturesRepository),
         m_openGlErrorDetector(openGlErrorDetector)
     {}
     OpenGlMeshRendererFactory(const OpenGlMeshRendererFactory& other) = delete;

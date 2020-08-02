@@ -15,12 +15,14 @@
 #include <glm/mat4x4.hpp>
 #include "OpenGLGeometryBuffersStorage.h"
 #include "OpenGlShaderProgramContainer.h"
+#include "OpenGLTexturesRepository.h"
 
 class OpenGlMeshRendererComponent : public GameObjectComponent {
 
     std::vector<std::string> m_layerNames;
     std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
+    std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
 
 public:
     static const std::string TYPE_NAME;
@@ -28,10 +30,12 @@ public:
     OpenGlMeshRendererComponent(
             std::vector<std::string> layerNames,
             std::shared_ptr<OpenGLGeometryBuffersStorage> geometryBuffersStorage,
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository,
             std::shared_ptr<OpenGLErrorDetector> openGlErrorDetector
     ) : m_layerNames(std::move(layerNames)),
-        m_geometryBuffersStorage(geometryBuffersStorage),
-        m_openGlErrorDetector(openGlErrorDetector)
+        m_geometryBuffersStorage(std::move(geometryBuffersStorage)),
+        m_texturesRepository(std::move(texturesRepository)),
+        m_openGlErrorDetector(std::move(openGlErrorDetector))
     {}
 
     const std::vector<std::string>& layerNames() const { return m_layerNames; }

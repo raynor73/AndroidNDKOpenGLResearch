@@ -8,5 +8,10 @@
 std::shared_ptr<GameObjectComponent> OpenGlMeshRendererFactory::createMeshRenderer(
         std::vector<std::string> layerNames
 ) {
-    return std::make_shared<OpenGlMeshRendererComponent>(layerNames, m_geometryBuffersStorage, m_openGlErrorDetector);
+    return std::make_shared<OpenGlMeshRendererComponent>(
+            layerNames,
+            m_geometryBuffersStorage,
+            m_texturesRepository,
+            m_openGlErrorDetector
+    );
 }

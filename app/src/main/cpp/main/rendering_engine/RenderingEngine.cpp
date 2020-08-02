@@ -163,6 +163,14 @@ void RenderingEngine::render(Scene &scene) {
             });
 
             for (
+                    auto it = layerNameToTranslucentMeshRendererMap.find(layerName);
+                    it != layerNameToMeshRendererMap.end();
+                    it++
+                    ) {
+                renderMesh(camera, it->second);
+            }
+
+            for (
                     auto it = layerNameToTextRendererMap.find(layerName);
                     it != layerNameToTextRendererMap.end();
                     it++

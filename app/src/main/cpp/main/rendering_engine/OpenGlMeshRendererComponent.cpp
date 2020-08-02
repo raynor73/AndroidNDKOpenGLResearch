@@ -53,6 +53,8 @@ void OpenGlMeshRendererComponent::render(
     auto materialComponent = std::static_pointer_cast<MaterialComponent>(
             m_gameObject->findComponent(MaterialComponent::TYPE_NAME)
     );
+    auto material = materialComponent->material();
+
     if (meshComponent == nullptr) {
         std::stringstream ss;
         ss << "No material for rendering game object: " << m_gameObject->name();
@@ -176,15 +178,15 @@ void OpenGlMeshRendererComponent::render(
     if (auto diffuseColorUniform = shaderProgramContainer.diffuseColorUniform(); diffuseColorUniform >= 0) {
         glUniform4f(
                 diffuseColorUniform,
-                materialComponent->material().diffuseColor.x,
-                materialComponent->material().diffuseColor.y,
-                materialComponent->material().diffuseColor.z,
-                materialComponent->material().diffuseColor.w
+                material.diffuseColor.x,
+                material.diffuseColor.y,
+                material.diffuseColor.z,
+                material.diffuseColor.w
         );
     }
 
     if (auto useDiffuseColorUniform = shaderProgramContainer.useDiffuseColorUniform(); useDiffuseColorUniform >= 0) {
-        glUniform1i(useDiffuseColorUniform, GL_TRUE);
+        glUniform1i(useDiffuseColorUniform, material.useDiffuseColor ? GL_TRUE : GL_FALSE);
     }
 
     if (
@@ -194,23 +196,15 @@ void OpenGlMeshRendererComponent::render(
         glUniform1i(hasSkeletalAnimationUniform, GL_FALSE);
     }
 
-    /*val textureName = material.textureName
-    if (textureName != null) {
-        val textureInfo = texturesManager.findTexture(textureName)
-                          ?: error("Texture not found for ${gameObject?.name}")
-
-        shaderProgram.textureUniform.takeIf { it >= 0 }?.let { textureUniform ->
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.texture)
-                GLES20.glUniform1i(textureUniform, 0)
+    if (!material.useDiffuseColor) {
+        if (auto textureUniform = shaderProgramContainer.textureUniform(); textureUniform >= 0) {
+            auto textureInfo = m_texturesRepository->findTexture(material.textureName);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureInfo->texture);
+            glUniform1i(textureUniform, 0);
         }
-
-        shaderProgram.useDiffuseColorUniform.glUniform1i(GLES20.GL_FALSE)
-    } else {
-        shaderProgram.useDiffuseColorUniform.glUniform1i(GLES20.GL_TRUE)
     }
-
-    shaderProgram.receiveShadows.glUniform1i(material.receiveShadows.toGLBoolean())
+    /*shaderProgram.receiveShadows.glUniform1i(material.receiveShadows.toGLBoolean())
     safeLet(shadowMapTextureInfo, shaderProgram.shadowMapUniform.takeIf { it >= 0 }) { textureInfo, shadowMapUniform ->
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE1)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.texture)
@@ -275,12 +269,32 @@ void OpenGlMeshRendererComponent::render(
         )
     }*/
 
-    glDrawElements(
-            GL_TRIANGLES,
-            iboInfo.numberOfIndices,
-            GL_UNSIGNED_SHORT,
-            reinterpret_cast<void*>(0)
-    );
+    if (material.isTranslucent) {
+        glEnable(GL_CULL_FACE);
+
+        glCullFace(GL_FRONT);
+        glDrawElements(
+                GL_TRIANGLES,
+                iboInfo.numberOfIndices,
+                GL_UNSIGNED_SHORT,
+                reinterpret_cast<void*>(0)
+        );
+
+        glCullFace(GL_BACK);
+        glDrawElements(
+                GL_TRIANGLES,
+                iboInfo.numberOfIndices,
+                GL_UNSIGNED_SHORT,
+                reinterpret_cast<void*>(0)
+        );
+    } else {
+        glDrawElements(
+                GL_TRIANGLES,
+                iboInfo.numberOfIndices,
+                GL_UNSIGNED_SHORT,
+                reinterpret_cast<void*>(0)
+        );
+    }
 
     if (vertexPositionAttribute >= 0) {
         glDisableVertexAttribArray(vertexPositionAttribute);
@@ -310,6 +324,7 @@ std::shared_ptr<GameObjectComponent> OpenGlMeshRendererComponent::clone() {
     auto clone = std::make_shared<OpenGlMeshRendererComponent>(
             m_layerNames,
             m_geometryBuffersStorage,
+            m_texturesRepository,
             m_openGlErrorDetector
     );
     clone->setEnabled(m_isEnabled);
