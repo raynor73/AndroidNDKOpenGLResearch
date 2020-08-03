@@ -11,14 +11,14 @@
 #include <game/FpsCalculator.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
 #include <game/SceneManager.h>
+#include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<SceneManager> m_sceneManager;
 
-    std::shared_ptr<ClickDetectorComponent> m_closeButtonClickDetector;
-
     FpsCalculator m_fpsCalculator;
+    std::shared_ptr<SceneCloser> m_sceneCloser;
 
 public:
     RenderingEngineDevScene(

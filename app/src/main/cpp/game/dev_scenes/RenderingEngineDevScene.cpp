@@ -11,8 +11,8 @@ using namespace Engine3D::Utils;
 void RenderingEngineDevScene::update(float dt) {
     m_fpsCalculator.update(dt);
 
-    if (m_closeButtonClickDetector->isClickDetected()) {
-        m_sceneManager->requestSceneLoadAndStart(SceneType::SCENES_SELECTION_SCENE);
+    if (m_sceneCloser != nullptr) {
+        m_sceneCloser->update();
     }
 
     auto fpsText = std::static_pointer_cast<TextComponent>(
@@ -29,12 +29,9 @@ void RenderingEngineDevScene::update(float dt) {
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
     Scene::restoreFromStateRepresentation(stateRepresentation);
 
-    auto closeButtonGameObject = m_gameObjectsMap.at("closeButton");
-    m_closeButtonClickDetector = std::static_pointer_cast<ClickDetectorComponent>(
-            closeButtonGameObject->findComponent(ClickDetectorComponent::TYPE_NAME)
-    );
-    throwErrorIfNull(
-            m_closeButtonClickDetector,
-            "Click detector for Rendering Engine Dev Scene close button not found"
+    m_sceneCloser = std::make_shared<SceneCloser>(
+            m_sceneManager,
+            m_gameObjectsMap.at("closeButton"),
+            SceneType::SCENES_SELECTION_SCENE
     );
 }
