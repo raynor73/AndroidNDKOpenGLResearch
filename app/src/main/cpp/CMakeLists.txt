@@ -51,6 +51,7 @@ add_library(
         game/dev_scenes/ScenesSelectionScene.cpp
         game/touch_screen/ClickDetectorComponent.cpp
         game/dev_scenes/SceneCloser.cpp
+        game/dev_scenes/MultitouchTestScene.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp
