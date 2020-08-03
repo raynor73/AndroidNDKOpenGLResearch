@@ -7,6 +7,7 @@
 #include <engine_3d/Utils.h>
 #include <engine_3d/TransformationComponent.h>
 #include "MultitouchTestScene.h"
+#include <engine_3d/MaterialComponent.h>
 
 using namespace Engine3D::Utils;
 
@@ -67,6 +68,18 @@ void MultitouchTestScene::update(float dt) {
                 position.x = touchEvent.x;
                 position.y = touchEvent.y;
                 transform->setPosition(position);
+
+                auto materialComponent = std::static_pointer_cast<MaterialComponent>(
+                        touchIndicator->findComponent(MaterialComponent::TYPE_NAME)
+                );
+                auto material = materialComponent->material();
+                material.diffuseColor = glm::vec4(
+                        m_unitsConverter->widthPixelsToPercent(touchEvent.x) / 100,
+                        m_unitsConverter->heightPixelsToPercent(touchEvent.y) / 100,
+                        0,
+                        1
+                );
+                materialComponent->setMaterial(material);
             }
         } else {
             if (touchEvent.type == TouchEventType::DOWN || touchEvent.type == TouchEventType::MOVE) {
