@@ -12,13 +12,18 @@
 #include <game/SceneManager.h>
 #include <game/dev_scenes/SceneCloser.h>
 #include <utility>
+#include <game/FpsCalculator.h>
 
 class MultitouchTestScene : public Scene {
 
     std::shared_ptr<SceneManager> m_sceneManager;
 
     std::shared_ptr<SceneCloser> m_sceneCloser;
-    ObjectPool<GameObject> m_touchIndicatorPrefabs;
+    ObjectPool<GameObject> m_touchIndicatorsPool;
+
+    FpsCalculator m_fpsCalculator;
+    std::shared_ptr<GameObject> m_touchIndicatorPrefab;
+    std::shared_ptr<GestureConsumerComponent> m_rootGestureConsumer;
 
 public:
     MultitouchTestScene(
@@ -32,6 +37,11 @@ public:
             std::shared_ptr<TexturesRepository> texturesRepository,
             std::shared_ptr<SceneManager> sceneManager
     );
+
+    virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
+
+protected:
+    virtual void update(float dt) override;
 };
 
 

@@ -15,6 +15,7 @@ class ScenesSelectionScene : public Scene {
 
     std::shared_ptr<ClickDetectorComponent> m_renderingEngineDevSceneMenuItemClickDetector;
     std::shared_ptr<ClickDetectorComponent> m_screenBlinkingSceneMenuItemClickDetector;
+    std::shared_ptr<ClickDetectorComponent> m_multitouchTestSceneMenuItemClickDetector;
 
     std::shared_ptr<SceneManager> m_sceneManager;
 

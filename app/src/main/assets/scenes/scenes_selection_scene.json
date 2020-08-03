@@ -73,6 +73,35 @@
       ]
     },
     {
+      "name": "multitouchTestSceneMenuItem",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        {
+          "type": "Text",
+          "text": "3. Multitouch Test Scene",
+          "textColor": [0.5, 0.5, 1, 1],
+          "textAppearanceName": "menuItemText"
+        },
+        { "type": "TextRenderer", "layerNames": ["ui"] },
+        { "type": "ViewBounds", "left": 0, "right": "50%", "top": "50dp", "bottom": 0 },
+        {
+          "type": "Layout",
+          "padding": [0, "8dp", 0, 0],
+          "verticalLayout": "BOTTOM_OUTSIDE",
+          "horizontalLayout": "LEFT_INSIDE",
+          "originVerticalLayout": "BOTTOM",
+          "originHorizontalLayout": "LEFT",
+          "referenceViewBoundsName": "screenBlinkingSceneMenuItem"
+        },
+        { "type": "GestureConsumer", "priority": 10 },
+        { "type": "ClickDetector" },
+        { "type": "TextButton", "textColor": [0.5, 0.5, 1, 1], "pressedTextColor": [1, 1, 1, 1] }
+      ]
+    },
+    {
       "name": "uiCamera",
       "parent": "root",
       "position" : [0.0, 0.0, 1.0],

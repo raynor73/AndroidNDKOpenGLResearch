@@ -7,6 +7,7 @@
 #include "GameWrapper.h"
 #include <game/SceneManager.h>
 #include <game/dev_scenes/ScreenBlinkingScene.h>
+#include <game/dev_scenes/MultitouchTestScene.h>
 
 const std::string GameWrapper::TOUCH_EVENT_MESSAGE_TYPE_NAME = "TouchEvent";
 
@@ -110,6 +111,21 @@ void GameWrapper::onDrawFrame() {
                         m_touchScreen,
                         m_texturesRepository
                 );
+                break;
+
+            case SceneType::MULTITOUCH_TEST_SCENE:
+                m_scene = std::make_shared<MultitouchTestScene>(
+                        m_timeProvider,
+                        m_displayInfo,
+                        m_unitsConverter,
+                        m_meshLoadingRepository,
+                        m_meshRendererFactory,
+                        m_textRendererFactory,
+                        m_touchScreen,
+                        m_texturesRepository,
+                        m_sceneManager
+                );
+                m_sceneDataLoader->loadSceneData("scenes/multitouch_test_scene.json", *m_scene);
                 break;
         }
         m_requestedSceneTypeOptional.reset();
