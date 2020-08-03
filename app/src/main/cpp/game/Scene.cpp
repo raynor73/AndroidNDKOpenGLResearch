@@ -24,6 +24,7 @@
 #include <game/touch_screen/GestureConsumerComponent.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
 #include <engine_3d/TextButtonComponent.h>
+#include <engine_3d/ImageButtonComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -41,11 +42,11 @@ Scene::Scene(
     m_displayInfo(std::move(displayInfo)),
     m_prevTimestamp(0.0f),
     m_hasPrevTimestamp(false),
-    m_unitsConverter(unitsConverter),
-    m_meshLoadingRepository(meshLoadingRepository),
-    m_meshRendererFactory(meshRendererFactory),
-    m_textRendererFactory(textRendererFactory),
-    m_touchScreen(touchScreen),
+    m_unitsConverter(std::move(unitsConverter)),
+    m_meshLoadingRepository(std::move(meshLoadingRepository)),
+    m_meshRendererFactory(std::move(meshRendererFactory)),
+    m_textRendererFactory(std::move(textRendererFactory)),
+    m_touchScreen(std::move(touchScreen)),
     m_texturesRepository(std::move(texturesRepository)),
     m_gesturesDispatcher(std::make_shared<GesturesDispatcher>())
 {
@@ -518,6 +519,19 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         auto textColor = parseColor4f(componentJson["textColor"]);
         auto pressedTextColor = parseColor4f(componentJson["pressedTextColor"]);
         return std::make_shared<TextButtonComponent>(textColor, pressedTextColor);
+    } else if (type == "ImageButton") {
+        auto materialNameJson = componentJson["materialName"];
+        if (!materialNameJson.is_string()) {
+            throw std::domain_error("Malformed material name for image button");
+        }
+        auto pressedMaterialNameJson = componentJson["pressedMaterialName"];
+        if (!pressedMaterialNameJson.is_string()) {
+            throw std::domain_error("Malformed pressed material name for image button");
+        }
+        return std::make_shared<ImageButtonComponent>(
+                materialsMap.at(materialNameJson.get<std::string>()),
+                materialsMap.at(pressedMaterialNameJson.get<std::string>())
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

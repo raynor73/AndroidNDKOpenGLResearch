@@ -21,6 +21,7 @@ void TextButtonComponent::update() {
     auto textComponent = std::static_pointer_cast<TextComponent>(
             m_gameObject->findComponent(TextComponent::TYPE_NAME)
     );
+    throwErrorIfNull(textComponent, "Text component for text button not found");
 
     if (!m_isEnabled) {
         textComponent->setTextColor(m_textColor);
@@ -31,7 +32,6 @@ void TextButtonComponent::update() {
             m_gameObject->findComponent(ClickDetectorComponent::TYPE_NAME)
     );
     throwErrorIfNull(clickDetector, "Click detector for text button not found");
-    throwErrorIfNull(textComponent, "Text component for text button not found");
 
     if (clickDetector->isPressDetected()) {
         textComponent->setTextColor(m_pressedTextColor);

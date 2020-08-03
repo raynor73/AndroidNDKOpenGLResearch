@@ -63,7 +63,10 @@
           "originVerticalLayout": "CENTER",
           "originHorizontalLayout": "CENTER",
           "referenceViewBoundsName": "root"
-        }
+        },
+        { "type": "GestureConsumer", "priority": 10 },
+        { "type": "ClickDetector" },
+        { "type": "ImageButton", "materialName": "close", "pressedMaterialName": "cancel" }
       ]
     },
     {
