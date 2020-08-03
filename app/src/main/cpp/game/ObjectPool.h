@@ -21,7 +21,7 @@ public:
     ObjectPool(const std::function<std::shared_ptr<T>()>& createObject) : m_createObject(createObject) {}
 
     std::shared_ptr<T> obtain() {
-        if (m_pool.isEmpty()) {
+        if (m_pool.size() == 0) {
             return m_createObject();
         } else {
             auto object = *m_pool.begin();

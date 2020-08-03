@@ -5,6 +5,7 @@
 #include <memory>
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/Utils.h>
+#include <engine_3d/TransformationComponent.h>
 #include "MultitouchTestScene.h"
 
 using namespace Engine3D::Utils;
@@ -49,6 +50,40 @@ void MultitouchTestScene::update(float dt) {
         std::stringstream ss;
         ss  << "FPS: " << int(m_fpsCalculator.fps());
         fpsText->setText(ss.str());
+    }
+
+    for (auto& touchEvent : m_rootGestureConsumer->touchEvents()) {
+        if (m_activeTouchIndicators.count(touchEvent.id) > 0) {
+            auto touchIndicator = m_activeTouchIndicators.at(touchEvent.id);
+            if (touchEvent.type == TouchEventType::UP || touchEvent.type == TouchEventType::CANCEL) {
+                m_rootGameObject->removeChild(touchIndicator);
+                m_touchIndicatorsPool.recycle(touchIndicator);
+                m_activeTouchIndicators.erase(touchEvent.id);
+            } else {
+                auto transform = std::static_pointer_cast<TransformationComponent>(
+                        touchIndicator->findComponent(TransformationComponent::TYPE_NAME)
+                );
+                auto position = transform->position();
+                position.x = touchEvent.x;
+                position.y = touchEvent.y;
+                transform->setPosition(position);
+            }
+        } else {
+            if (touchEvent.type == TouchEventType::DOWN || touchEvent.type == TouchEventType::MOVE) {
+                auto touchIndicator = m_touchIndicatorsPool.obtain();
+
+                m_rootGameObject->addChild(touchIndicator);
+                m_activeTouchIndicators[touchEvent.id] = touchIndicator;
+
+                auto transform = std::static_pointer_cast<TransformationComponent>(
+                        touchIndicator->findComponent(TransformationComponent::TYPE_NAME)
+                );
+                auto position = transform->position();
+                position.x = touchEvent.x;
+                position.y = touchEvent.y;
+                transform->setPosition(position);
+            }
+        }
     }
 }
 

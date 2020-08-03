@@ -13,6 +13,7 @@
 #include <game/dev_scenes/SceneCloser.h>
 #include <utility>
 #include <game/FpsCalculator.h>
+#include <unordered_map>
 
 class MultitouchTestScene : public Scene {
 
@@ -24,6 +25,8 @@ class MultitouchTestScene : public Scene {
     FpsCalculator m_fpsCalculator;
     std::shared_ptr<GameObject> m_touchIndicatorPrefab;
     std::shared_ptr<GestureConsumerComponent> m_rootGestureConsumer;
+
+    std::unordered_map<int, std::shared_ptr<GameObject>> m_activeTouchIndicators;
 
 public:
     MultitouchTestScene(
