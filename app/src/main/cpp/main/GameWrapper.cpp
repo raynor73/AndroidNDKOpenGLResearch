@@ -6,6 +6,7 @@
 #include <game/dev_scenes/ScenesSelectionScene.h>
 #include "GameWrapper.h"
 #include <game/SceneManager.h>
+#include <game/dev_scenes/ScreenBlinkingScene.h>
 
 const std::string GameWrapper::TOUCH_EVENT_MESSAGE_TYPE_NAME = "TouchEvent";
 
@@ -20,6 +21,7 @@ GameWrapper::GameWrapper(
     m_bridgeClass(bridgeClass),
     m_bridgeObject(bridgeObject),
     m_openGlErrorDetector(std::make_shared<OpenGLErrorDetector>()),
+    m_timeProvider(std::make_shared<TimeProvider>()),
     m_sceneDataLoader(std::make_shared<AndroidSceneDataLoader>(
             m_javaVm,
             bridgeClass,
@@ -69,7 +71,7 @@ void GameWrapper::onDrawFrame() {
 
             case SceneType::SCENES_SELECTION_SCENE:
                 m_scene = std::make_shared<ScenesSelectionScene>(
-                        std::make_shared<TimeProvider>(),
+                        m_timeProvider,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -84,7 +86,22 @@ void GameWrapper::onDrawFrame() {
 
             case SceneType::RENDERING_ENGINE_DEV_SCENE:
                 m_scene = std::make_shared<RenderingEngineDevScene>(
-                        std::make_shared<TimeProvider>(),
+                        m_timeProvider,
+                        m_displayInfo,
+                        m_unitsConverter,
+                        m_meshLoadingRepository,
+                        m_meshRendererFactory,
+                        m_textRendererFactory,
+                        m_touchScreen,
+                        m_texturesRepository,
+                        m_sceneManager
+                );
+                m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
+                break;
+
+            case SceneType::SCREEN_BLINKING_SCENE:
+                m_scene = std::make_shared<ScreenBlinkingScene>(
+                        m_timeProvider,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -93,10 +110,6 @@ void GameWrapper::onDrawFrame() {
                         m_touchScreen,
                         m_texturesRepository
                 );
-                m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
-                break;
-
-            case SceneType::SCREEN_BLINKING_SCENE:
                 break;
         }
         m_requestedSceneTypeOptional.reset();

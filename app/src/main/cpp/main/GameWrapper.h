@@ -23,6 +23,7 @@
 #include <main/rendering_engine/OpenGLTexturesRepository.h>
 #include <game/touch_screen/TouchEvent.h>
 #include <game/SceneManager.h>
+#include <game/TimeProvider.h>
 #include "AndroidBitmapDataLoader.h"
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
@@ -37,6 +38,7 @@ class GameWrapper : public SceneManager {
     jclass m_bridgeClass;
     jobject m_bridgeObject;
     std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
+    std::shared_ptr<TimeProvider> m_timeProvider;
     std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
     std::shared_ptr<AndroidUnitsConverter> m_unitsConverter;
     std::shared_ptr<Scene> m_scene;

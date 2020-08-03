@@ -9,8 +9,14 @@
 #include <game/Scene.h>
 #include <memory>
 #include <game/FpsCalculator.h>
+#include <game/touch_screen/ClickDetectorComponent.h>
+#include <game/SceneManager.h>
 
 class RenderingEngineDevScene : public Scene {
+
+    std::shared_ptr<SceneManager> m_sceneManager;
+
+    std::shared_ptr<ClickDetectorComponent> m_closeButtonClickDetector;
 
     FpsCalculator m_fpsCalculator;
 
@@ -23,7 +29,8 @@ public:
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
             std::shared_ptr<TextRendererFactory> textRendererFactory,
             std::shared_ptr<TouchScreen> touchScreen,
-            std::shared_ptr<TexturesRepository> texturesRepository
+            std::shared_ptr<TexturesRepository> texturesRepository,
+            std::shared_ptr<SceneManager> sceneManager
     ) : Scene(
             timeProvider,
             displayInfo,
@@ -33,9 +40,11 @@ public:
             textRendererFactory,
             touchScreen,
             texturesRepository
-    ) {}
+    ), m_sceneManager(std::move(sceneManager)) {}
 
     virtual void update(float dt) override;
+
+    virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
 };
 
 
