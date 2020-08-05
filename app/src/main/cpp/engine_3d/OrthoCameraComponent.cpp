@@ -36,11 +36,28 @@ glm::mat4 OrthoCameraComponent::calculateViewMatrix() {
 }
 
 glm::mat4 OrthoCameraComponent::calculateProjectionMatrix() {
-    return glm::ortho(m_left, m_right, m_bottom, m_top, m_zNear, m_zFar);
+    if (shouldRecalculateProjectionMatrix()) {
+        m_lastDisplayWidth = m_displayInfo->width();
+        m_lastDisplayHeight = m_displayInfo->height();
+        m_lastDisplayDensityFactor = m_displayInfo->densityFactor();
+
+        m_projectionMatrix = glm::ortho(
+                m_unitsConverter->complexValueToPixels(m_left),
+                m_unitsConverter->complexValueToPixels(m_right),
+                m_unitsConverter->complexValueToPixels(m_bottom),
+                m_unitsConverter->complexValueToPixels(m_top),
+                m_zNear,
+                m_zFar
+        );
+    }
+
+    return m_projectionMatrix;
 }
 
 std::shared_ptr<GameObjectComponent> OrthoCameraComponent::clone() {
     auto clone = std::make_shared<OrthoCameraComponent>(
+            m_displayInfo,
+            m_unitsConverter,
             m_clearColor,
             m_layerNames,
             m_left,
@@ -58,4 +75,14 @@ std::shared_ptr<GameObjectComponent> OrthoCameraComponent::clone() {
     clone->setShouldClearDepth(m_shouldClearDepth);
     clone->setShouldClearColor(m_shouldClearColor);
     return clone;
+}
+
+bool OrthoCameraComponent::shouldRecalculateProjectionMatrix() {
+    return
+        std::isnan(m_lastDisplayWidth) ||
+        std::isnan(m_lastDisplayHeight) ||
+        std::isnan(m_lastDisplayDensityFactor) ||
+        abs(m_displayInfo->width() - m_lastDisplayWidth) > FLT_EPSILON ||
+        abs(m_displayInfo->height() - m_lastDisplayHeight) > FLT_EPSILON ||
+        abs(m_displayInfo->densityFactor() - m_lastDisplayDensityFactor) > FLT_EPSILON;
 }

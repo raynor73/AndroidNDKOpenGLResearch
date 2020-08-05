@@ -74,10 +74,6 @@ protected:
     void removeGameObject(const std::string& name);
 
 private:
-    enum class DimensionType {
-        UNDEFINED, WIDTH, HEIGHT
-    };
-
     float parseNumber(const nlohmann::json& jsonValue, DimensionType dimensionType);
     static std::vector<std::string> parseLayerNames(const nlohmann::json& layerNamesJsonArray);
     std::shared_ptr<GameObjectComponent> parseComponent(

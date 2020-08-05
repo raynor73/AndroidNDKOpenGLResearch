@@ -17,13 +17,10 @@ class AndroidUnitsConverter : public UnitsConverter {
 public:
     AndroidUnitsConverter(std::shared_ptr<DisplayInfo> displayInfo) : m_displayInfo(displayInfo) {}
 
-    virtual float widthPercentToPixels(float percentValue) override;
-    virtual float widthPixelsToPercent(float pixels) override;
-    virtual float heightPercentToPixels(float percentValue) override;
-    virtual float heightPixelsToPercent(float pixels) override;
-
-    virtual float dpToPixels(float dpValue) override;
-    virtual float pixelsToDp(float pixels) override;
+    virtual float complexValueToPixels(const ComplexValue& value) override;
+    virtual ComplexValue widthPixelsToPercentValue(float pixels) override;
+    virtual ComplexValue heightPixelsToPercentValue(float pixels) override;
+    virtual ComplexValue pixelsToDpValue(float pixels) override;
 };
 
 
