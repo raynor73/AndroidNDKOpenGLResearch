@@ -116,7 +116,7 @@ void OpenGLGeometryBuffersStorage::restoreBuffers() {
             auto vertexBufferCreationParams = std::get<VertexBufferCreationParams>(entry.second);
             createStaticVertexBuffer(vertexBufferCreationParams.name, vertexBufferCreationParams.vertexData, true);
         } else if (std::holds_alternative<IndexBufferCreationParams>(entry.second)) {
-            auto indexBufferCreationParams = std::get<IndexBufferCreationParams>(entry.second   );
+            auto indexBufferCreationParams = std::get<IndexBufferCreationParams>(entry.second);
             createStaticIndexBuffer(indexBufferCreationParams.name, indexBufferCreationParams.indices, true);
         }
     }

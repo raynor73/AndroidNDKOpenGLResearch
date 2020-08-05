@@ -4,24 +4,10 @@
 
 #include "OpenGLVerticalQuadBuffersRepository.h"
 
-const std::string OpenGLVerticalQuadBuffersRepository::VERTICAL_QUAD_BUFFERS_NAME = "VERTICAL_QUAD_BUFFERS_NAME";
+const std::string OpenGLVerticalQuadBuffersRepository::VERTICAL_QUAD_VERTEX_BUFFER_NAME = "VERTICAL_QUAD_VERTEX_BUFFER";
+const std::string OpenGLVerticalQuadBuffersRepository::VERTICAL_QUAD_INDEX_BUFFER_NAME = "VERTICAL_QUAD_INDEX_BUFFER";
 
 const std::vector<float> OpenGLVerticalQuadBuffersRepository::QUAD_VERTEX_DATA = {
-        /*-0.5, -0.5, 0,
-           0,    0, 1,
-           0,    0,
-
-        -0.5,  0.5, 0,
-           0,    0, 1,
-           0,    1,
-
-         0.5,  0.5, 0,
-           0,    0, 1,
-           1,    1,
-
-         0.5, -0.5, 0,
-           0,    0, 1,
-           1,    0*/
         0, 0, 0,
         0, 0, 1,
         0, 1,
@@ -43,8 +29,8 @@ const std::vector<uint16_t> OpenGLVerticalQuadBuffersRepository::QUAD_INDEX_DATA
 };
 
 VerticalQuadBuffers OpenGLVerticalQuadBuffersRepository::getBuffers() {
-    auto vboOptional = m_geometryBuffersStorage->findVbo(VERTICAL_QUAD_BUFFERS_NAME);
-    auto iboInfoOptional = m_geometryBuffersStorage->findIbo(VERTICAL_QUAD_BUFFERS_NAME);
+    auto vboOptional = m_geometryBuffersStorage->findVbo(VERTICAL_QUAD_VERTEX_BUFFER_NAME);
+    auto iboInfoOptional = m_geometryBuffersStorage->findIbo(VERTICAL_QUAD_INDEX_BUFFER_NAME);
 
     if (!vboOptional || !iboInfoOptional) {
         return createBuffers();
@@ -54,7 +40,7 @@ VerticalQuadBuffers OpenGLVerticalQuadBuffersRepository::getBuffers() {
 }
 
 VerticalQuadBuffers OpenGLVerticalQuadBuffersRepository::createBuffers() {
-    auto vbo = m_geometryBuffersStorage->createStaticVertexBuffer(VERTICAL_QUAD_BUFFERS_NAME, QUAD_VERTEX_DATA);
-    auto iboInfo = m_geometryBuffersStorage->createStaticIndexBuffer(VERTICAL_QUAD_BUFFERS_NAME, QUAD_INDEX_DATA);
+    auto vbo = m_geometryBuffersStorage->createStaticVertexBuffer(VERTICAL_QUAD_VERTEX_BUFFER_NAME, QUAD_VERTEX_DATA);
+    auto iboInfo = m_geometryBuffersStorage->createStaticIndexBuffer(VERTICAL_QUAD_INDEX_BUFFER_NAME, QUAD_INDEX_DATA);
     return VerticalQuadBuffers { vbo, iboInfo };
 }

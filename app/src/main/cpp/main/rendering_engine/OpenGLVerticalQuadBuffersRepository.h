@@ -34,7 +34,8 @@ public:
     OpenGLVerticalQuadBuffersRepository& operator=(OpenGLVerticalQuadBuffersRepository&&) = delete;
 
 private:
-    static const std::string VERTICAL_QUAD_BUFFERS_NAME;
+    static const std::string VERTICAL_QUAD_VERTEX_BUFFER_NAME;
+    static const std::string VERTICAL_QUAD_INDEX_BUFFER_NAME;
     static const std::vector<float> QUAD_VERTEX_DATA;
     static const std::vector<uint16_t> QUAD_INDEX_DATA;
 
