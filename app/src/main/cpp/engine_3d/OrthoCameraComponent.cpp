@@ -36,11 +36,7 @@ glm::mat4 OrthoCameraComponent::calculateViewMatrix() {
 }
 
 glm::mat4 OrthoCameraComponent::calculateProjectionMatrix() {
-    if (shouldRecalculateProjectionMatrix()) {
-        m_lastDisplayWidth = m_displayInfo->width();
-        m_lastDisplayHeight = m_displayInfo->height();
-        m_lastDisplayDensityFactor = m_displayInfo->densityFactor();
-
+    if (isDisplayInfoUpdated()) {
         m_projectionMatrix = glm::ortho(
                 m_unitsConverter->complexValueToPixels(m_left),
                 m_unitsConverter->complexValueToPixels(m_right),
@@ -75,14 +71,4 @@ std::shared_ptr<GameObjectComponent> OrthoCameraComponent::clone() {
     clone->setShouldClearDepth(m_shouldClearDepth);
     clone->setShouldClearColor(m_shouldClearColor);
     return clone;
-}
-
-bool OrthoCameraComponent::shouldRecalculateProjectionMatrix() {
-    return
-        std::isnan(m_lastDisplayWidth) ||
-        std::isnan(m_lastDisplayHeight) ||
-        std::isnan(m_lastDisplayDensityFactor) ||
-        abs(m_displayInfo->width() - m_lastDisplayWidth) > FLT_EPSILON ||
-        abs(m_displayInfo->height() - m_lastDisplayHeight) > FLT_EPSILON ||
-        abs(m_displayInfo->densityFactor() - m_lastDisplayDensityFactor) > FLT_EPSILON;
 }

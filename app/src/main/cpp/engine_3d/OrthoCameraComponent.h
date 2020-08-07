@@ -8,18 +8,14 @@
 
 #include <game/UnitsConverter.h>
 #include <game/DisplayInfo.h>
+#include <game/DisplayInfoUpdateDetector.h>
 #include <utility>
 #include <memory>
 #include "CameraComponent.h"
 
-class OrthoCameraComponent : public CameraComponent {
+class OrthoCameraComponent : public CameraComponent, DisplayInfoUpdateDetector {
 
-    std::shared_ptr<DisplayInfo> m_displayInfo;
     std::shared_ptr<UnitsConverter> m_unitsConverter;
-
-    float m_lastDisplayWidth = NAN;
-    float m_lastDisplayHeight = NAN;
-    float m_lastDisplayDensityFactor = NAN;
 
     ComplexValue m_left;
     ComplexValue m_top;
@@ -43,7 +39,7 @@ public:
             float zNear,
             float zFar
     ) : CameraComponent(clearColor, layerNames, zNear, zFar),
-        m_displayInfo(std::move(displayInfo)),
+        DisplayInfoUpdateDetector(displayInfo),
         m_unitsConverter(std::move(unitsConverter)),
         m_left(std::move(left)),
         m_top(std::move(top)),
@@ -54,9 +50,6 @@ public:
     glm::mat4 calculateProjectionMatrix() override;
     virtual const std::string& typeName() const override { return OrthoCameraComponent::TYPE_NAME; }
     virtual std::shared_ptr<GameObjectComponent> clone() override;
-
-private:
-    bool shouldRecalculateProjectionMatrix();
 };
 
 

@@ -34,6 +34,7 @@ add_library(
         engine_3d/ViewBoundsComponent.cpp
         engine_3d/TextButtonComponent.cpp
         engine_3d/ImageButtonComponent.cpp
+        engine_3d/Transformation2DComponent.cpp
         game/touch_screen/GestureConsumerComponent.cpp
 
         game/DisplayInfo.cpp
@@ -52,6 +53,7 @@ add_library(
         game/touch_screen/ClickDetectorComponent.cpp
         game/dev_scenes/SceneCloser.cpp
         game/dev_scenes/MultitouchTestScene.cpp
+        game/DisplayInfoUpdateDetector.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp
