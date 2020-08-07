@@ -25,6 +25,7 @@
 #include <game/touch_screen/ClickDetectorComponent.h>
 #include <engine_3d/TextButtonComponent.h>
 #include <engine_3d/ImageButtonComponent.h>
+#include <engine_3d/Transformation2DComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -197,12 +198,12 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
             if (!nameJson.is_string()) {
                 continue;
             }
-            auto textSize = parseNumber(textAppearanceJson["textSize"], DimensionType::UNDEFINED);
+            auto textSize = parseComplexValue(textAppearanceJson["textSize"]);
             auto fontPathJson = textAppearanceJson["fontPath"];
             if (!fontPathJson.is_string()) {
                 continue;
             }
-            TextAppearance textAppearance { uint32_t(textSize), fontPathJson.get<std::string>() };
+            TextAppearance textAppearance { textSize, fontPathJson.get<std::string>() };
             textAppearancesMap.insert({ nameJson.get<std::string>(), textAppearance });
         }
     }
@@ -228,9 +229,9 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
 
             if (gameObjectJson["position"].is_array() && gameObjectJson["position"].size() == 3) {
                 try {
-                    position.x = parseNumber(gameObjectJson["position"][0], DimensionType::WIDTH);
-                    position.y = parseNumber(gameObjectJson["position"][1], DimensionType::HEIGHT);
-                    position.z = parseNumber(gameObjectJson["position"][2], DimensionType::UNDEFINED);
+                    position.x = parseFloatNumber(gameObjectJson["position"][0]);
+                    position.y = parseFloatNumber(gameObjectJson["position"][1]);
+                    position.z = parseFloatNumber(gameObjectJson["position"][2]);
                 } catch (std::exception& e) {
                     L::e(App::Constants::LOG_TAG, "Error parsing position values", e);
                     continue;
@@ -241,9 +242,9 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
 
             if (gameObjectJson["rotation"].is_array() && gameObjectJson["rotation"].size() == 3) {
                 try {
-                    rotation.x = parseNumber(gameObjectJson["rotation"][0], DimensionType::WIDTH);
-                    rotation.y = parseNumber(gameObjectJson["rotation"][1], DimensionType::HEIGHT);
-                    rotation.z = parseNumber(gameObjectJson["rotation"][2], DimensionType::UNDEFINED);
+                    rotation.x = parseFloatNumber(gameObjectJson["rotation"][0]);
+                    rotation.y = parseFloatNumber(gameObjectJson["rotation"][1]);
+                    rotation.z = parseFloatNumber(gameObjectJson["rotation"][2]);
                 } catch (std::exception& e) {
                     L::e(App::Constants::LOG_TAG, "Error parsing rotation values", e);
                     continue;
@@ -254,9 +255,9 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
 
             if (gameObjectJson["scale"].is_array() && gameObjectJson["scale"].size() == 3) {
                 try {
-                    scale.x = parseNumber(gameObjectJson["scale"][0], DimensionType::WIDTH);
-                    scale.y = parseNumber(gameObjectJson["scale"][1], DimensionType::HEIGHT);
-                    scale.z = parseNumber(gameObjectJson["scale"][2], DimensionType::UNDEFINED);
+                    scale.x = parseFloatNumber(gameObjectJson["scale"][0]);
+                    scale.y = parseFloatNumber(gameObjectJson["scale"][1]);
+                    scale.z = parseFloatNumber(gameObjectJson["scale"][2]);
                 } catch (std::exception& e) {
                     L::e(App::Constants::LOG_TAG, "Error parsing scale values", e);
                     continue;
@@ -334,12 +335,14 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         return m_meshRendererFactory->createMeshRenderer(parseLayerNames(componentJson["layerNames"]));
     } else if (type == "OrthoCamera") {
         return std::make_shared<OrthoCameraComponent>(
+                m_displayInfo,
+                m_unitsConverter,
                 parseColor4f(componentJson["clearColor"]),
                 parseLayerNames(componentJson["layerNames"]),
-                parseNumber(componentJson["left"], DimensionType::WIDTH),
-                parseNumber(componentJson["top"], DimensionType::HEIGHT),
-                parseNumber(componentJson["right"], DimensionType::WIDTH),
-                parseNumber(componentJson["bottom"], DimensionType::HEIGHT),
+                parseComplexValue(componentJson["left"], DimensionType::WIDTH),
+                parseComplexValue(componentJson["top"], DimensionType::HEIGHT),
+                parseComplexValue(componentJson["right"], DimensionType::WIDTH),
+                parseComplexValue(componentJson["bottom"], DimensionType::HEIGHT),
                 parseFloatNumber(componentJson["zNear"]),
                 parseFloatNumber(componentJson["zFar"])
         );
@@ -372,22 +375,35 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
     } else if (type == "TextRenderer") {
         return m_textRendererFactory->createTextRenderer(parseLayerNames(componentJson["layerNames"]));
     } else if (type == "ViewBounds") {
-        auto left = parseNumber(componentJson["left"], DimensionType::WIDTH);
-        auto bottom = parseNumber(componentJson["bottom"], DimensionType::HEIGHT);
+        auto left = parseComplexValue(componentJson["left"], DimensionType::WIDTH);
+        auto bottom = parseComplexValue(componentJson["bottom"], DimensionType::HEIGHT);
 
         if (componentJson.contains("right") && componentJson.contains("top")) {
-            auto right = parseNumber(componentJson["right"], DimensionType::WIDTH);
-            auto top = parseNumber(componentJson["top"], DimensionType::HEIGHT);
-            return std::make_shared<ViewBoundsComponent>(left, top, right, bottom);
+            auto right = parseComplexValue(componentJson["right"], DimensionType::WIDTH);
+            auto top = parseComplexValue(componentJson["top"], DimensionType::HEIGHT);
+            return std::make_shared<ViewBoundsComponent>(
+                    m_displayInfo,
+                    m_unitsConverter,
+                    EdgeViewBounds { left, top, right, bottom }
+            );
         } else if (componentJson.contains("width") && componentJson.contains("height")) {
-            auto width = parseNumber(componentJson["width"], DimensionType::WIDTH);
-            auto height = parseNumber(componentJson["height"], DimensionType::HEIGHT);
-            return std::make_shared<ViewBoundsComponent>(left, bottom + height, left + width, bottom);
+            auto width = parseComplexValue(componentJson["width"], DimensionType::WIDTH);
+            auto height = parseComplexValue(componentJson["height"], DimensionType::HEIGHT);
+            return std::make_shared<ViewBoundsComponent>(
+                    m_displayInfo,
+                    m_unitsConverter,
+                    SizeViewBounds { left, bottom, width, height }
+            );
         } else {
             throw std::domain_error("Insufficient params set for view bounds");
         }
     } else if (type == "Layout") {
-        auto padding = parseVec4(componentJson["padding"]);
+        auto paddingJson = componentJson["padding"];
+
+        auto paddingLeft = parseComplexValue(paddingJson[0]);
+        auto paddingTop = parseComplexValue(paddingJson[1]);
+        auto paddingRight = parseComplexValue(paddingJson[2]);
+        auto paddingBottom = parseComplexValue(paddingJson[3]);
 
         auto verticalLayoutJson = componentJson["verticalLayout"];
         if (!verticalLayoutJson.is_string()) {
@@ -491,17 +507,20 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             throw std::domain_error(ss.str());
         }
 
-        return std::make_shared<LayoutComponent>(LayoutParams {
-                int(padding.x),
-                int(padding.y),
-                int(padding.z),
-                int(padding.w),
-                verticalLayoutType,
-                horizontalLayoutType,
-                originVerticalLayoutType,
-                originHorizontalLayoutType,
-                referenceViewBounds
-        });
+        return std::make_shared<LayoutComponent>(
+                LayoutParams {
+                        paddingLeft,
+                        paddingTop,
+                        paddingRight,
+                        paddingBottom,
+                        verticalLayoutType,
+                        horizontalLayoutType,
+                        originVerticalLayoutType,
+                        originHorizontalLayoutType,
+                        referenceViewBounds
+                },
+                m_unitsConverter
+        );
     } else if (type == "GestureConsumer") {
         auto priorityJson = componentJson["priority"];
         if (!priorityJson.is_number()) {
@@ -532,6 +551,36 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 materialsMap.at(materialNameJson.get<std::string>()),
                 materialsMap.at(pressedMaterialNameJson.get<std::string>())
         );
+    } else if (type == "Transform2D") {
+        ComplexValue positionX;
+        ComplexValue positionY;
+        ComplexValue scaleX;
+        ComplexValue scaleY;
+
+        auto positionJson = componentJson["position"];
+        if (positionJson.is_array() && positionJson.size() == 2) {
+            positionX = parseComplexValue(positionJson[0], DimensionType::WIDTH);
+            positionY = parseComplexValue(positionJson[1], DimensionType::HEIGHT);
+        } else {
+            throw std::domain_error("Malformed Transform2D position");
+        }
+
+        auto sacleJson = componentJson["scale"];
+        if (sacleJson.is_array() && sacleJson.size() == 2) {
+            scaleX = parseComplexValue(sacleJson[0], DimensionType::WIDTH);
+            scaleY = parseComplexValue(sacleJson[1], DimensionType::HEIGHT);
+        } else {
+            throw std::domain_error("Malformed Transform2D scale");
+        }
+
+        return std::make_shared<Transformation2DComponent>(
+                m_unitsConverter,
+                m_displayInfo,
+                positionX,
+                positionY,
+                scaleX,
+                scaleY
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
@@ -544,19 +593,6 @@ float Scene::parseFloatNumber(const nlohmann::json& jsonValue) {
         throw std::domain_error("Float number has invalid format or missing");
     }
     return jsonValue.get<float>();
-}
-
-glm::vec4 Scene::parseVec4(const nlohmann::json& jsonValue) {
-    if (!jsonValue.is_array() || jsonValue.size() != 4) {
-        throw std::domain_error("Invalid or missing vec4 component");
-    }
-
-    return glm::vec4(
-            parseNumber(jsonValue[0], DimensionType::WIDTH),
-            parseNumber(jsonValue[1], DimensionType::HEIGHT),
-            parseNumber(jsonValue[2], DimensionType::WIDTH),
-            parseNumber(jsonValue[3], DimensionType::HEIGHT)
-    );
 }
 
 glm::vec3 Scene::parseColor3f(const nlohmann::json &colorJson) {
@@ -624,25 +660,22 @@ std::vector<std::string> Scene::parseLayerNames(const nlohmann::json& layerNames
     return layerNames;
 }
 
-float Scene::parseNumber(const nlohmann::json &jsonValue, DimensionType dimensionType) {
+ComplexValue Scene::parseComplexValue(
+        const nlohmann::json &jsonValue,
+        std::optional<DimensionType> optionalDimensionType
+) {
     if (jsonValue.is_number()) {
-        return jsonValue.get<float>();
+        return PlainValue { jsonValue.get<float>() };
     } else if (jsonValue.is_string()) {
         auto stringValue = jsonValue.get<std::string>();
         if (stringValue[stringValue.size() - 1] == '%') {
             auto value = std::stof(stringValue.substr(0, stringValue.size() - 1));
-            switch (dimensionType) {
-                case DimensionType::UNDEFINED:
-                    throw std::domain_error("Percent value given but dimension is undefined");
-
-                case DimensionType::WIDTH:
-                    return m_unitsConverter->widthPercentToPixels(value);
-
-                case DimensionType::HEIGHT:
-                    return m_unitsConverter->heightPercentToPixels(value);
+            if (!optionalDimensionType) {
+                throw std::domain_error("Dimension type not provided for percent complex value");
             }
+            return PercentValue { optionalDimensionType.value(), value };
         } else if (stringValue.substr(stringValue.size() - 2, 2) == "dp") {
-            return m_unitsConverter->dpToPixels(std::stof(stringValue.substr(0, stringValue.size() - 2)));
+            return DpValue { std::stof(stringValue.substr(0, stringValue.size() - 2)) };
         } else {
             throw std::domain_error("Bad number format");
         }

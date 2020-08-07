@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <game/UnitsConverter.h>
 #include "ViewBoundsComponent.h"
 
 enum class VerticalLayoutType {
@@ -26,10 +27,10 @@ enum class OriginHorizontalLayoutType {
 };
 
 struct LayoutParams {
-    int paddingLeft;
-    int paddingTop;
-    int paddingRight;
-    int paddingBottom;
+    ComplexValue paddingLeft;
+    ComplexValue paddingTop;
+    ComplexValue paddingRight;
+    ComplexValue paddingBottom;
     VerticalLayoutType verticalLayoutType;
     HorizontalLayoutType horizontalLayoutType;
     OriginVerticalLayoutType originVerticalLayoutType;

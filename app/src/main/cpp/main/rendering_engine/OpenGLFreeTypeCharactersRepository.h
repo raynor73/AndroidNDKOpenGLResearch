@@ -12,12 +12,40 @@
 #include <memory>
 #include <game/CharactersRepository.h>
 #include <game/FontDataLoader.h>
+#include <game/UnitsConverter.h>
+#include <game/DisplayInfoUpdateDetector.h>
 #include "OpenGLTexturesRepository.h"
 
 namespace std {
+
+    template<> struct hash<ComplexValue> {
+        size_t operator()(const ComplexValue& complexValue) const {
+            size_t typeHash;
+            size_t valueHash;
+            if (std::holds_alternative<PercentValue>(complexValue)) {
+                auto percentValue = std::get<PercentValue>(complexValue);
+
+                typeHash = std::hash<std::string>{}("%");
+                valueHash = std::hash<float>{}(percentValue.value);
+            } else if (std::holds_alternative<DpValue>(complexValue)) {
+                auto dpValue = std::get<DpValue>(complexValue);
+
+                typeHash = std::hash<std::string>{}("dp");
+                valueHash = std::hash<float>{}(dpValue.value);
+            } else {
+                auto plainValue = std::get<PlainValue>(complexValue);
+
+                typeHash = std::hash<std::string>{}("px");
+                valueHash = std::hash<float>{}(plainValue.value);
+            }
+
+            return typeHash ^ (valueHash << 1);
+        }
+    };
+
     template<> struct hash<TextAppearance> {
         size_t operator()(const TextAppearance& textAppearance) const {
-            auto textSizeHash = std::hash<unsigned int>{}(textAppearance.textSize());
+            auto textSizeHash = std::hash<ComplexValue>{}(textAppearance.textSize());
             auto fontPathHash = std::hash<std::string>{}(textAppearance.fontPath());
             return textSizeHash ^ (fontPathHash << 1);
         }
@@ -32,17 +60,20 @@ namespace std {
     };
 }
 
-class OpenGLFreeTypeCharactersRepository : public CharactersRepository {
+class OpenGLFreeTypeCharactersRepository : public CharactersRepository, DisplayInfoUpdateDetector {
 
     FT_Library m_freeType;
     std::unordered_map<std::pair<char, TextAppearance>, Character> m_characterMap;
     std::shared_ptr<FontDataLoader> m_fontDataLoader;
     std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
+    std::shared_ptr<UnitsConverter> m_unitsConverter;
 
 public:
     OpenGLFreeTypeCharactersRepository(
             std::shared_ptr<FontDataLoader> fontDataLoader,
-            std::shared_ptr<OpenGLTexturesRepository> texturesRepository
+            std::shared_ptr<OpenGLTexturesRepository> texturesRepository,
+            std::shared_ptr<UnitsConverter> unitsConverter,
+            std::shared_ptr<DisplayInfo> displayInfo
     );
     OpenGLFreeTypeCharactersRepository(const OpenGLFreeTypeCharactersRepository&) = delete;
     OpenGLFreeTypeCharactersRepository(OpenGLFreeTypeCharactersRepository&&) = delete;

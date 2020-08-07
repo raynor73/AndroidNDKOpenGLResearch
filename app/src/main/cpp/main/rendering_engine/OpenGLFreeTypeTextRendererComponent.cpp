@@ -36,7 +36,6 @@ void OpenGLFreeTypeTextRendererComponent::render(
         auto character = m_charactersRepository->getCharacter(textAppearance, c);
         renderCharacter(
                 character,
-                textAppearance.textSize(),
                 textComponent->textColor(),
                 shaderProgramContainer,
                 modelMatrix,
@@ -50,7 +49,6 @@ void OpenGLFreeTypeTextRendererComponent::render(
 
 void OpenGLFreeTypeTextRendererComponent::renderCharacter(
         const Character& character,
-        float textSize,
         const glm::vec4& color,
         const OpenGlShaderProgramContainer& shaderProgramContainer,
         const glm::mat4x4& modelMatrix,

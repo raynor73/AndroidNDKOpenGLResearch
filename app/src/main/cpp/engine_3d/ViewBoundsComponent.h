@@ -7,9 +7,32 @@
 
 
 #include <string>
+#include <memory>
+#include <utility>
+#include <variant>
+#include <game/UnitsConverter.h>
+#include <game/DisplayInfoUpdateDetector.h>
 #include "GameObjectComponent.h"
 
-class ViewBoundsComponent : public GameObjectComponent {
+struct EdgeViewBounds {
+    ComplexValue leftComplexValue;
+    ComplexValue topComplexValue;
+    ComplexValue rightComplexValue;
+    ComplexValue bottomComplexValue;
+};
+
+struct SizeViewBounds {
+    ComplexValue leftComplexValue;
+    ComplexValue bottomComplexValue;
+    ComplexValue widthComplexValue;
+    ComplexValue    heightComplexValue;
+};
+
+class ViewBoundsComponent : public GameObjectComponent, DisplayInfoUpdateDetector {
+
+    std::shared_ptr<UnitsConverter> m_unitsConverter;
+
+    std::variant<EdgeViewBounds, SizeViewBounds> m_viewBounds;
 
     int m_left;
     int m_top;
@@ -18,14 +41,20 @@ class ViewBoundsComponent : public GameObjectComponent {
 
 public:
     ViewBoundsComponent(
-            int left,
-            int top,
-            int right,
-            int bottom
-    ) : m_left(left),
-        m_top(top),
-        m_right(right),
-        m_bottom(bottom) {}
+            std::shared_ptr<DisplayInfo> displayInfo,
+            std::shared_ptr<UnitsConverter> unitsConverter,
+            EdgeViewBounds viewBounds
+    ) : DisplayInfoUpdateDetector(displayInfo),
+        m_unitsConverter(std::move(unitsConverter)),
+        m_viewBounds(std::move(viewBounds)) {}
+
+    ViewBoundsComponent(
+            std::shared_ptr<DisplayInfo> displayInfo,
+            std::shared_ptr<UnitsConverter> unitsConverter,
+            SizeViewBounds viewBounds
+    ) : DisplayInfoUpdateDetector(displayInfo),
+        m_unitsConverter(std::move(unitsConverter)),
+        m_viewBounds(viewBounds) {}
 
     int left() const { return m_left; }
     void setLeft(int left) { m_left = left; }
@@ -40,6 +69,9 @@ public:
     void setBottom(int bottom) { m_bottom = bottom; }
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }
+
+    // TODO May be it makes sense to make checks in getters and/or setters instead of doing them in update
+    virtual void update() override;
 
     virtual std::shared_ptr<GameObjectComponent> clone() override;
 

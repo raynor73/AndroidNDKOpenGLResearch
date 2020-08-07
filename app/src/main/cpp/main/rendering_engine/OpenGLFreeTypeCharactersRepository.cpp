@@ -10,9 +10,13 @@
 
 OpenGLFreeTypeCharactersRepository::OpenGLFreeTypeCharactersRepository(
         std::shared_ptr<FontDataLoader> fontDataLoader,
-        std::shared_ptr<OpenGLTexturesRepository> texturesRepository
-) : m_fontDataLoader(std::move(fontDataLoader)),
-    m_texturesRepository(std::move(texturesRepository)) {
+        std::shared_ptr<OpenGLTexturesRepository> texturesRepository,
+        std::shared_ptr<UnitsConverter> unitsConverter,
+        std::shared_ptr<DisplayInfo> displayInfo
+) : DisplayInfoUpdateDetector(std::move(displayInfo)),
+    m_fontDataLoader(std::move(fontDataLoader)),
+    m_texturesRepository(std::move(texturesRepository)),
+    m_unitsConverter(std::move(unitsConverter)) {
     if (FT_Init_FreeType(&m_freeType)){
         throw std::domain_error("Could not init FreeType library");
     }
@@ -23,6 +27,10 @@ OpenGLFreeTypeCharactersRepository::~OpenGLFreeTypeCharactersRepository() {
 }
 
 const Character& OpenGLFreeTypeCharactersRepository::getCharacter(const TextAppearance& textAppearance, char c) {
+    if (isDisplayInfoUpdated()) {
+        removeAllCharacters();
+    }
+
     auto key = std::pair<char, TextAppearance>(c, textAppearance);
     if (m_characterMap.count(key) == 0) {
         createCharacters(textAppearance);
@@ -52,7 +60,7 @@ void OpenGLFreeTypeCharactersRepository::createCharacters(const TextAppearance& 
         throw std::domain_error(ss.str());
     }
 
-    FT_Set_Pixel_Sizes(face, 0, textAppearance.textSize());
+    FT_Set_Pixel_Sizes(face, 0, m_unitsConverter->complexValueToPixels(textAppearance.textSize()));
 
     for (unsigned char c = 0; c < 128; c++) {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {

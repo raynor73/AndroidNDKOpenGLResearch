@@ -8,7 +8,50 @@
 const std::string ViewBoundsComponent::TYPE_NAME = "ViewBoundsComponent";
 
 std::shared_ptr<GameObjectComponent> ViewBoundsComponent::clone() {
-    auto clone = std::make_shared<ViewBoundsComponent>(m_left, m_top, m_right, m_bottom);
+    std::shared_ptr<GameObjectComponent> clone;
+    if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
+        auto viewBounds = std::get<EdgeViewBounds>(m_viewBounds);
+        clone = std::make_shared<ViewBoundsComponent>(
+                m_displayInfo,
+                m_unitsConverter,
+                viewBounds
+        );
+    } else {
+        auto viewBounds = std::get<SizeViewBounds>(m_viewBounds);
+        clone = std::make_shared<ViewBoundsComponent>(
+                m_displayInfo,
+                m_unitsConverter,
+                viewBounds
+        );
+    }
     clone->setEnabled(m_isEnabled);
     return clone;
+}
+
+void ViewBoundsComponent::update() {
+    GameObjectComponent::update();
+
+    if (!m_isEnabled) {
+        return;
+    }
+
+    if (isDisplayInfoUpdated()) {
+        if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
+            auto viewBounds = std::get<EdgeViewBounds>(m_viewBounds);
+            m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
+            m_top = m_unitsConverter->complexValueToPixels(viewBounds.topComplexValue);
+            m_right = m_unitsConverter->complexValueToPixels(viewBounds.rightComplexValue);
+            m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
+        } else {
+            auto viewBounds = std::get<SizeViewBounds>(m_viewBounds);
+            m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
+            m_top =
+                    m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue) +
+                    m_unitsConverter->complexValueToPixels(viewBounds.heightComplexValue);
+            m_right =
+                    m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue) +
+                    m_unitsConverter->complexValueToPixels(viewBounds.widthComplexValue);
+            m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
+        }
+    }
 }

@@ -8,20 +8,21 @@
 
 #include <utility>
 #include <string>
+#include <game/UnitsConverter.h>
 
 class TextAppearance {
 
-    unsigned int m_textSize;
+    ComplexValue m_textSize;
     std::string m_fontPath;
 
 public:
     TextAppearance(
-            unsigned int textSize,
+            ComplexValue textSize,
             std::string fontPath
-    ) : m_textSize(textSize),
+    ) : m_textSize(std::move(textSize)),
         m_fontPath(std::move(fontPath)) {}
 
-    unsigned int textSize() const { return m_textSize; }
+    const ComplexValue& textSize() const { return m_textSize; }
     const std::string& fontPath() const { return m_fontPath; }
 
     bool operator==(const TextAppearance& other) const;

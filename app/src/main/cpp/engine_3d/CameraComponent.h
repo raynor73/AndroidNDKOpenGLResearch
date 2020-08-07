@@ -10,6 +10,7 @@
 #include <string>
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
+#include <game/UnitsConverter.h>
 #include "GameObjectComponent.h"
 
 class CameraComponent : public GameObjectComponent {
@@ -18,10 +19,10 @@ protected:
     float m_zNear;
     float m_zFar;
 
-    float m_viewportX = 0;
-    float m_viewportY = 0;
-    float m_viewportWidth = 1;
-    float m_viewportHeight = 1;
+    ComplexValue m_viewportX = PlainValue { 0 };
+    ComplexValue m_viewportY = PlainValue { 0 };
+    ComplexValue m_viewportWidth = PercentValue { DimensionType::WIDTH, 100 };
+    ComplexValue m_viewportHeight = PercentValue { DimensionType::HEIGHT, 100 };
 
     glm::vec4 m_clearColor;
     bool m_shouldClearDepth = true;
@@ -41,14 +42,14 @@ public:
     float zFar() const { return m_zFar; };
     void setZFar(float zFar) { m_zFar = zFar; };
 
-    float viewportX() const { return m_viewportX; };
-    void setViewportX(float viewportX) { m_viewportX = viewportX; };
-    float viewportY() const { return m_viewportY; };
-    void setViewportY(float viewportY) { m_viewportY = viewportY; };
-    float viewportWidth() const { return m_viewportWidth; };
-    void setViewportWidth(float viewportWidth) { m_viewportWidth = viewportWidth; };
-    float viewportHeight() const { return m_viewportHeight; };
-    void setViewportHeight(float viewportHeight) { m_viewportHeight = viewportHeight; };
+    const ComplexValue& viewportX() const { return m_viewportX; };
+    void setViewportX(const ComplexValue& viewportX) { m_viewportX = viewportX; };
+    const ComplexValue& viewportY() const { return m_viewportY; };
+    void setViewportY(const ComplexValue& viewportY) { m_viewportY = viewportY; };
+    const ComplexValue& viewportWidth() const { return m_viewportWidth; };
+    void setViewportWidth(const ComplexValue& viewportWidth) { m_viewportWidth = viewportWidth; };
+    const ComplexValue& viewportHeight() const { return m_viewportHeight; };
+    void setViewportHeight(const ComplexValue& viewportHeight) { m_viewportHeight = viewportHeight; };
 
     glm::vec4 clearColor() const { return m_clearColor; }
     void setClearColor(const glm::vec4& clearColor) { m_clearColor = clearColor; }

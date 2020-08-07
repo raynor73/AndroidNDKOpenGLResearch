@@ -150,7 +150,9 @@ void GameWrapper::onSurfaceChanged(int width, int height) {
         );
         m_charactersRepository = std::make_shared<OpenGLFreeTypeCharactersRepository>(
                 m_fontDataLoader,
-                m_texturesRepository
+                m_texturesRepository,
+                m_unitsConverter,
+                m_displayInfo
         );
     }
     m_displayInfo->setWidth(width);

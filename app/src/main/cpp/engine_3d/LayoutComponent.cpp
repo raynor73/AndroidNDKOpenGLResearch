@@ -51,34 +51,39 @@ void LayoutComponent::update() {
 
     auto width = viewBounds->right() - viewBounds->left();
     auto height = viewBounds->top() - viewBounds->bottom();
+    
+    auto paddingLeft = m_unitsConverter->complexValueToPixels(m_layoutParams.paddingLeft);
+    auto paddingTop = m_unitsConverter->complexValueToPixels(m_layoutParams.paddingTop);
+    auto paddingRight = m_unitsConverter->complexValueToPixels(m_layoutParams.paddingRight);
+    auto paddingBottom = m_unitsConverter->complexValueToPixels(m_layoutParams.paddingBottom);
 
     switch (m_layoutParams.horizontalLayoutType) {
 
         case HorizontalLayoutType::LEFT_INSIDE:
-            viewBounds->setLeft(currentReferenceLeftViewBound + m_layoutParams.paddingLeft);
+            viewBounds->setLeft(currentReferenceLeftViewBound + paddingLeft);
             viewBounds->setRight(viewBounds->left() + width);
             break;
 
         case HorizontalLayoutType::LEFT_OUTSIDE:
-            viewBounds->setRight(currentReferenceLeftViewBound - m_layoutParams.paddingRight);
+            viewBounds->setRight(currentReferenceLeftViewBound - paddingRight);
             viewBounds->setLeft(viewBounds->right() - width);
             break;
 
         case HorizontalLayoutType::CENTER: {
             auto referenceCenter = (currentReferenceLeftViewBound + currentReferenceRightViewBound) / 2;
             auto halfWidth = width / 2;
-            viewBounds->setLeft(referenceCenter - halfWidth + m_layoutParams.paddingLeft);
+            viewBounds->setLeft(referenceCenter - halfWidth + paddingLeft);
             viewBounds->setRight(viewBounds->left() + width);
             break;
         }
 
         case HorizontalLayoutType::RIGHT_INSIDE:
-            viewBounds->setRight(currentReferenceRightViewBound - m_layoutParams.paddingRight);
+            viewBounds->setRight(currentReferenceRightViewBound - paddingRight);
             viewBounds->setLeft(viewBounds->right() - width);
             break;
 
         case HorizontalLayoutType::RIGHT_OUTSIDE:
-            viewBounds->setLeft(currentReferenceRightViewBound + m_layoutParams.paddingLeft);
+            viewBounds->setLeft(currentReferenceRightViewBound + paddingLeft);
             viewBounds->setRight(viewBounds->left() + width);
             break;
     }
@@ -86,30 +91,30 @@ void LayoutComponent::update() {
     switch (m_layoutParams.verticalLayoutType) {
 
         case VerticalLayoutType::TOP_INSIDE:
-            viewBounds->setTop(currentReferenceTopViewBound - m_layoutParams.paddingTop);
+            viewBounds->setTop(currentReferenceTopViewBound - paddingTop);
             viewBounds->setBottom(viewBounds->top() - height);
             break;
 
         case VerticalLayoutType::TOP_OUTSIDE:
-            viewBounds->setBottom(currentReferenceBottomViewBound + m_layoutParams.paddingBottom);
+            viewBounds->setBottom(currentReferenceBottomViewBound + paddingBottom);
             viewBounds->setTop(viewBounds->bottom() + height);
             break;
 
         case VerticalLayoutType::CENTER: {
             auto referenceCenter = (currentReferenceTopViewBound + currentReferenceBottomViewBound) / 2;
             auto halfHeight = height / 2;
-            viewBounds->setBottom(referenceCenter - halfHeight + m_layoutParams.paddingBottom);
+            viewBounds->setBottom(referenceCenter - halfHeight + paddingBottom);
             viewBounds->setTop(viewBounds->bottom() + height);
             break;
         }
 
         case VerticalLayoutType::BOTTOM_INSIDE:
-            viewBounds->setBottom(currentReferenceBottomViewBound + m_layoutParams.paddingBottom);
+            viewBounds->setBottom(currentReferenceBottomViewBound + paddingBottom);
             viewBounds->setTop(viewBounds->bottom() + height);
             break;
 
         case VerticalLayoutType::BOTTOM_OUTSIDE:
-            viewBounds->setTop(currentReferenceBottomViewBound - m_layoutParams.paddingTop);
+            viewBounds->setTop(currentReferenceBottomViewBound - paddingTop);
             viewBounds->setBottom(viewBounds->top() - height);
             break;
     }
@@ -160,7 +165,7 @@ void LayoutComponent::update() {
 }
 
 std::shared_ptr <GameObjectComponent> LayoutComponent::clone() {
-    auto clone = std::make_shared<LayoutComponent>(m_layoutParams);
+    auto clone = std::make_shared<LayoutComponent>(m_layoutParams, m_unitsConverter);
     clone->setEnabled(m_isEnabled);
     return clone;
 }

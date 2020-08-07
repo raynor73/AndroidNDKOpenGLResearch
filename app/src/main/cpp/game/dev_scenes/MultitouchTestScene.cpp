@@ -74,8 +74,8 @@ void MultitouchTestScene::update(float dt) {
                 );
                 auto material = materialComponent->material();
                 material.diffuseColor = glm::vec4(
-                        m_unitsConverter->widthPixelsToPercent(touchEvent.x) / 100,
-                        m_unitsConverter->heightPixelsToPercent(touchEvent.y) / 100,
+                        touchEvent.x / m_displayInfo->width(),
+                        touchEvent.y / m_displayInfo->height(),
                         0,
                         1
                 );

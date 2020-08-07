@@ -6,12 +6,15 @@
 #define ENGINE_3D_LAYOUT_COMPONENT_H
 
 
+#include <memory>
 #include <string>
 #include <utility>
 #include "GameObjectComponent.h"
 #include "LayoutParams.h"
 
 class LayoutComponent : public GameObjectComponent {
+
+    std::shared_ptr<UnitsConverter> m_unitsConverter;
 
     LayoutParams m_layoutParams;
 
@@ -21,16 +24,20 @@ class LayoutComponent : public GameObjectComponent {
     int m_prevReferenceBottomViewBound = INT_MIN;
 
 public:
-    LayoutComponent(LayoutParams layoutParams) : m_layoutParams(std::move(layoutParams)) {}
+    LayoutComponent(
+            LayoutParams layoutParams,
+            std::shared_ptr<UnitsConverter> unitsConverter
+    ) : m_unitsConverter(std::move(unitsConverter)),
+        m_layoutParams(std::move(layoutParams)) {}
 
-    virtual const std::string& typeName() const { return TYPE_NAME; };
+    virtual const std::string& typeName() const override { return TYPE_NAME; }
 
     virtual void update() override;
 
     const LayoutParams& layoutParams() const { return m_layoutParams; }
     void setLayoutParams(const LayoutParams& layoutParams) { m_layoutParams = layoutParams; }
 
-    virtual std::shared_ptr <GameObjectComponent> clone();
+    virtual std::shared_ptr <GameObjectComponent> clone() override;
 
     static const std::string TYPE_NAME;
 };

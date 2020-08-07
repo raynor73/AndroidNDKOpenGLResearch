@@ -40,7 +40,7 @@ public:
 
     static const std::string TYPE_NAME;
 
-    virtual const std::string& typeName() const { return TYPE_NAME; }
+    virtual const std::string& typeName() const override { return TYPE_NAME; }
 
     const ComplexValue& positionX() const { return m_positionX; }
     void setPositionX(const ComplexValue& positionX) { m_positionX = positionX; }
@@ -53,7 +53,7 @@ public:
 
     virtual void update() override;
 
-    virtual std::shared_ptr <GameObjectComponent> clone();
+    virtual std::shared_ptr <GameObjectComponent> clone() override;
 };
 
 

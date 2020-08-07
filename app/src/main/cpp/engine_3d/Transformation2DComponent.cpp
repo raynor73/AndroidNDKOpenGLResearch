@@ -3,6 +3,7 @@
 //
 
 #include <sstream>
+#include "LayoutComponent.h"
 #include "Transformation2DComponent.h"
 #include "TransformationComponent.h"
 #include "GameObject.h"
@@ -35,16 +36,18 @@ void Transformation2DComponent::update() {
     throwErrorIfNoGameObject();
 
     if (isDisplayInfoUpdated()) {
-        auto transform3D = std::const_pointer_cast<TransformationComponent>(
+        auto transform3D = std::static_pointer_cast<TransformationComponent>(
                 m_gameObject->findComponent(TransformationComponent::TYPE_NAME)
         );
         throwErrorIfNull(transform3D, "No transformation component for applying 2D transform");
 
-        transform3D->setPosition(glm::vec3(
-                m_unitsConverter->complexValueToPixels(m_positionX),
-                m_unitsConverter->complexValueToPixels(m_positionY),
-                transform3D->position().z
-        ));
+        if (m_gameObject->findComponent(LayoutComponent::TYPE_NAME) == nullptr) {
+            transform3D->setPosition(glm::vec3(
+                    m_unitsConverter->complexValueToPixels(m_positionX),
+                    m_unitsConverter->complexValueToPixels(m_positionY),
+                    transform3D->position().z
+            ));
+        }
 
         transform3D->setScale(glm::vec3(
                 m_unitsConverter->complexValueToPixels(m_scaleX),

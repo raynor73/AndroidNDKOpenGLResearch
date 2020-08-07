@@ -127,13 +127,13 @@ void RenderingEngine::render(Scene &scene) {
             clearMask |= GL_DEPTH_BUFFER_BIT;
         }
 
-        int viewportX = m_unitsConverter->widthPercentToPixels(camera->viewportX() * 100);
-        int viewportY =  m_unitsConverter->heightPercentToPixels(camera->viewportY() * 100);
-        int viewportWidth = m_unitsConverter->widthPercentToPixels(camera->viewportWidth() * 100);
-        int viewportHeight = m_unitsConverter->heightPercentToPixels(camera->viewportHeight() * 100);
+        int viewportX = m_unitsConverter->complexValueToPixels(camera->viewportX());
+        int viewportY =  m_unitsConverter->complexValueToPixels(camera->viewportY());
+        int viewportWidth = m_unitsConverter->complexValueToPixels(camera->viewportWidth());
+        int viewportHeight = m_unitsConverter->complexValueToPixels(camera->viewportHeight());
         pushOpenGLState({
-            {viewportX, viewportY, viewportWidth, viewportHeight},
-            {viewportX, viewportY, viewportWidth, viewportHeight},
+            { viewportX, viewportY, viewportWidth, viewportHeight },
+            { viewportX, viewportY, viewportWidth, viewportHeight },
             false,
             {GL_ONE, GL_ONE},
             true,
