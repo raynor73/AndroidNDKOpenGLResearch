@@ -3,6 +3,7 @@
 //
 
 #include <vector>
+#include <algorithm>
 #include <glm/gtx/compatibility.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/mat4x4.hpp>
@@ -14,6 +15,7 @@
 #include <engine_3d/TransformationComponent.h>
 #include <engine_3d/MaterialComponent.h>
 #include <engine_3d/Utils.h>
+#include <engine_3d/PerspectiveCameraComponent.h>
 #include "RenderingEngine.h"
 
 using namespace Engine3D::Utils;
@@ -51,6 +53,9 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createVertexShader("text", textVertexShaderSource);
     shadersRepository->createFragmentShader("text", textFragmentShaderSource);
     shadersRepository->createShaderProgram("text", "text", "text");
+
+    glEnable(GL_DEPTH_TEST);
+    glFrontFace(GL_CCW);
 }
 
 void RenderingEngine::render(Scene &scene) {
@@ -73,6 +78,12 @@ void RenderingEngine::render(Scene &scene) {
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
         if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
+            if (camera->isEnabled()) {
+                activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
+            }
+        }
+
+        if (auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME); camera != nullptr) {
             if (camera->isEnabled()) {
                 activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
             }
@@ -117,6 +128,14 @@ void RenderingEngine::render(Scene &scene) {
             putMeshInGeometryBuffersIfNecessary(meshComponent->meshName(), meshComponent->mesh());
         }
     });
+
+    std::sort(
+            activeCameras.begin(),
+            activeCameras.end(),
+            [](const std::shared_ptr<CameraComponent>& lhs, const std::shared_ptr<CameraComponent>& rhs) {
+                return lhs->order() < rhs->order();
+            }
+    );
 
     for (auto& camera : activeCameras) {
         GLbitfield clearMask = 0;

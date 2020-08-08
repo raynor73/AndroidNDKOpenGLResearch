@@ -26,6 +26,7 @@
 #include <engine_3d/TextButtonComponent.h>
 #include <engine_3d/ImageButtonComponent.h>
 #include <engine_3d/Transformation2DComponent.h>
+#include <engine_3d/PerspectiveCameraComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -350,7 +351,7 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
     } else if (type == "MeshRenderer") {
         return m_meshRendererFactory->createMeshRenderer(parseLayerNames(componentJson["layerNames"]));
     } else if (type == "OrthoCamera") {
-        return std::make_shared<OrthoCameraComponent>(
+        auto camera = std::make_shared<OrthoCameraComponent>(
                 m_displayInfo,
                 m_unitsConverter,
                 parseColor4f(componentJson["clearColor"]),
@@ -360,8 +361,20 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 parseComplexValue(componentJson["right"], DimensionType::WIDTH),
                 parseComplexValue(componentJson["bottom"], DimensionType::HEIGHT),
                 parseFloatNumber(componentJson["zNear"]),
-                parseFloatNumber(componentJson["zFar"])
+                parseFloatNumber(componentJson["zFar"]),
+                componentJson["order"].get<int>()
         );
+        camera->setShouldClearColor(
+                componentJson.contains("shouldClearColor") &&
+                componentJson["shouldClearColor"].is_boolean() &&
+                componentJson["shouldClearColor"].get<bool>()
+        );
+        camera->setShouldClearDepth(
+                componentJson.contains("shouldClearDepth") &&
+                componentJson["shouldClearDepth"].is_boolean() &&
+                componentJson["shouldClearDepth"].get<bool>()
+        );
+        return camera;
     } else if (type == "AmbientLight") {
         return std::make_shared<AmbientLightComponent>(
                 parseColor3f(componentJson["color"]),
@@ -581,10 +594,10 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             throw std::domain_error("Malformed Transform2D position");
         }
 
-        auto sacleJson = componentJson["scale"];
-        if (sacleJson.is_array() && sacleJson.size() == 2) {
-            scaleX = parseComplexValue(sacleJson[0], DimensionType::WIDTH);
-            scaleY = parseComplexValue(sacleJson[1], DimensionType::HEIGHT);
+        auto scaleJson = componentJson["scale"];
+        if (scaleJson.is_array() && scaleJson.size() == 2) {
+            scaleX = parseComplexValue(scaleJson[0], DimensionType::WIDTH);
+            scaleY = parseComplexValue(scaleJson[1], DimensionType::HEIGHT);
         } else {
             throw std::domain_error("Malformed Transform2D scale");
         }
@@ -597,6 +610,27 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 scaleX,
                 scaleY
         );
+    } else if (type == "PerspectiveCamera") {
+        auto camera = std::make_shared<PerspectiveCameraComponent>(
+                m_unitsConverter,
+                parseColor4f(componentJson["clearColor"]),
+                parseLayerNames(componentJson["layerNames"]),
+                parseFloatNumber(componentJson["fov"]),
+                parseFloatNumber(componentJson["zNear"]),
+                parseFloatNumber(componentJson["zFar"]),
+                componentJson["order"].get<int>()
+        );
+        camera->setShouldClearColor(
+                componentJson.contains("shouldClearColor") &&
+                componentJson["shouldClearColor"].is_boolean() &&
+                componentJson["shouldClearColor"].get<bool>()
+        );
+        camera->setShouldClearDepth(
+                componentJson.contains("shouldClearDepth") &&
+                componentJson["shouldClearDepth"].is_boolean() &&
+                componentJson["shouldClearDepth"].get<bool>()
+        );
+        return camera;
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

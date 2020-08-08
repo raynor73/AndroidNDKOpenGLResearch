@@ -24,6 +24,10 @@ bool operator==(const ComplexValue& lhs, const ComplexValue& rhs) {
     }
 }
 
+bool operator!=(const ComplexValue& lhs, const ComplexValue& rhs) {
+    return !(lhs == rhs);
+}
+
 std::ostream& operator<<(std::ostream& os, const ComplexValue& complexValue) {
     if (std::holds_alternative<PercentValue>(complexValue)) {
         auto percentValue = std::get<PercentValue>(complexValue);

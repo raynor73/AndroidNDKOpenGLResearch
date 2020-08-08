@@ -29,6 +29,7 @@ struct PlainValue {
 typedef std::variant<PercentValue, DpValue, PlainValue> ComplexValue;
 
 bool operator==(const ComplexValue& lhs, const ComplexValue& rhs);
+bool operator!=(const ComplexValue& lhs, const ComplexValue& rhs);
 
 std::ostream& operator<<(std::ostream& os, const ComplexValue& complexValue);
 

@@ -3,7 +3,7 @@
     { "name": "quad", "path": "meshes/vertical_plane.obj" }
   ],
   "materials": [
-    { "name": "white", "diffuseColor": [1, 1, 1, 1], "isWireframe": true },
+    { "name": "white", "diffuseColor": [1, 1, 1, 1] },
     { "name": "close", "textureName": "close", "isTranslucent": true },
     { "name": "cancel", "textureName": "cancel", "isTranslucent": true }
   ],
@@ -88,7 +88,10 @@
           "top": "100%",
           "zNear": 0,
           "zFar": 1000,
-          "layerNames": ["ui"]
+          "layerNames": ["ui"],
+          "shouldClearDepth": true,
+          "shouldClearColor": true,
+          "order": 0
         },
         { "type": "AmbientLight", "color": [0.5, 0.5, 0.5], "layerNames": ["ui"] }
       ]

@@ -117,7 +117,10 @@
           "top": "100%",
           "zNear": 0,
           "zFar": 1000,
-          "layerNames": ["ui"]
+          "layerNames": ["ui"],
+          "shouldClearDepth": true,
+          "shouldClearColor": true,
+          "order": 0
         },
         { "type": "AmbientLight", "color": [0.1, 0.1, 0.1], "layerNames": ["ui"] }
       ]

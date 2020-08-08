@@ -37,8 +37,9 @@ public:
             ComplexValue right,
             ComplexValue bottom,
             float zNear,
-            float zFar
-    ) : CameraComponent(clearColor, layerNames, zNear, zFar),
+            float zFar,
+            int order
+    ) : CameraComponent(clearColor, layerNames, zNear, zFar, order),
         DisplayInfoUpdateDetector(displayInfo),
         m_unitsConverter(std::move(unitsConverter)),
         m_left(std::move(left)),

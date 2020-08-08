@@ -24,6 +24,8 @@ protected:
     ComplexValue m_viewportWidth = PercentValue { DimensionType::WIDTH, 100 };
     ComplexValue m_viewportHeight = PercentValue { DimensionType::HEIGHT, 100 };
 
+    int m_order;
+
     glm::vec4 m_clearColor;
     bool m_shouldClearDepth = true;
     bool m_shouldClearColor = true;
@@ -31,11 +33,19 @@ protected:
     std::vector<std::string> m_layerNames;
 
 public:
-    CameraComponent(const glm::vec4& clearColor, const std::vector<std::string>& layerNames, float zNear, float zFar) :
+    CameraComponent(
+            const glm::vec4& clearColor,
+            const std::vector<std::string>& layerNames,
+            float zNear,
+            float zFar,
+            int order
+    ) :
         m_clearColor(clearColor),
         m_layerNames(layerNames),
         m_zNear(zNear),
-        m_zFar(zFar) {}
+        m_zFar(zFar),
+        m_order(order)
+        {}
 
     float zNear() const { return m_zNear; };
     void setZNear(float zNear) { m_zNear = zNear; };
@@ -50,6 +60,9 @@ public:
     void setViewportWidth(const ComplexValue& viewportWidth) { m_viewportWidth = viewportWidth; };
     const ComplexValue& viewportHeight() const { return m_viewportHeight; };
     void setViewportHeight(const ComplexValue& viewportHeight) { m_viewportHeight = viewportHeight; };
+
+    int order() const { return m_order; }
+    void setOrder(int priority) { m_order = priority; }
 
     glm::vec4 clearColor() const { return m_clearColor; }
     void setClearColor(const glm::vec4& clearColor) { m_clearColor = clearColor; }

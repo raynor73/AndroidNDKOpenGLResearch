@@ -1,9 +1,11 @@
 {
   "meshes": [
-    { "name": "quad", "path": "meshes/vertical_plane.obj" }
+    { "name": "quad", "path": "meshes/vertical_plane.obj" },
+    { "name": "box", "path": "meshes/box.obj" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
+    { "name": "green", "diffuseColor": [0, 0.5, 0, 1], "isWireframe": true },
     { "name": "close", "textureName": "close", "isTranslucent": true },
     { "name": "cancel", "textureName": "cancel", "isTranslucent": true }
   ],
@@ -22,6 +24,18 @@
       "scale": [1.0, 1.0, 1.0],
       "components": [
         { "type": "ViewBounds", "left": 0, "right": "100%", "top": "100%", "bottom": 0 }
+      ]
+    },
+    {
+      "name": "box",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "box" },
+        { "type": "Material", "materialName": "green" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] }
       ]
     },
     {
@@ -118,11 +132,35 @@
           "right": "100%",
           "bottom": 0,
           "top": "100%",
-          "zNear": 0,
+          "zNear": 0.1,
           "zFar": 1000,
-          "layerNames": ["ui"]
+          "layerNames": ["ui"],
+          "shouldClearDepth": true,
+          "shouldClearColor": false,
+          "order": 20
         },
         { "type": "AmbientLight", "color": [0.5, 0.5, 0.5], "layerNames": ["ui"] }
+      ]
+    },
+    {
+      "name": "sceneCamera",
+      "parent": "root",
+      "position" : [0.0, 0.0, 2.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        {
+          "type": "PerspectiveCamera",
+          "clearColor": [0, 0, 0, 0],
+          "fov": 90,
+          "zNear": 0.1,
+          "zFar": 1000,
+          "layerNames": ["scene"],
+          "shouldClearDepth": true,
+          "shouldClearColor": true,
+          "order": 10
+        },
+        { "type": "AmbientLight", "color": [0.5, 0.5, 0.5], "layerNames": ["scene"] }
       ]
     }
   ]

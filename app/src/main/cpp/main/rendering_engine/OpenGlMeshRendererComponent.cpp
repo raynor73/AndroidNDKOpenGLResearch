@@ -227,33 +227,6 @@ void OpenGlMeshRendererComponent::render(
         GLES20.glDisable(GLES20.GL_CULL_FACE)
     } else {
         GLES20.glEnable(GLES20.GL_CULL_FACE)
-    }
-
-    if (materialComponent.isTranslucent) {
-        GLES20.glEnable(GLES20.GL_CULL_FACE)
-
-        GLES20.glCullFace(GLES20.GL_FRONT)
-        GLES20.glDrawElements(
-                mode,
-                iboInfo.numberOfIndices,
-                GLES20.GL_UNSIGNED_SHORT,
-                0
-        )
-
-        GLES20.glCullFace(GLES20.GL_BACK)
-        GLES20.glDrawElements(
-                mode,
-                iboInfo.numberOfIndices,
-                GLES20.GL_UNSIGNED_SHORT,
-                0
-        )
-    } else {
-        GLES20.glDrawElements(
-                mode,
-                iboInfo.numberOfIndices,
-                GLES20.GL_UNSIGNED_SHORT,
-                0
-        )
     }*/
 
     GLenum mode;
@@ -262,11 +235,9 @@ void OpenGlMeshRendererComponent::render(
     } else {
         mode = GL_TRIANGLES;
     }
-    //glLineWidth(lineWidth);
 
+    glEnable(GL_CULL_FACE);
     if (material.isTranslucent) {
-        glEnable(GL_CULL_FACE);
-
         glCullFace(GL_FRONT);
         glDrawElements(
                 mode,
@@ -283,6 +254,7 @@ void OpenGlMeshRendererComponent::render(
                 reinterpret_cast<void*>(0)
         );
     } else {
+        glCullFace(GL_BACK);
         glDrawElements(
                 mode,
                 iboInfo.numberOfIndices,

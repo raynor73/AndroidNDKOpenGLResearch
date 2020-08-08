@@ -36,6 +36,7 @@ add_library(
         engine_3d/ImageButtonComponent.cpp
         engine_3d/Transformation2DComponent.cpp
         game/touch_screen/GestureConsumerComponent.cpp
+        engine_3d/PerspectiveCameraComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
