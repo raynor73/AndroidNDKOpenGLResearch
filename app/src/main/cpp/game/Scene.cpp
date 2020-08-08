@@ -384,7 +384,7 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             return std::make_shared<ViewBoundsComponent>(
                     m_displayInfo,
                     m_unitsConverter,
-                    EdgeViewBounds { left, top, right, bottom }
+                    EdgesInitParams {left, top, right, bottom }
             );
         } else if (componentJson.contains("width") && componentJson.contains("height")) {
             auto width = parseComplexValue(componentJson["width"], DimensionType::WIDTH);
@@ -392,7 +392,7 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             return std::make_shared<ViewBoundsComponent>(
                     m_displayInfo,
                     m_unitsConverter,
-                    SizeViewBounds { left, bottom, width, height }
+                    SizeInitParams {left, bottom, width, height }
             );
         } else {
             throw std::domain_error("Insufficient params set for view bounds");

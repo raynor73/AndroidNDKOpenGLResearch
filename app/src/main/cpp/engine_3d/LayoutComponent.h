@@ -23,6 +23,11 @@ class LayoutComponent : public GameObjectComponent {
     int m_prevReferenceRightViewBound = INT_MIN;
     int m_prevReferenceBottomViewBound = INT_MIN;
 
+    int m_calculatedLeftViewBound = INT_MIN;
+    int m_calculatedTopViewBound = INT_MIN;
+    int m_calculatedRightViewBound = INT_MIN;
+    int m_calculatedBottomViewBound = INT_MIN;
+
 public:
     LayoutComponent(
             LayoutParams layoutParams,

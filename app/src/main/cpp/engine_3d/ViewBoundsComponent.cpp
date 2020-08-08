@@ -9,35 +9,37 @@ const std::string ViewBoundsComponent::TYPE_NAME = "ViewBoundsComponent";
 
 ViewBoundsComponent::ViewBoundsComponent(
         std::shared_ptr<DisplayInfo> displayInfo,
-        std::shared_ptr<UnitsConverter> unitsConverter, EdgeViewBounds viewBounds
-) : DisplayInfoUpdateDetector(displayInfo),
+        std::shared_ptr<UnitsConverter> unitsConverter,
+        EdgesInitParams initParams
+) : DisplayInfoUpdateDetector(std::move(displayInfo)),
     m_unitsConverter(std::move(unitsConverter)),
-    m_viewBounds(std::move(viewBounds))
+    m_initParams(std::move(initParams))
 {
     calculateBounds();
 }
 
 ViewBoundsComponent::ViewBoundsComponent(
         std::shared_ptr<DisplayInfo> displayInfo,
-        std::shared_ptr<UnitsConverter> unitsConverter, SizeViewBounds viewBounds
-) : DisplayInfoUpdateDetector(displayInfo),
+        std::shared_ptr<UnitsConverter> unitsConverter,
+        SizeInitParams initParams
+) : DisplayInfoUpdateDetector(std::move(displayInfo)),
     m_unitsConverter(std::move(unitsConverter)),
-    m_viewBounds(viewBounds)
+    m_initParams(initParams)
 {
     calculateBounds();
 }
 
 std::shared_ptr<GameObjectComponent> ViewBoundsComponent::clone() {
     std::shared_ptr<GameObjectComponent> clone;
-    if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
-        auto viewBounds = std::get<EdgeViewBounds>(m_viewBounds);
+    if (std::holds_alternative<EdgesInitParams>(m_initParams)) {
+        auto viewBounds = std::get<EdgesInitParams>(m_initParams);
         clone = std::make_shared<ViewBoundsComponent>(
                 m_displayInfo,
                 m_unitsConverter,
                 viewBounds
         );
     } else {
-        auto viewBounds = std::get<SizeViewBounds>(m_viewBounds);
+        auto viewBounds = std::get<SizeInitParams>(m_initParams);
         clone = std::make_shared<ViewBoundsComponent>(
                 m_displayInfo,
                 m_unitsConverter,
@@ -61,14 +63,14 @@ void ViewBoundsComponent::update() {
 }
 
 void ViewBoundsComponent::calculateBounds() {
-    if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
-        auto viewBounds = std::get<EdgeViewBounds>(m_viewBounds);
+    if (std::holds_alternative<EdgesInitParams>(m_initParams)) {
+        auto viewBounds = std::get<EdgesInitParams>(m_initParams);
         m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
         m_top = m_unitsConverter->complexValueToPixels(viewBounds.topComplexValue);
         m_right = m_unitsConverter->complexValueToPixels(viewBounds.rightComplexValue);
         m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
     } else {
-        auto viewBounds = std::get<SizeViewBounds>(m_viewBounds);
+        auto viewBounds = std::get<SizeInitParams>(m_initParams);
         m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
         m_top =
                 m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue) +

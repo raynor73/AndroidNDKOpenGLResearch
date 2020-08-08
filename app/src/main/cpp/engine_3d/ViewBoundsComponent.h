@@ -14,14 +14,14 @@
 #include <game/DisplayInfoUpdateDetector.h>
 #include "GameObjectComponent.h"
 
-struct EdgeViewBounds {
+struct EdgesInitParams {
     ComplexValue leftComplexValue;
     ComplexValue topComplexValue;
     ComplexValue rightComplexValue;
     ComplexValue bottomComplexValue;
 };
 
-struct SizeViewBounds {
+struct SizeInitParams {
     ComplexValue leftComplexValue;
     ComplexValue bottomComplexValue;
     ComplexValue widthComplexValue;
@@ -32,7 +32,7 @@ class ViewBoundsComponent : public GameObjectComponent, DisplayInfoUpdateDetecto
 
     std::shared_ptr<UnitsConverter> m_unitsConverter;
 
-    std::variant<EdgeViewBounds, SizeViewBounds> m_viewBounds;
+    std::variant<EdgesInitParams, SizeInitParams> m_initParams;
 
     int m_left;
     int m_top;
@@ -43,13 +43,13 @@ public:
     ViewBoundsComponent(
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
-            EdgeViewBounds viewBounds
+            EdgesInitParams initParams
     );
 
     ViewBoundsComponent(
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
-            SizeViewBounds viewBounds
+            SizeInitParams initParams
     );
 
     int left() const { return m_left; }
