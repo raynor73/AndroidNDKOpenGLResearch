@@ -7,6 +7,26 @@
 
 const std::string ViewBoundsComponent::TYPE_NAME = "ViewBoundsComponent";
 
+ViewBoundsComponent::ViewBoundsComponent(
+        std::shared_ptr<DisplayInfo> displayInfo,
+        std::shared_ptr<UnitsConverter> unitsConverter, EdgeViewBounds viewBounds
+) : DisplayInfoUpdateDetector(displayInfo),
+    m_unitsConverter(std::move(unitsConverter)),
+    m_viewBounds(std::move(viewBounds))
+{
+    calculateBounds();
+}
+
+ViewBoundsComponent::ViewBoundsComponent(
+        std::shared_ptr<DisplayInfo> displayInfo,
+        std::shared_ptr<UnitsConverter> unitsConverter, SizeViewBounds viewBounds
+) : DisplayInfoUpdateDetector(displayInfo),
+    m_unitsConverter(std::move(unitsConverter)),
+    m_viewBounds(viewBounds)
+{
+    calculateBounds();
+}
+
 std::shared_ptr<GameObjectComponent> ViewBoundsComponent::clone() {
     std::shared_ptr<GameObjectComponent> clone;
     if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
@@ -36,22 +56,26 @@ void ViewBoundsComponent::update() {
     }
 
     if (isDisplayInfoUpdated()) {
-        if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
-            auto viewBounds = std::get<EdgeViewBounds>(m_viewBounds);
-            m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
-            m_top = m_unitsConverter->complexValueToPixels(viewBounds.topComplexValue);
-            m_right = m_unitsConverter->complexValueToPixels(viewBounds.rightComplexValue);
-            m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
-        } else {
-            auto viewBounds = std::get<SizeViewBounds>(m_viewBounds);
-            m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
-            m_top =
-                    m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue) +
-                    m_unitsConverter->complexValueToPixels(viewBounds.heightComplexValue);
-            m_right =
-                    m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue) +
-                    m_unitsConverter->complexValueToPixels(viewBounds.widthComplexValue);
-            m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
-        }
+        calculateBounds();
+    }
+}
+
+void ViewBoundsComponent::calculateBounds() {
+    if (std::holds_alternative<EdgeViewBounds>(m_viewBounds)) {
+        auto viewBounds = std::get<EdgeViewBounds>(m_viewBounds);
+        m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
+        m_top = m_unitsConverter->complexValueToPixels(viewBounds.topComplexValue);
+        m_right = m_unitsConverter->complexValueToPixels(viewBounds.rightComplexValue);
+        m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
+    } else {
+        auto viewBounds = std::get<SizeViewBounds>(m_viewBounds);
+        m_left = m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue);
+        m_top =
+                m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue) +
+                m_unitsConverter->complexValueToPixels(viewBounds.heightComplexValue);
+        m_right =
+                m_unitsConverter->complexValueToPixels(viewBounds.leftComplexValue) +
+                m_unitsConverter->complexValueToPixels(viewBounds.widthComplexValue);
+        m_bottom = m_unitsConverter->complexValueToPixels(viewBounds.bottomComplexValue);
     }
 }

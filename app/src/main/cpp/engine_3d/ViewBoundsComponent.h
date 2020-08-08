@@ -25,7 +25,7 @@ struct SizeViewBounds {
     ComplexValue leftComplexValue;
     ComplexValue bottomComplexValue;
     ComplexValue widthComplexValue;
-    ComplexValue    heightComplexValue;
+    ComplexValue heightComplexValue;
 };
 
 class ViewBoundsComponent : public GameObjectComponent, DisplayInfoUpdateDetector {
@@ -44,17 +44,13 @@ public:
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             EdgeViewBounds viewBounds
-    ) : DisplayInfoUpdateDetector(displayInfo),
-        m_unitsConverter(std::move(unitsConverter)),
-        m_viewBounds(std::move(viewBounds)) {}
+    );
 
     ViewBoundsComponent(
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             SizeViewBounds viewBounds
-    ) : DisplayInfoUpdateDetector(displayInfo),
-        m_unitsConverter(std::move(unitsConverter)),
-        m_viewBounds(viewBounds) {}
+    );
 
     int left() const { return m_left; }
     void setLeft(int left) { m_left = left; }
@@ -76,6 +72,9 @@ public:
     virtual std::shared_ptr<GameObjectComponent> clone() override;
 
     static const std::string TYPE_NAME;
+
+private:
+    void calculateBounds();
 };
 
 

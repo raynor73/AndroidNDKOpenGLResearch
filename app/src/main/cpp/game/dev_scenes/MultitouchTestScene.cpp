@@ -5,7 +5,7 @@
 #include <memory>
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/Utils.h>
-#include <engine_3d/TransformationComponent.h>
+#include <engine_3d/Transformation2DComponent.h>
 #include "MultitouchTestScene.h"
 #include <engine_3d/MaterialComponent.h>
 
@@ -61,13 +61,11 @@ void MultitouchTestScene::update(float dt) {
                 m_touchIndicatorsPool.recycle(touchIndicator);
                 m_activeTouchIndicators.erase(touchEvent.id);
             } else {
-                auto transform = std::static_pointer_cast<TransformationComponent>(
-                        touchIndicator->findComponent(TransformationComponent::TYPE_NAME)
+                auto transform2D = std::static_pointer_cast<Transformation2DComponent>(
+                        touchIndicator->findComponent(Transformation2DComponent::TYPE_NAME)
                 );
-                auto position = transform->position();
-                position.x = touchEvent.x;
-                position.y = touchEvent.y;
-                transform->setPosition(position);
+                transform2D->setPositionX(PlainValue { touchEvent.x });
+                transform2D->setPositionY(PlainValue { touchEvent.y });
 
                 auto materialComponent = std::static_pointer_cast<MaterialComponent>(
                         touchIndicator->findComponent(MaterialComponent::TYPE_NAME)
@@ -88,13 +86,23 @@ void MultitouchTestScene::update(float dt) {
                 m_rootGameObject->addChild(touchIndicator);
                 m_activeTouchIndicators[touchEvent.id] = touchIndicator;
 
-                auto transform = std::static_pointer_cast<TransformationComponent>(
-                        touchIndicator->findComponent(TransformationComponent::TYPE_NAME)
+                auto transform2D = std::static_pointer_cast<Transformation2DComponent>(
+                        touchIndicator->findComponent(Transformation2DComponent::TYPE_NAME)
                 );
-                auto position = transform->position();
-                position.x = touchEvent.x;
-                position.y = touchEvent.y;
-                transform->setPosition(position);
+                transform2D->setPositionX(PlainValue { touchEvent.x });
+                transform2D->setPositionY(PlainValue { touchEvent.y });
+
+                auto materialComponent = std::static_pointer_cast<MaterialComponent>(
+                        touchIndicator->findComponent(MaterialComponent::TYPE_NAME)
+                );
+                auto material = materialComponent->material();
+                material.diffuseColor = glm::vec4(
+                        touchEvent.x / m_displayInfo->width(),
+                        touchEvent.y / m_displayInfo->height(),
+                        0,
+                        1
+                );
+                materialComponent->setMaterial(material);
             }
         }
     }
