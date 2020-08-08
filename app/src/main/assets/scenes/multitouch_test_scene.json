@@ -4,8 +4,8 @@
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
-    { "name": "close", "textureName": "close", "isTranslucent": "true" },
-    { "name": "cancel", "textureName": "cancel", "isTranslucent": "true" }
+    { "name": "close", "textureName": "close", "isTranslucent": true },
+    { "name": "cancel", "textureName": "cancel", "isTranslucent": true }
   ],
   "textAppearances": [
     { "name": "fpsText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
