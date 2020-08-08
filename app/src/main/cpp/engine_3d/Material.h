@@ -14,6 +14,7 @@ struct Material {
     bool useDiffuseColor;
     bool isTranslucent;
     bool isWireframe;
+    bool isUnlit;
 };
 
 

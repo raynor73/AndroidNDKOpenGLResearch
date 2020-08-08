@@ -19,7 +19,8 @@ void OpenGlMeshRendererComponent::render(
         const OpenGlShaderProgramContainer& shaderProgramContainer,
         const glm::mat4x4& modelMatrix,
         const glm::mat4x4& viewMatrix,
-        const glm::mat4x4& projectionMatrix
+        const glm::mat4x4& projectionMatrix,
+        ShaderType shaderType
 ) {
     throwErrorIfNoGameObject();
 
@@ -54,6 +55,13 @@ void OpenGlMeshRendererComponent::render(
             m_gameObject->findComponent(MaterialComponent::TYPE_NAME)
     );
     auto material = materialComponent->material();
+
+    if (
+            (material.isUnlit && shaderType != ShaderType::UNLIT) ||
+            (!material.isUnlit && shaderType == ShaderType::UNLIT)
+    ) {
+        return;
+    }
 
     if (meshComponent == nullptr) {
         std::stringstream ss;

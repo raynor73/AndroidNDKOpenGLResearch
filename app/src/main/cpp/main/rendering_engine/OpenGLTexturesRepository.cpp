@@ -25,6 +25,10 @@ void OpenGLTexturesRepository::createDisplayDensityFactorAwareTexture(const std:
     createDisplayDensityFactorAwareTexture(name, path, false);
 }
 
+void OpenGLTexturesRepository::createTexture(const std::string& name, const std::string& path) {
+    createTexture(name, path, false);
+}
+
 /*void OpenGLTexturesRepository::createGlyphTexture(
         const std::string& name,
         uint_t width,
@@ -111,7 +115,49 @@ void OpenGLTexturesRepository::createDisplayDensityFactorAwareTexture(
         m_texturesCreationParams[name] = DisplayDensityFactorAwareTextureFromFileCreationParams { name, path };
     }
 
-    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createTexture from memory");
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createDisplayDensityFactorAwareTexture");
+}
+
+void OpenGLTexturesRepository::createTexture(const std::string& name, const std::string& path, bool isBeingRestored) {
+    throwIfTextureAlreadyExists(name);
+
+    std::stringstream ss;
+    ss << "bitmaps/" << path;
+    auto bitmapInfo = m_bitmapDataLoader->loadBitmap(ss.str());
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGBA,
+            bitmapInfo.width,
+            bitmapInfo.height,
+            0,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            bitmapInfo.data.data()
+    );
+
+    m_textures[name] = TextureInfo { texture, bitmapInfo.width, bitmapInfo.height };
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (!isBeingRestored) {
+        m_texturesCreationParams[name] = TextureFromFileCreationParams { name, path };
+    }
+
+    m_openGLErrorDetector->checkOpenGLErrors("OpenGLTexturesRepository::createTexture from file");
 }
 
 /*void OpenGLTexturesRepository::createGlyphTexture(
@@ -199,9 +245,14 @@ void OpenGLTexturesRepository::restoreTextures() {
                     textureFromMemoryCreationParams.data,
                     true
             );
+        } else if (std::holds_alternative<DisplayDensityFactorAwareTextureFromFileCreationParams>(entry.second)) {
+            auto textureCreationParams = std::get<DisplayDensityFactorAwareTextureFromFileCreationParams>(entry.second);
+            createDisplayDensityFactorAwareTexture(textureCreationParams.name, textureCreationParams.path, true);
+        } else if (std::holds_alternative<TextureFromFileCreationParams>(entry.second)) {
+            auto textureCreationParams = std::get<TextureFromFileCreationParams>(entry.second);
+            createTexture(textureCreationParams.name, textureCreationParams.path, true);
         }
-
-        /*if (std::holds_alternative<GlyphTextureCreationParams>(entry.second)) {
+        /* else if (std::holds_alternative<GlyphTextureCreationParams>(entry.second)) {
             auto glyphTextureCreationParams = std::get<GlyphTextureCreationParams>(entry.second);
             createGlyphTexture(
                     glyphTextureCreationParams.name,
@@ -210,11 +261,6 @@ void OpenGLTexturesRepository::restoreTextures() {
                     glyphTextureCreationParams.data
             );
         }*/
-
-        if (std::holds_alternative<DisplayDensityFactorAwareTextureFromFileCreationParams>(entry.second)) {
-            auto textureCreationParams = std::get<DisplayDensityFactorAwareTextureFromFileCreationParams>(entry.second);
-            createDisplayDensityFactorAwareTexture(textureCreationParams.name, textureCreationParams.path, true);
-        }
     }
 }
 

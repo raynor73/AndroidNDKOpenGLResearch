@@ -17,6 +17,7 @@ OpenGlShaderProgramContainer::OpenGlShaderProgramContainer(
     m_textureUniform(glGetUniformLocation(shaderProgram, "textureUniform")),
     m_diffuseColorUniform(glGetUniformLocation(shaderProgram, "diffuseColorUniform")),
     m_useDiffuseColorUniform(glGetUniformLocation(shaderProgram, "useDiffuseColorUniform")),
+    m_ambientColorUniform(glGetUniformLocation(shaderProgram, "ambientColorUniform")),
     m_hasSkeletalAnimationUniform(glGetUniformLocation(shaderProgram, "hasSkeletalAnimationUniform"))
 {
     m_openGlErrorDetector->checkOpenGLErrors("OpenGlShaderProgramContainer::OpenGlShaderProgramContainer");

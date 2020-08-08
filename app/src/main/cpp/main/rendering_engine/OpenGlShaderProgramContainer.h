@@ -24,6 +24,8 @@ class OpenGlShaderProgramContainer {
     GLint m_diffuseColorUniform;
     GLint m_useDiffuseColorUniform;
 
+    GLint m_ambientColorUniform;
+
     GLint m_hasSkeletalAnimationUniform;
 
 public:
@@ -41,6 +43,8 @@ public:
     GLint diffuseColorUniform() const { return m_diffuseColorUniform; }
 
     GLint useDiffuseColorUniform() const { return m_useDiffuseColorUniform; }
+
+    GLint ambientColorUniform() const { return m_ambientColorUniform; }
 
     GLint hasSkeletalAnimationUniform() const { return m_hasSkeletalAnimationUniform; }
 };

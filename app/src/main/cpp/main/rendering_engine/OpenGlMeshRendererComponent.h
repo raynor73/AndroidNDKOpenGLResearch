@@ -17,6 +17,10 @@
 #include "OpenGlShaderProgramContainer.h"
 #include "OpenGLTexturesRepository.h"
 
+enum class ShaderType {
+    UNLIT, LIGHT
+};
+
 class OpenGlMeshRendererComponent : public GameObjectComponent {
 
     std::vector<std::string> m_layerNames;
@@ -45,7 +49,8 @@ public:
             const OpenGlShaderProgramContainer& shaderProgramContainer,
             const glm::mat4x4& modelMatrix,
             const glm::mat4x4& viewMatrix,
-            const glm::mat4x4& projectionMatrix
+            const glm::mat4x4& projectionMatrix,
+            ShaderType shaderType
     );
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }

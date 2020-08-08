@@ -22,10 +22,15 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<SceneCloser> m_sceneCloser;
 
     std::shared_ptr<TransformationComponent> m_boxTransform;
+    std::shared_ptr<TransformationComponent> m_box2Transform;
 
     float boxAngleX = 0;
     float boxAngleY = 0;
     float boxAngleZ = 0;
+
+    float box2AngleX = 0;
+    float box2AngleY = 0;
+    float box2AngleZ = 0;
 
 public:
     RenderingEngineDevScene(

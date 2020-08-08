@@ -30,12 +30,23 @@ void RenderingEngineDevScene::update(float dt) {
     boxAngleY += dt * 45;
     boxAngleZ += dt * 45;
 
+    box2AngleX += dt * 30;
+    box2AngleY += dt * 30;
+    box2AngleZ += dt * 30;
+
     auto rotationMatrix = glm::identity<glm::mat4>();
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(boxAngleZ), glm::vec3(0, 0, 1));
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(boxAngleX), glm::vec3(1, 0, 0));
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(boxAngleY), glm::vec3(0, 1, 0));
     auto rotationQuaternion = glm::quat_cast(rotationMatrix);
     m_boxTransform->setRotation(rotationQuaternion);
+
+    rotationMatrix = glm::identity<glm::mat4>();
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleZ), glm::vec3(0, 0, 1));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleX), glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleY), glm::vec3(0, 1, 0));
+    rotationQuaternion = glm::quat_cast(rotationMatrix);
+    m_box2Transform->setRotation(rotationQuaternion);
 }
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
@@ -53,4 +64,11 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             TransformationComponent::TYPE_NAME
     ));
     throwErrorIfNull(m_boxTransform, "Box has not transform");
+
+    auto box2GameObject = m_gameObjectsMap.at("box2");
+    throwErrorIfNull(box2GameObject, "Box2 not found");
+    m_box2Transform = std::static_pointer_cast<TransformationComponent>(box2GameObject->findComponent(
+            TransformationComponent::TYPE_NAME
+    ));
+    throwErrorIfNull(m_box2Transform, "Box has not transform");
 }

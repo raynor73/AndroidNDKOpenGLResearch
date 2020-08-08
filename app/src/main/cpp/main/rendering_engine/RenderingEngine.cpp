@@ -54,6 +54,16 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createFragmentShader("text", textFragmentShaderSource);
     shadersRepository->createShaderProgram("text", "text", "text");
 
+    auto ambientVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/light/ambientVertexShader.glsl"
+    );
+    auto ambientFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/light/ambientFragmentShader.glsl"
+    );
+    shadersRepository->createVertexShader("ambient", ambientVertexShaderSource);
+    shadersRepository->createFragmentShader("ambient", ambientFragmentShaderSource);
+    shadersRepository->createShaderProgram("ambient", "ambient", "ambient");
+
     glEnable(GL_DEPTH_TEST);
     glFrontFace(GL_CCW);
 }
@@ -72,6 +82,7 @@ void RenderingEngine::render(Scene &scene) {
     }
 
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
+    std::unordered_map<std::string, std::shared_ptr<AmbientLightComponent>> layerNameToAmbientLightMap;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToTranslucentMeshRendererMap;
     std::unordered_multimap<std::string, std::shared_ptr<OpenGLFreeTypeTextRendererComponent>> layerNameToTextRendererMap;
@@ -127,6 +138,17 @@ void RenderingEngine::render(Scene &scene) {
         ) {
             putMeshInGeometryBuffersIfNecessary(meshComponent->meshName(), meshComponent->mesh());
         }
+
+        if (
+                auto ambientLight = std::static_pointer_cast<AmbientLightComponent>(
+                        gameObject.findComponent(AmbientLightComponent::TYPE_NAME)
+                );
+                ambientLight != nullptr
+        ) {
+            for (auto& layerName : ambientLight->layerNames()) {
+                layerNameToAmbientLightMap.insert({ layerName, ambientLight });
+            }
+        }
     });
 
     std::sort(
@@ -169,7 +191,7 @@ void RenderingEngine::render(Scene &scene) {
                     it != layerNameToMeshRendererMap.end();
                     it++
             ) {
-                renderMesh(camera, it->second);
+                renderMeshWithAllRequiredShaders(camera, it->second, layerNameToAmbientLightMap, layerName);
             }
 
             pushOpenGLState({
@@ -185,8 +207,8 @@ void RenderingEngine::render(Scene &scene) {
                     auto it = layerNameToTranslucentMeshRendererMap.find(layerName);
                     it != layerNameToMeshRendererMap.end();
                     it++
-                    ) {
-                renderMesh(camera, it->second);
+            ) {
+                renderMeshWithAllRequiredShaders(camera, it->second, layerNameToAmbientLightMap, layerName);
             }
 
             for (
@@ -204,9 +226,37 @@ void RenderingEngine::render(Scene &scene) {
     }
 }
 
+void RenderingEngine::renderMeshWithAllRequiredShaders(
+        const std::shared_ptr<CameraComponent>& camera,
+        const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
+        const std::unordered_map<std::string, std::shared_ptr<AmbientLightComponent>>& layerNameToAmbientLightMap,
+        const std::string& layerName
+) {
+    auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
+    glUseProgram(shaderProgramContainer.shaderProgram());
+    renderMesh(camera, meshRenderer, ShaderType::UNLIT, shaderProgramContainer);
+
+    const auto& ambientLight = layerNameToAmbientLightMap.at(layerName);
+    throwErrorIfNull(ambientLight, "No ambient light found");
+    shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("ambient");
+    glUseProgram(shaderProgramContainer.shaderProgram());
+    if (auto ambientColorUniform = shaderProgramContainer.ambientColorUniform(); ambientColorUniform >= 0) {
+        auto ambientColor = ambientLight->color();
+        glUniform3f(
+                ambientColorUniform,
+                ambientColor.r,
+                ambientColor.g,
+                ambientColor.b
+        );
+    }
+    renderMesh(camera, meshRenderer, ShaderType::LIGHT, shaderProgramContainer);
+}
+
 void RenderingEngine::renderMesh(
-        std::shared_ptr<CameraComponent> camera,
-        std::shared_ptr <OpenGlMeshRendererComponent> meshRenderer
+        const std::shared_ptr<CameraComponent>& camera,
+        const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
+        ShaderType shaderType,
+        const OpenGlShaderProgramContainer& shaderProgramContainer
 ) {
     auto gameObject = meshRenderer->gameObject();
     if (gameObject == nullptr) {
@@ -222,8 +272,6 @@ void RenderingEngine::renderMesh(
         throw std::domain_error(ss.str());
     }
 
-    auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
-    glUseProgram(shaderProgramContainer.shaderProgram());
 
     auto modelMatrix = glm::translate(glm::identity<glm::mat4>(), transform->position());
     modelMatrix *= glm::toMat4(transform->rotation());
@@ -233,13 +281,14 @@ void RenderingEngine::renderMesh(
             shaderProgramContainer,
             modelMatrix,
             camera->calculateViewMatrix(),
-            camera->calculateProjectionMatrix()
+            camera->calculateProjectionMatrix(),
+            shaderType
     );
 }
 
 void RenderingEngine::renderText(
-        std::shared_ptr<CameraComponent> camera,
-        std::shared_ptr<OpenGLFreeTypeTextRendererComponent> textRenderer
+        const std::shared_ptr<CameraComponent>& camera,
+        const std::shared_ptr<OpenGLFreeTypeTextRendererComponent>& textRenderer
 ) {
     auto gameObject = textRenderer->gameObject();
     if (gameObject == nullptr) {

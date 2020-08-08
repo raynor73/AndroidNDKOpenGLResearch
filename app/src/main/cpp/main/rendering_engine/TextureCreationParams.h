@@ -24,6 +24,10 @@ struct DisplayDensityFactorAwareTextureFromFileCreationParams : public TextureCr
     std::string path;
 };
 
+struct TextureFromFileCreationParams : public TextureCreationParams {
+    std::string path;
+};
+
 //struct GlyphTextureCreationParams : public TextureFromMemoryCreationParams {};
 
 

@@ -26,7 +26,7 @@ class OpenGLTexturesRepository : public TexturesRepository {
     std::shared_ptr<BitmapDataLoader> m_bitmapDataLoader;
     std::shared_ptr<OpenGLErrorDetector> m_openGLErrorDetector;
 
-    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams/*, GlyphTextureCreationParams*/, DisplayDensityFactorAwareTextureFromFileCreationParams>> m_texturesCreationParams;
+    std::unordered_map<std::string, std::variant<TextureFromMemoryCreationParams/*, GlyphTextureCreationParams*/, DisplayDensityFactorAwareTextureFromFileCreationParams, TextureFromFileCreationParams>> m_texturesCreationParams;
 
 public:
     OpenGLTexturesRepository(
@@ -47,6 +47,8 @@ public:
     ) override;
 
     virtual void createDisplayDensityFactorAwareTexture(const std::string& name, const std::string& path) override;
+
+    virtual void createTexture(const std::string& name, const std::string& path) override;
 
     /*virtual void createGlyphTexture(
             const std::string& name,
@@ -84,6 +86,8 @@ private:
     );
 
     void createDisplayDensityFactorAwareTexture(const std::string& name, const std::string& path, bool isBeingRestored);
+
+    void createTexture(const std::string& name, const std::string& path, bool isBeingRestored);
 
     /*void createGlyphTexture(
             const std::string& name,

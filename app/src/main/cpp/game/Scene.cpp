@@ -155,13 +155,13 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
             bool displayDensityFactorAware =
                     displayDensityFactorAwareJson.is_boolean() &&
                     displayDensityFactorAwareJson.get<bool>();
+            auto name = nameJson.get<std::string>();
             if (displayDensityFactorAware) {
-                auto name = nameJson.get<std::string>();
                 m_texturesRepository->createDisplayDensityFactorAwareTexture(
                         name, pathJson.get<std::string>()
                 );
             } else {
-                // TODO Implement later
+                m_texturesRepository->createTexture(name, pathJson.get<std::string>());
             }
         }
     }
@@ -181,6 +181,10 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
                     materialJson.contains("isWireframe") &&
                     materialJson["isWireframe"].is_boolean() &&
                     materialJson["isWireframe"].get<bool>();
+            auto isUnlit =
+                    materialJson.contains("isUnlit") &&
+                    materialJson["isUnlit"].is_boolean() &&
+                    materialJson["isUnlit"].get<bool>();
             auto diffuseColorJson = materialJson["diffuseColor"];
             if (diffuseColorJson.is_array()) {
                 Material material {
@@ -188,7 +192,8 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
                     "",
                     true,
                     isTranslucent,
-                    isWireframe
+                    isWireframe,
+                    isUnlit
                 };
                 materialsMap[nameJson.get<std::string>()] = material;
             } else {
@@ -201,7 +206,8 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
                     textureNameJson.get<std::string>(),
                     false,
                     isTranslucent,
-                    isWireframe
+                    isWireframe,
+                    isUnlit
                 };
                 materialsMap[nameJson.get<std::string>()] = material;
             }

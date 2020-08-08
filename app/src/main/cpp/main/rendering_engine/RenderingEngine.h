@@ -11,6 +11,7 @@
 #include <main/OpenGLErrorDetector.h>
 #include <game/UnitsConverter.h>
 #include <engine_3d/CameraComponent.h>
+#include <engine_3d/AmbientLightComponent.h>
 #include "OpenGlMeshRendererComponent.h"
 #include "OpenGLFreeTypeTextRendererComponent.h"
 #include "OpenGLState.h"
@@ -50,17 +51,25 @@ public:
 private:
     bool m_isErrorLogged;
 
-    void traverseSceneHierarchy(GameObject& gameObject, const std::function<void(GameObject&)>& callback);
+    static void traverseSceneHierarchy(GameObject& gameObject, const std::function<void(GameObject&)>& callback);
 
     void putMeshInGeometryBuffersIfNecessary(const std::string& name, const Mesh& mesh);
 
-    void renderMesh(
-            std::shared_ptr<CameraComponent> camera,
-            std::shared_ptr<OpenGlMeshRendererComponent> meshRenderer
+    void renderMeshWithAllRequiredShaders(
+            const std::shared_ptr<CameraComponent>& camera,
+            const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
+            const std::unordered_map<std::string, std::shared_ptr<AmbientLightComponent>>& layerNameToAmbientLightMap,
+            const std::string& layerName
+    );
+    static void renderMesh(
+            const std::shared_ptr<CameraComponent>& camera,
+            const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
+            ShaderType shaderType,
+            const OpenGlShaderProgramContainer& shaderProgramContainer
     );
     void renderText(
-            std::shared_ptr<CameraComponent> camera,
-            std::shared_ptr<OpenGLFreeTypeTextRendererComponent> textRenderer
+            const std::shared_ptr<CameraComponent>& camera,
+            const std::shared_ptr<OpenGLFreeTypeTextRendererComponent>& textRenderer
     );
 
     void pushOpenGLState(const OpenGLState& state);
