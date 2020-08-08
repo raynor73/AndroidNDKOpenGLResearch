@@ -11,6 +11,7 @@
 #include <game/FpsCalculator.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
 #include <game/SceneManager.h>
+#include <engine_3d/TransformationComponent.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -19,6 +20,12 @@ class RenderingEngineDevScene : public Scene {
 
     FpsCalculator m_fpsCalculator;
     std::shared_ptr<SceneCloser> m_sceneCloser;
+
+    std::shared_ptr<TransformationComponent> m_boxTransform;
+
+    float boxAngleX = 0;
+    float boxAngleY = 0;
+    float boxAngleZ = 0;
 
 public:
     RenderingEngineDevScene(
