@@ -3,7 +3,7 @@
     { "name": "quad", "path": "meshes/vertical_plane.obj" }
   ],
   "materials": [
-    { "name": "white", "diffuseColor": [1, 1, 1, 1] },
+    { "name": "white", "diffuseColor": [1, 1, 1, 1], "isWireframe": true },
     { "name": "close", "textureName": "close", "isTranslucent": true },
     { "name": "cancel", "textureName": "cancel", "isTranslucent": true }
   ],

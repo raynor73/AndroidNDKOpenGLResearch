@@ -176,16 +176,32 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
                     materialJson.contains("isTranslucent") &&
                     materialJson["isTranslucent"].is_boolean() &&
                     materialJson["isTranslucent"].get<bool>();
+            auto isWireframe =
+                    materialJson.contains("isWireframe") &&
+                    materialJson["isWireframe"].is_boolean() &&
+                    materialJson["isWireframe"].get<bool>();
             auto diffuseColorJson = materialJson["diffuseColor"];
             if (diffuseColorJson.is_array()) {
-                Material material { parseColor4f(materialJson["diffuseColor"]), "", true, isTranslucent };
+                Material material {
+                    parseColor4f(materialJson["diffuseColor"]),
+                    "",
+                    true,
+                    isTranslucent,
+                    isWireframe
+                };
                 materialsMap[nameJson.get<std::string>()] = material;
             } else {
                 auto textureNameJson = materialJson["textureName"];
                 if (!textureNameJson.is_string()) {
                     continue;
                 }
-                Material material { glm::vec4(0), textureNameJson.get<std::string>(), false, isTranslucent };
+                Material material {
+                    glm::vec4(0),
+                    textureNameJson.get<std::string>(),
+                    false,
+                    isTranslucent,
+                    isWireframe
+                };
                 materialsMap[nameJson.get<std::string>()] = material;
             }
         }

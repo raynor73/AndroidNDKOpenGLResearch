@@ -13,6 +13,7 @@ struct Material {
     std::string textureName;
     bool useDiffuseColor;
     bool isTranslucent;
+    bool isWireframe;
 };
 
 

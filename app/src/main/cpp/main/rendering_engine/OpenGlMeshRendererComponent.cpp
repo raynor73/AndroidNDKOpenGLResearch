@@ -71,13 +71,7 @@ void OpenGlMeshRendererComponent::render(
     ) {
         return
     }
-
-    if (
-            (material.isTranslucent && !isTranslucentRendering) or
-            (!material.isTranslucent && isTranslucentRendering)
-            ) {
-        return
-    }*/
+    */
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboInfo.ibo);
@@ -235,13 +229,6 @@ void OpenGlMeshRendererComponent::render(
         GLES20.glEnable(GLES20.GL_CULL_FACE)
     }
 
-    val mode = if (materialComponent.isWireframe) {
-        GLES20.GL_LINES
-    } else {
-        GLES20.GL_TRIANGLES
-    }
-    GLES20.glLineWidth(lineWidth)
-
     if (materialComponent.isTranslucent) {
         GLES20.glEnable(GLES20.GL_CULL_FACE)
 
@@ -269,12 +256,20 @@ void OpenGlMeshRendererComponent::render(
         )
     }*/
 
+    GLenum mode;
+    if (material.isWireframe) {
+        mode = GL_LINE_STRIP;
+    } else {
+        mode = GL_TRIANGLES;
+    }
+    //glLineWidth(lineWidth);
+
     if (material.isTranslucent) {
         glEnable(GL_CULL_FACE);
 
         glCullFace(GL_FRONT);
         glDrawElements(
-                GL_TRIANGLES,
+                mode,
                 iboInfo.numberOfIndices,
                 GL_UNSIGNED_SHORT,
                 reinterpret_cast<void*>(0)
@@ -282,14 +277,14 @@ void OpenGlMeshRendererComponent::render(
 
         glCullFace(GL_BACK);
         glDrawElements(
-                GL_TRIANGLES,
+                mode,
                 iboInfo.numberOfIndices,
                 GL_UNSIGNED_SHORT,
                 reinterpret_cast<void*>(0)
         );
     } else {
         glDrawElements(
-                GL_TRIANGLES,
+                mode,
                 iboInfo.numberOfIndices,
                 GL_UNSIGNED_SHORT,
                 reinterpret_cast<void*>(0)
