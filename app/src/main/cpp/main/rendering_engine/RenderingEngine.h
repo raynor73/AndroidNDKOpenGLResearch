@@ -12,6 +12,7 @@
 #include <game/UnitsConverter.h>
 #include <engine_3d/CameraComponent.h>
 #include <engine_3d/AmbientLightComponent.h>
+#include <engine_3d/DirectionalLightComponent.h>
 #include "OpenGlMeshRendererComponent.h"
 #include "OpenGLFreeTypeTextRendererComponent.h"
 #include "OpenGLState.h"
@@ -57,8 +58,10 @@ private:
 
     void renderMeshWithAllRequiredShaders(
             const std::shared_ptr<CameraComponent>& camera,
+            const Viewport& viewport, const Scissor& scissor,
             const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
             const std::unordered_map<std::string, std::shared_ptr<AmbientLightComponent>>& layerNameToAmbientLightMap,
+            const std::unordered_multimap<std::string, std::shared_ptr<DirectionalLightComponent>>& layerNameToDirectionalLightsMap,
             const std::string& layerName
     );
     static void renderMesh(

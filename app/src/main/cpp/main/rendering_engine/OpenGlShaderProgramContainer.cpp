@@ -14,10 +14,13 @@ OpenGlShaderProgramContainer::OpenGlShaderProgramContainer(
     m_normalAttribute(glGetAttribLocation(shaderProgram, "normalAttribute")),
     m_uvAttribute(glGetAttribLocation(shaderProgram, "uvAttribute")),
     m_mvpMatrixUniform(glGetUniformLocation(shaderProgram, "mvpMatrixUniform")),
+    m_modelMatrixUniform(glGetUniformLocation(shaderProgram, "modelMatrixUniform")),
     m_textureUniform(glGetUniformLocation(shaderProgram, "textureUniform")),
     m_diffuseColorUniform(glGetUniformLocation(shaderProgram, "diffuseColorUniform")),
     m_useDiffuseColorUniform(glGetUniformLocation(shaderProgram, "useDiffuseColorUniform")),
     m_ambientColorUniform(glGetUniformLocation(shaderProgram, "ambientColorUniform")),
+    m_directionalLightColorUniform(glGetUniformLocation(shaderProgram, "directionalLightUniform.color")),
+    m_directionalLightDirectionUniform(glGetUniformLocation(shaderProgram, "directionalLightUniform.direction")),
     m_hasSkeletalAnimationUniform(glGetUniformLocation(shaderProgram, "hasSkeletalAnimationUniform"))
 {
     m_openGlErrorDetector->checkOpenGLErrors("OpenGlShaderProgramContainer::OpenGlShaderProgramContainer");

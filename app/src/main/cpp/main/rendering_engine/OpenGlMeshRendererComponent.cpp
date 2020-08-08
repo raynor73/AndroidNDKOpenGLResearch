@@ -159,17 +159,16 @@ void OpenGlMeshRendererComponent::render(
         glUniformMatrix4fv(mvpMatrixUniform, 1, false, &mvpMatrix[0][0]);
     }
 
+    if (auto modelMatrixUniform = shaderProgramContainer.modelMatrixUniform(); modelMatrixUniform >=0) {
+        glUniformMatrix4fv(modelMatrixUniform, 1, false, &modelMatrix[0][0]);
+    }
+
     /*shaderProgram.lightMvpMatrixUniform.takeIf { it >= 0 }?.let { lightMvpMatrixUniform ->
             tmpMatrix.set(lightProjectionMatrix)
             tmpMatrix.mul(lightViewMatrix)
             tmpMatrix.mul(lightModelMatrix)
             tmpMatrix.get(tmpFloatArray)
             GLES20.glUniformMatrix4fv(lightMvpMatrixUniform, 1, false, tmpFloatArray, 0)
-    }
-
-    shaderProgram.modelMatrixUniform.takeIf { it >= 0 }?.let { modelMatrixUniform ->
-            modelMatrix.get(tmpFloatArray)
-            GLES20.glUniformMatrix4fv(modelMatrixUniform, 1, false, tmpFloatArray, 0)
     }
 
     shaderProgram.biasMatrixUniform.takeIf { it >= 0 }?.let { biasMatrixUniform ->

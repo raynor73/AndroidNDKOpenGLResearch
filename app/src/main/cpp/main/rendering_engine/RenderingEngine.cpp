@@ -64,8 +64,19 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createFragmentShader("ambient", ambientFragmentShaderSource);
     shadersRepository->createShaderProgram("ambient", "ambient", "ambient");
 
+    auto directionalLightVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/light/directionalLightVertexShader.glsl"
+    );
+    auto directionalLightFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/light/directionalLightFragmentShader.glsl"
+    );
+    shadersRepository->createVertexShader("directionalLight", directionalLightVertexShaderSource);
+    shadersRepository->createFragmentShader("directionalLight", directionalLightFragmentShaderSource);
+    shadersRepository->createShaderProgram("directionalLight", "directionalLight", "directionalLight");
+
     glEnable(GL_DEPTH_TEST);
     glFrontFace(GL_CCW);
+    glEnable(GL_SCISSOR_TEST);
 }
 
 void RenderingEngine::render(Scene &scene) {
@@ -83,9 +94,10 @@ void RenderingEngine::render(Scene &scene) {
 
     std::vector<std::shared_ptr<CameraComponent>> activeCameras;
     std::unordered_map<std::string, std::shared_ptr<AmbientLightComponent>> layerNameToAmbientLightMap;
-    std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRendererMap;
-    std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToTranslucentMeshRendererMap;
-    std::unordered_multimap<std::string, std::shared_ptr<OpenGLFreeTypeTextRendererComponent>> layerNameToTextRendererMap;
+    std::unordered_multimap<std::string, std::shared_ptr<DirectionalLightComponent>> layerNameToDirectionalLightsMap;
+    std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToMeshRenderersMap;
+    std::unordered_multimap<std::string, std::shared_ptr<OpenGlMeshRendererComponent>> layerNameToTranslucentMeshRenderersMap;
+    std::unordered_multimap<std::string, std::shared_ptr<OpenGLFreeTypeTextRendererComponent>> layerNameToTextRenderersMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
         if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
@@ -112,9 +124,9 @@ void RenderingEngine::render(Scene &scene) {
                 );
                 throwErrorIfNull(materialComponent, "Can't find material component for mesh renderer while rendering");
                 if (materialComponent->material().isTranslucent) {
-                    layerNameToTranslucentMeshRendererMap.insert({ layerName, meshRenderer });
+                    layerNameToTranslucentMeshRenderersMap.insert({layerName, meshRenderer });
                 } else {
-                    layerNameToMeshRendererMap.insert({ layerName, meshRenderer });
+                    layerNameToMeshRenderersMap.insert({layerName, meshRenderer });
                 }
             }
         }
@@ -126,7 +138,7 @@ void RenderingEngine::render(Scene &scene) {
                 textRenderer != nullptr
         ) {
             for (auto& layerName : textRenderer->layerNames()) {
-                layerNameToTextRendererMap.insert({layerName, textRenderer });
+                layerNameToTextRenderersMap.insert({layerName, textRenderer });
             }
         }
 
@@ -147,6 +159,17 @@ void RenderingEngine::render(Scene &scene) {
         ) {
             for (auto& layerName : ambientLight->layerNames()) {
                 layerNameToAmbientLightMap.insert({ layerName, ambientLight });
+            }
+        }
+
+        if (
+                auto directionalLight = std::static_pointer_cast<DirectionalLightComponent>(
+                        gameObject.findComponent(DirectionalLightComponent::TYPE_NAME)
+                );
+                directionalLight != nullptr
+        ) {
+            for (auto& layerName : directionalLight->layerNames()) {
+                layerNameToDirectionalLightsMap.insert({layerName, directionalLight });
             }
         }
     });
@@ -172,13 +195,15 @@ void RenderingEngine::render(Scene &scene) {
         int viewportY =  m_unitsConverter->complexValueToPixels(camera->viewportY());
         int viewportWidth = m_unitsConverter->complexValueToPixels(camera->viewportWidth());
         int viewportHeight = m_unitsConverter->complexValueToPixels(camera->viewportHeight());
+        Viewport viewport { viewportX, viewportY, viewportWidth, viewportHeight };
+        Scissor scissor { viewportX, viewportY, viewportWidth, viewportHeight };
         pushOpenGLState({
-            { viewportX, viewportY, viewportWidth, viewportHeight },
-            { viewportX, viewportY, viewportWidth, viewportHeight },
-            false,
-            {GL_ONE, GL_ONE},
-            true,
-            GL_LESS
+                viewport,
+                scissor,
+                true,
+                {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
+                true,
+                GL_LESS
         });
 
         auto clearColor = camera->clearColor();
@@ -187,39 +212,44 @@ void RenderingEngine::render(Scene &scene) {
 
         for (auto& layerName : camera->layerNames()) {
             for (
-                    auto it = layerNameToMeshRendererMap.find(layerName);
-                    it != layerNameToMeshRendererMap.end();
+                    auto it = layerNameToMeshRenderersMap.find(layerName);
+                    it != layerNameToMeshRenderersMap.end();
                     it++
             ) {
-                renderMeshWithAllRequiredShaders(camera, it->second, layerNameToAmbientLightMap, layerName);
-            }
-
-            pushOpenGLState({
-                {viewportX, viewportY, viewportWidth, viewportHeight},
-                {viewportX, viewportY, viewportWidth, viewportHeight},
-                true,
-                {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
-                true,
-                GL_LESS
-            });
-
-            for (
-                    auto it = layerNameToTranslucentMeshRendererMap.find(layerName);
-                    it != layerNameToMeshRendererMap.end();
-                    it++
-            ) {
-                renderMeshWithAllRequiredShaders(camera, it->second, layerNameToAmbientLightMap, layerName);
+                renderMeshWithAllRequiredShaders(
+                        camera,
+                        viewport,
+                        scissor,
+                        it->second,
+                        layerNameToAmbientLightMap,
+                        layerNameToDirectionalLightsMap,
+                        layerName
+                );
             }
 
             for (
-                    auto it = layerNameToTextRendererMap.find(layerName);
-                    it != layerNameToTextRendererMap.end();
+                    auto it = layerNameToTranslucentMeshRenderersMap.find(layerName);
+                    it != layerNameToMeshRenderersMap.end();
+                    it++
+            ) {
+                renderMeshWithAllRequiredShaders(
+                        camera,
+                        viewport,
+                        scissor,
+                        it->second,
+                        layerNameToAmbientLightMap,
+                        layerNameToDirectionalLightsMap,
+                        layerName
+                );
+            }
+
+            for (
+                    auto it = layerNameToTextRenderersMap.find(layerName);
+                    it != layerNameToTextRenderersMap.end();
                     it++
             ) {
                 renderText(camera, it->second);
             }
-
-            popOpenGLState();
         }
 
         popOpenGLState();
@@ -228,8 +258,11 @@ void RenderingEngine::render(Scene &scene) {
 
 void RenderingEngine::renderMeshWithAllRequiredShaders(
         const std::shared_ptr<CameraComponent>& camera,
+        const Viewport& viewport,
+        const Scissor& scissor,
         const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
         const std::unordered_map<std::string, std::shared_ptr<AmbientLightComponent>>& layerNameToAmbientLightMap,
+        const std::unordered_multimap<std::string, std::shared_ptr<DirectionalLightComponent>>& layerNameToDirectionalLightsMap,
         const std::string& layerName
 ) {
     auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
@@ -250,6 +283,45 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
         );
     }
     renderMesh(camera, meshRenderer, ShaderType::LIGHT, shaderProgramContainer);
+
+    pushOpenGLState({
+        viewport,
+        scissor,
+        true,
+        {GL_ONE, GL_ONE},
+        false,
+        GL_EQUAL
+    });
+
+    shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("directionalLight");
+    glUseProgram(shaderProgramContainer.shaderProgram());
+    for (
+            auto it = layerNameToDirectionalLightsMap.find(layerName);
+            it != layerNameToDirectionalLightsMap.end();
+            it++
+    ) {
+        if (auto colorUniform = shaderProgramContainer.directionalLightColorUniform(); colorUniform >= 0) {
+            auto color = it->second->color();
+            glUniform3f(
+                    colorUniform,
+                    color.r,
+                    color.g,
+                    color.b
+            );
+        }
+        if (auto directionUniform = shaderProgramContainer.directionalLightDirectionUniform(); directionUniform >= 0) {
+            auto direction = it->second->direction();
+            glUniform3f(
+                    directionUniform,
+                    direction.r,
+                    direction.g,
+                    direction.b
+            );
+        }
+        renderMesh(camera, meshRenderer, ShaderType::LIGHT, shaderProgramContainer);
+    }
+
+    popOpenGLState();
 }
 
 void RenderingEngine::renderMesh(

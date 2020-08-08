@@ -27,6 +27,8 @@
 #include <engine_3d/ImageButtonComponent.h>
 #include <engine_3d/Transformation2DComponent.h>
 #include <engine_3d/PerspectiveCameraComponent.h>
+#include <engine_3d/DirectionalLightComponent.h>
+#include <engine_3d/Constants.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -637,6 +639,12 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 componentJson["shouldClearDepth"].get<bool>()
         );
         return camera;
+    } else if (type == "DirectionalLight") {
+        return std::make_shared<DirectionalLightComponent>(
+                parseColor3f(componentJson["color"]),
+                Engine3D::Constants::DEFAULT_FORWARD_DIRECTION,
+                parseLayerNames(componentJson["layerNames"])
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

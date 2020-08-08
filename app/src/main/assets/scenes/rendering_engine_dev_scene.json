@@ -29,6 +29,16 @@
       ]
     },
     {
+      "name": "directionalLight",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        { "type": "DirectionalLight", "color": [0.5, 0.5, 0.5], "layerNames": ["scene"] }
+      ]
+    },
+    {
       "name": "box",
       "parent": "root",
       "position" : [0.0, 0.0, 0.0],
