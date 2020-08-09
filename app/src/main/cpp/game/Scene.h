@@ -41,9 +41,7 @@ public:
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<TexturesRepository> texturesRepository
     );
-    virtual ~Scene() {
-        L::d("!@£", "Scene::~Scene");
-    }
+    virtual ~Scene() = default;
 
     std::shared_ptr<GameObject> rootGameObject() { return m_rootGameObject; }
 

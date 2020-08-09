@@ -13,6 +13,13 @@ const std::string ClickDetectorComponent::TYPE_NAME = "ClickDetectorComponent";
 void ClickDetectorComponent::update() {
     GameObjectComponent::update();
 
+    if (!m_isEnabled) {
+        m_prevTouchEventOptional.reset();
+        m_isPressDetected = false;
+        m_isClickDetected = false;
+        return;
+    }
+
     throwErrorIfNoGameObject();
 
     auto m_gestureConsumer = std::static_pointer_cast<GestureConsumerComponent>(

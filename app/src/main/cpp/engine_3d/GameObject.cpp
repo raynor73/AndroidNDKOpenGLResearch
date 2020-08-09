@@ -9,17 +9,9 @@
 
 using namespace std;
 
-GameObject::GameObject(std::string name) : m_name(std::move(name)), m_isEnabled(true) {
-    std::stringstream ss;
-    ss << "GameObject::GameObject: " << m_name;
-    L::d("!@£", ss.str());
-}
+GameObject::GameObject(std::string name) : m_name(std::move(name)), m_isEnabled(true) {}
 
 GameObject::~GameObject() {
-    std::stringstream ss;
-    ss << "GameObject::~GameObject: " << m_name;
-    L::d("!@£", ss.str());
-
     for (auto& entry : m_children) {
         removeChild(entry.second);
     }

@@ -12,6 +12,7 @@
 #include <game/touch_screen/ClickDetectorComponent.h>
 #include <game/SceneManager.h>
 #include <engine_3d/TransformationComponent.h>
+#include <game/touch_screen/ScrollDetectorComponent.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -23,6 +24,8 @@ class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<TransformationComponent> m_boxTransform;
     std::shared_ptr<TransformationComponent> m_box2Transform;
+
+    std::shared_ptr<ScrollDetectorComponent> m_rightControllerAreaScrollDetector;
 
     float boxAngleX = 0;
     float boxAngleY = 0;

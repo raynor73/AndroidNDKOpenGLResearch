@@ -23,6 +23,7 @@
 #include <engine_3d/LayoutComponent.h>
 #include <game/touch_screen/GestureConsumerComponent.h>
 #include <game/touch_screen/ClickDetectorComponent.h>
+#include <game/touch_screen/ScrollDetectorComponent.h>
 #include <engine_3d/TextButtonComponent.h>
 #include <engine_3d/ImageButtonComponent.h>
 #include <engine_3d/Transformation2DComponent.h>
@@ -645,6 +646,8 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 Engine3D::Constants::DEFAULT_FORWARD_DIRECTION,
                 parseLayerNames(componentJson["layerNames"])
         );
+    } else if (type == "ScrollDetector") {
+        return std::make_shared<ScrollDetectorComponent>();
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

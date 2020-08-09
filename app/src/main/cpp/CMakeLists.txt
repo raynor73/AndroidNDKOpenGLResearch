@@ -56,6 +56,7 @@ add_library(
         game/dev_scenes/SceneCloser.cpp
         game/dev_scenes/MultitouchTestScene.cpp
         game/DisplayInfoUpdateDetector.cpp
+        game/touch_screen/ScrollDetectorComponent.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

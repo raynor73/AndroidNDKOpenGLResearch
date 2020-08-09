@@ -29,26 +29,16 @@ protected:
     }
 
 public:
-    GameObjectComponent() : m_isEnabled(true) {
-        std::stringstream ss;
-        ss << "GameObjectComponent::GameObjectComponent";
-        L::d("!@£", ss.str());
-    }
+    GameObjectComponent() : m_isEnabled(true) {}
     GameObjectComponent(const GameObjectComponent&) = delete;
     GameObjectComponent(GameObjectComponent&&) = delete;
-    virtual ~GameObjectComponent() {
-        std::stringstream ss;
-        ss << "GameObjectComponent::~GameObjectComponent";
-        L::d("!@£", ss.str());
-    };
+    virtual ~GameObjectComponent() = default;
 
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
     virtual const std::string& typeName() const = 0;
 
-    /*std::shared_ptr<GameObject> gameObject() { return m_gameObject.lock(); }
-    void setGameObject(const std::shared_ptr<GameObject>& gameObject) { m_gameObject = gameObject; }*/
     GameObject* gameObject() { return m_gameObject; }
     void setGameObject(GameObject* gameObject) { m_gameObject = gameObject; }
 

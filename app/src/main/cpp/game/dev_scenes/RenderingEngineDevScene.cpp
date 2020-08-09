@@ -2,10 +2,12 @@
 // Created by Igor Lapin on 28/06/2020.
 //
 
+#include <sstream>
 #include <glm/gtc/quaternion.hpp>
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/Utils.h>
 #include "RenderingEngineDevScene.h"
+#include <main/L.h>
 
 using namespace Engine3D::Utils;
 
@@ -47,6 +49,14 @@ void RenderingEngineDevScene::update(float dt) {
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleY), glm::vec3(0, 1, 0));
     rotationQuaternion = glm::quat_cast(rotationMatrix);
     m_box2Transform->setRotation(rotationQuaternion);
+
+    auto optionalScrollEvent = m_rightControllerAreaScrollDetector->scrollEvent();
+    if (optionalScrollEvent) {
+        auto scrollEvent = optionalScrollEvent.value();
+        std::stringstream ss;
+        ss << "Scroll detected: dx: " << scrollEvent.dx << "; dy: " << scrollEvent.dy;
+        L::d("!@£", ss.str());
+    }
 }
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
@@ -71,4 +81,11 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             TransformationComponent::TYPE_NAME
     ));
     throwErrorIfNull(m_box2Transform, "Box has not transform");
+
+    auto rightControllerAreaGameObject = m_gameObjectsMap.at("rightControllerArea");
+    throwErrorIfNull(rightControllerAreaGameObject, "No right controller area game object");
+    m_rightControllerAreaScrollDetector = std::static_pointer_cast<ScrollDetectorComponent>(
+            rightControllerAreaGameObject->findComponent(ScrollDetectorComponent::TYPE_NAME)
+    );
+    throwErrorIfNull(rightControllerAreaGameObject, "No right controller area scroll detector");
 }
