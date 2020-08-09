@@ -6,11 +6,16 @@
 #define GAME_TIMEPROVIDER_H
 
 
+#include <chrono>
 #include <cstdint>
 
 class TimeProvider {
 
+    std::chrono::time_point<std::chrono::high_resolution_clock> m_startTimestamp;
+
 public:
+    TimeProvider();
+
     int64_t getTimestamp();
 
     static const float NANOS_IN_SECOND;

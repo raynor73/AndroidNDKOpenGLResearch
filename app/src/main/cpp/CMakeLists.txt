@@ -114,7 +114,9 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib})
 target_link_libraries(native-lib ${opengl-lib})
-target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libassimp.so)
-target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libfreetype.so)
-#target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/armeabi-v7a/libassimp.so)
-#target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/armeabi-v7a/libfreetype.so)
+#target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libassimp.so)
+#target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libfreetype.so)
+#target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/x86/libode.so)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/armeabi-v7a/libassimp.so)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/armeabi-v7a/libfreetype.so)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/armeabi-v7a/libode.so)

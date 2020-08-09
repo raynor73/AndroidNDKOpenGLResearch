@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         const val LOG_TAG = "AndroidNDKOpenGLResearch"
 
         init {
+            System.loadLibrary("ode")
             System.loadLibrary("freetype")
             System.loadLibrary("assimp")
             System.loadLibrary("native-lib")

@@ -29,7 +29,6 @@ class Scene {
     float m_prevTimestamp;
     bool m_hasPrevTimestamp;
 
-
 public:
     explicit Scene(
             std::shared_ptr<TimeProvider> timeProvider,
