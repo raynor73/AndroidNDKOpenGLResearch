@@ -69,7 +69,8 @@
       "rotation" : [0.0, 0.0, 0.0],
       "scale": [1.0, 1.0, 1.0],
       "components": [
-        { "type": "ViewBounds", "left": 0, "right": "50%", "top": "100%", "bottom": 0 }
+        { "type": "ViewBounds", "left": 0, "right": "50%", "top": "100%", "bottom": 0 },
+        { "type": "GestureConsumer", "priority": 10 }
       ]
     },
     {

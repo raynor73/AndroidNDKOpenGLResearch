@@ -5,8 +5,9 @@
 #include <sstream>
 #include <glm/gtc/quaternion.hpp>
 #include <engine_3d/TextComponent.h>
-#include "RenderingEngineDevScene.h"
 #include <main/L.h>
+#include <engine_3d/Constants.h>
+#include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
 
@@ -29,13 +30,16 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         textRendererFactory,
         touchScreen,
         texturesRepository
-    ), m_sceneManager(std::move(sceneManager))
+    ),
+    m_sceneManager(std::move(sceneManager))
 {
-    m_cameraRotationSensitivity = 90 / m_displayInfo->width();
+    m_cameraRotationSensitivity = 90 / m_displayInfo->width(); // around 45 degrees per screen half-width scroll gesture
+    m_cameraMovementSpeed = 0.1; // units per second
 }
 
 void RenderingEngineDevScene::update(float dt) {
     m_fpsCalculator.update(dt);
+    m_movementJoystick->update();
 
     if (m_sceneCloser != nullptr) {
         m_sceneCloser->update();
@@ -73,9 +77,9 @@ void RenderingEngineDevScene::update(float dt) {
     rotationQuaternion = glm::quat_cast(rotationMatrix);
     m_box2Transform->setRotation(rotationQuaternion);
 
-    auto optionalScrollEvent = m_rightControllerAreaScrollDetector->scrollEvent();
-    if (optionalScrollEvent) {
-        auto scrollEvent = optionalScrollEvent.value();
+    auto optionalRightControllerScrollEvent = m_rightControllerAreaScrollDetector->scrollEvent();
+    if (optionalRightControllerScrollEvent) {
+        auto scrollEvent = optionalRightControllerScrollEvent.value();
 
         m_cameraAngleX += glm::radians(scrollEvent.dy* m_cameraRotationSensitivity);
         m_cameraAngleY += glm::radians(-scrollEvent.dx * m_cameraRotationSensitivity);
@@ -91,6 +95,26 @@ void RenderingEngineDevScene::update(float dt) {
                 glm::vec3(1, 0, 0)
         );
         m_cameraTransform->setRotation(rotation);
+    }
+
+    auto movementJoystickPosition = m_movementJoystick->position();
+    if (abs(movementJoystickPosition.y) > 0.5) {
+        auto rotation = m_cameraTransform->rotation();
+        glm::vec3 movement =
+                rotation *
+                Engine3D::Constants::DEFAULT_FORWARD_DIRECTION *
+                m_cameraMovementSpeed *
+                (movementJoystickPosition.y > 0 ? 1.0f : -1.0f);
+        m_cameraTransform->setPosition(m_cameraTransform->position() + movement);
+    }
+    if (abs(movementJoystickPosition.x) > 0.5) {
+        auto rotation = m_cameraTransform->rotation();
+        glm::vec3 strafe =
+                rotation *
+                glm::cross(Engine3D::Constants::DEFAULT_FORWARD_DIRECTION, Engine3D::Constants::CAMERA_UP_DIRECTION) *
+                m_cameraMovementSpeed *
+                (movementJoystickPosition.x > 0 ? 1.0f : -1.0f);
+        m_cameraTransform->setPosition(m_cameraTransform->position() + strafe);
     }
 }
 
@@ -125,4 +149,12 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     throwErrorIfNull(rightControllerAreaGameObject, "No right controller area scroll detector");
 
     m_cameraTransform = findComponent<TransformationComponent>("sceneCamera", TransformationComponent::TYPE_NAME);
+
+    m_movementJoystick = std::make_shared<SimpleJoystick>(
+            findComponent<GestureConsumerComponent>("leftControllerArea", GestureConsumerComponent::TYPE_NAME),
+            m_unitsConverter,
+            m_displayInfo,
+            DpValue { 150 },
+            DpValue { 150 }
+    );
 }

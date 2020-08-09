@@ -14,6 +14,7 @@
 #include <engine_3d/TransformationComponent.h>
 #include <game/touch_screen/ScrollDetectorComponent.h>
 #include <engine_3d/Utils.h>
+#include <game/SimpleJoystick.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -22,6 +23,7 @@ class RenderingEngineDevScene : public Scene {
 
     FpsCalculator m_fpsCalculator;
     std::shared_ptr<SceneCloser> m_sceneCloser;
+    std::shared_ptr<SimpleJoystick> m_movementJoystick;
 
     std::shared_ptr<TransformationComponent> m_boxTransform;
     std::shared_ptr<TransformationComponent> m_box2Transform;
@@ -31,6 +33,7 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<TransformationComponent> m_cameraTransform;
 
     float m_cameraRotationSensitivity;
+    float m_cameraMovementSpeed;
 
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;
