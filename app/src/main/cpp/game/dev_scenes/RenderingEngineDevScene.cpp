@@ -5,11 +5,34 @@
 #include <sstream>
 #include <glm/gtc/quaternion.hpp>
 #include <engine_3d/TextComponent.h>
-#include <engine_3d/Utils.h>
 #include "RenderingEngineDevScene.h"
 #include <main/L.h>
 
 using namespace Engine3D::Utils;
+
+RenderingEngineDevScene::RenderingEngineDevScene(
+        std::shared_ptr<TimeProvider> timeProvider,
+        std::shared_ptr<DisplayInfo> displayInfo,
+        std::shared_ptr<UnitsConverter> unitsConverter,
+        std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
+        std::shared_ptr<MeshRendererFactory> meshRendererFactory,
+        std::shared_ptr<TextRendererFactory> textRendererFactory,
+        std::shared_ptr<TouchScreen> touchScreen,
+        std::shared_ptr<TexturesRepository> texturesRepository,
+        std::shared_ptr<SceneManager> sceneManager
+) : Scene(
+        timeProvider,
+        displayInfo,
+        unitsConverter,
+        meshLoadingRepository,
+        meshRendererFactory,
+        textRendererFactory,
+        touchScreen,
+        texturesRepository
+    ), m_sceneManager(std::move(sceneManager))
+{
+    m_cameraRotationSensitivity = 90 / m_displayInfo->width();
+}
 
 void RenderingEngineDevScene::update(float dt) {
     m_fpsCalculator.update(dt);
@@ -28,34 +51,46 @@ void RenderingEngineDevScene::update(float dt) {
         fpsText->setText(ss.str());
     }
 
-    boxAngleX += dt * 45;
-    boxAngleY += dt * 45;
-    boxAngleZ += dt * 45;
+    m_boxAngleX += dt * 45;
+    m_boxAngleY += dt * 45;
+    m_boxAngleZ += dt * 45;
 
-    box2AngleX += dt * 30;
-    box2AngleY += dt * 30;
-    box2AngleZ += dt * 30;
+    m_box2AngleX += dt * 30;
+    m_box2AngleY += dt * 30;
+    m_box2AngleZ += dt * 30;
 
     auto rotationMatrix = glm::identity<glm::mat4>();
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(boxAngleZ), glm::vec3(0, 0, 1));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(boxAngleX), glm::vec3(1, 0, 0));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(boxAngleY), glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_boxAngleZ), glm::vec3(0, 0, 1));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_boxAngleX), glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_boxAngleY), glm::vec3(0, 1, 0));
     auto rotationQuaternion = glm::quat_cast(rotationMatrix);
     m_boxTransform->setRotation(rotationQuaternion);
 
     rotationMatrix = glm::identity<glm::mat4>();
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleZ), glm::vec3(0, 0, 1));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleX), glm::vec3(1, 0, 0));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(box2AngleY), glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_box2AngleZ), glm::vec3(0, 0, 1));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_box2AngleX), glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_box2AngleY), glm::vec3(0, 1, 0));
     rotationQuaternion = glm::quat_cast(rotationMatrix);
     m_box2Transform->setRotation(rotationQuaternion);
 
     auto optionalScrollEvent = m_rightControllerAreaScrollDetector->scrollEvent();
     if (optionalScrollEvent) {
         auto scrollEvent = optionalScrollEvent.value();
-        std::stringstream ss;
-        ss << "Scroll detected: dx: " << scrollEvent.dx << "; dy: " << scrollEvent.dy;
-        L::d("!@£", ss.str());
+
+        m_cameraAngleX += glm::radians(scrollEvent.dy* m_cameraRotationSensitivity);
+        m_cameraAngleY += glm::radians(-scrollEvent.dx * m_cameraRotationSensitivity);
+
+        auto rotation = glm::rotate(
+                glm::identity<glm::quat>(),
+                m_cameraAngleY,
+                glm::vec3(0, 1, 0)
+        );
+        rotation = glm::rotate(
+                rotation,
+                m_cameraAngleX,
+                glm::vec3(1, 0, 0)
+        );
+        m_cameraTransform->setRotation(rotation);
     }
 }
 
@@ -88,4 +123,6 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             rightControllerAreaGameObject->findComponent(ScrollDetectorComponent::TYPE_NAME)
     );
     throwErrorIfNull(rightControllerAreaGameObject, "No right controller area scroll detector");
+
+    m_cameraTransform = findComponent<TransformationComponent>("sceneCamera", TransformationComponent::TYPE_NAME);
 }

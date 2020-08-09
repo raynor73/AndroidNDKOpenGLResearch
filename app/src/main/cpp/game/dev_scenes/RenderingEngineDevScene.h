@@ -13,6 +13,7 @@
 #include <game/SceneManager.h>
 #include <engine_3d/TransformationComponent.h>
 #include <game/touch_screen/ScrollDetectorComponent.h>
+#include <engine_3d/Utils.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -27,13 +28,20 @@ class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<ScrollDetectorComponent> m_rightControllerAreaScrollDetector;
 
-    float boxAngleX = 0;
-    float boxAngleY = 0;
-    float boxAngleZ = 0;
+    std::shared_ptr<TransformationComponent> m_cameraTransform;
 
-    float box2AngleX = 0;
-    float box2AngleY = 0;
-    float box2AngleZ = 0;
+    float m_cameraRotationSensitivity;
+
+    float m_boxAngleX = 0;
+    float m_boxAngleY = 0;
+    float m_boxAngleZ = 0;
+
+    float m_box2AngleX = 0;
+    float m_box2AngleY = 0;
+    float m_box2AngleZ = 0;
+
+    float m_cameraAngleX = 0;
+    float m_cameraAngleY = 0;
 
 public:
     RenderingEngineDevScene(
@@ -46,20 +54,21 @@ public:
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<TexturesRepository> texturesRepository,
             std::shared_ptr<SceneManager> sceneManager
-    ) : Scene(
-            timeProvider,
-            displayInfo,
-            unitsConverter,
-            meshLoadingRepository,
-            meshRendererFactory,
-            textRendererFactory,
-            touchScreen,
-            texturesRepository
-    ), m_sceneManager(std::move(sceneManager)) {}
+    );
 
     virtual void update(float dt) override;
 
     virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
+
+private:
+    template<typename T>
+    std::shared_ptr<T> findComponent(const std::string& gameObjectName, const std::string& typeName) {
+        auto gameObject = m_gameObjectsMap.at(gameObjectName);
+        Engine3D::Utils::throwErrorIfNull(gameObject, "Game object not found");
+        auto component = std::static_pointer_cast<T>(gameObject->findComponent(typeName));
+        Engine3D::Utils::throwErrorIfNull(m_boxTransform, "Game object has no required component");
+        return component;
+    }
 };
 
 
