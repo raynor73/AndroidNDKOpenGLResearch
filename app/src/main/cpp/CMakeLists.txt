@@ -38,6 +38,7 @@ add_library(
         game/touch_screen/GestureConsumerComponent.cpp
         engine_3d/PerspectiveCameraComponent.cpp
         engine_3d/DirectionalLightComponent.cpp
+        engine_3d/OdePhysicsEngine.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

@@ -35,12 +35,6 @@ RenderingEngineDevScene::RenderingEngineDevScene(
 {
     m_cameraRotationSensitivity = 360 / m_displayInfo->width(); // around 180 degrees per screen half-width scroll gesture
     m_cameraMovementMaxSpeed = 0.1; // units per second
-
-    dInitODE2(0);
-    m_physicsWorldID = dWorldCreate();
-    m_physicsSpaceID = dSimpleSpaceCreate(0);
-    dWorldDestroy(m_physicsWorldID);
-    dSpaceDestroy(m_physicsSpaceID);
 }
 
 void RenderingEngineDevScene::update(float dt) {

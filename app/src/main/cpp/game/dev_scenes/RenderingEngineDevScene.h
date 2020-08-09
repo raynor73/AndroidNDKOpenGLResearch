@@ -15,7 +15,6 @@
 #include <game/touch_screen/ScrollDetectorComponent.h>
 #include <engine_3d/Utils.h>
 #include <game/SimpleJoystick.h>
-#include <ode/ode.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -46,9 +45,6 @@ class RenderingEngineDevScene : public Scene {
 
     float m_cameraAngleX = 0;
     float m_cameraAngleY = 0;
-
-    dWorldID m_physicsWorldID;
-    dSpaceID m_physicsSpaceID;
 
 public:
     RenderingEngineDevScene(
