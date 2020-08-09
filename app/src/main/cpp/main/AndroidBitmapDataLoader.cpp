@@ -28,14 +28,23 @@ BitmapInfo AndroidBitmapDataLoader::loadBitmap(const std::string& path) {
     jbyte* dataJBytes = env->GetByteArrayElements(dataByteArray, JNI_FALSE);
     jsize lengthOfResultArray = env->GetArrayLength(dataByteArray);
 
+    jint width = env->GetIntField(result, widthFieldID);
+    jint height = env->GetIntField(result, heightFieldID);
+
     std::vector<uint8_t> bitmapData(lengthOfResultArray);
     std::memcpy(bitmapData.data(), dataJBytes, lengthOfResultArray);
+    std::vector<uint8_t> flippedBitmapData(lengthOfResultArray);
+    for (size_t y = 0; y < height; y++) {
+        auto reversedY = height - y - 1;
+        std::memcpy(
+                flippedBitmapData.data() + reversedY * width * BYTES_PER_PIXEL,
+                bitmapData.data() + y * width * BYTES_PER_PIXEL,
+                width * BYTES_PER_PIXEL
+        );
+    }
 
     env->ReleaseByteArrayElements(dataByteArray, dataJBytes, JNI_ABORT);
     env->DeleteLocalRef(pathJString);
 
-    jint width = env->GetIntField(result, widthFieldID);
-    jint height = env->GetIntField(result, heightFieldID);
-
-    return BitmapInfo { bitmapData, uint(width), uint(height) };
+    return BitmapInfo { flippedBitmapData, uint(width), uint(height) };
 }

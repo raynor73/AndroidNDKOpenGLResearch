@@ -11,6 +11,8 @@
 
 class AndroidBitmapDataLoader : public BitmapDataLoader {
 
+    static const size_t BYTES_PER_PIXEL = 4;
+
     JavaVM* m_javaVm;
     jclass m_binaryDataLoaderClass;
     jobject m_binaryDataLoaderObject;
