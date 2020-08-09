@@ -34,7 +34,7 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<TransformationComponent> m_cameraTransform;
 
     float m_cameraRotationSensitivity;
-    float m_cameraMovementSpeed;
+    float m_cameraMovementMaxSpeed;
 
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;

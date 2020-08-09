@@ -33,8 +33,8 @@ RenderingEngineDevScene::RenderingEngineDevScene(
     ),
     m_sceneManager(std::move(sceneManager))
 {
-    m_cameraRotationSensitivity = 90 / m_displayInfo->width(); // around 45 degrees per screen half-width scroll gesture
-    m_cameraMovementSpeed = 0.1; // units per second
+    m_cameraRotationSensitivity = 360 / m_displayInfo->width(); // around 180 degrees per screen half-width scroll gesture
+    m_cameraMovementMaxSpeed = 0.1; // units per second
 
     dInitODE2(0);
     m_physicsWorldID = dWorldCreate();
@@ -44,12 +44,6 @@ RenderingEngineDevScene::RenderingEngineDevScene(
 }
 
 void RenderingEngineDevScene::update(float dt) {
-    {
-        std::stringstream ss;
-        ss << "dt: " << dt;
-        L::d("!@£", ss.str());
-    }
-
     m_fpsCalculator.update(dt);
     m_movementJoystick->update();
 
@@ -110,22 +104,22 @@ void RenderingEngineDevScene::update(float dt) {
     }
 
     auto movementJoystickPosition = m_movementJoystick->position();
-    if (abs(movementJoystickPosition.y) > 0.5) {
+    if (abs(movementJoystickPosition.y) > 0.01) {
         auto rotation = m_cameraTransform->rotation();
         glm::vec3 movement =
                 rotation *
                 Engine3D::Constants::DEFAULT_FORWARD_DIRECTION *
-                m_cameraMovementSpeed *
-                (movementJoystickPosition.y > 0 ? 1.0f : -1.0f);
+                m_cameraMovementMaxSpeed *
+                movementJoystickPosition.y;
         m_cameraTransform->setPosition(m_cameraTransform->position() + movement);
     }
-    if (abs(movementJoystickPosition.x) > 0.5) {
+    if (abs(movementJoystickPosition.x) > 0.01) {
         auto rotation = m_cameraTransform->rotation();
         glm::vec3 strafe =
                 rotation *
                 glm::cross(Engine3D::Constants::DEFAULT_FORWARD_DIRECTION, Engine3D::Constants::CAMERA_UP_DIRECTION) *
-                m_cameraMovementSpeed *
-                (movementJoystickPosition.x > 0 ? 1.0f : -1.0f);
+                m_cameraMovementMaxSpeed *
+                movementJoystickPosition.x;
         m_cameraTransform->setPosition(m_cameraTransform->position() + strafe);
     }
 }
