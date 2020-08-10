@@ -2,6 +2,8 @@
 // Created by Igor Lapin on 09/08/2020.
 //
 
+#include <sstream>
+#include <exception>
 #include "OdePhysicsEngine.h"
 
 OdePhysicsEngine::OdePhysicsEngine() {
@@ -29,7 +31,6 @@ void OdePhysicsEngine::setGravity(const glm::vec3 gravity) {
 }
 
 void OdePhysicsEngine::setPosition(const std::string& rigidBodyName, const glm::vec3& position) {
-
 }
 
 void OdePhysicsEngine::setRotation(const std::string& rigidBodyName, const glm::quat& rotation) {
@@ -57,6 +58,10 @@ void OdePhysicsEngine::setAngularVelocityDirectly(const std::string& rigidBodyNa
 }
 
 void OdePhysicsEngine::setAngularVelocityViaMotor(const std::string& rigidBodyName, const glm::vec3& velocity) {
+
+}
+
+void OdePhysicsEngine::setRigidBodyEnabled(const std::string& rigidBodyName, bool isEnabled) {
 
 }
 
@@ -92,7 +97,63 @@ void OdePhysicsEngine::createSphereRigidBody(
         float maxMotorTorqueY,
         float maxMotorTorqueZ
 ) {
+    if (m_rigidBodies.count(name) > 0) {
+        std::stringstream ss;
+        ss << "Already has " << name << " rigid body";
+        throw std::domain_error(ss.str());
+    }
 
+    dMass mass;
+
+    auto rigidBody = dBodyCreate(m_physicsWorldID);
+    m_rigidBodies.insert({ name, rigidBody });
+
+    if (massValue) {
+        mass.setSphereTotal(massValue.value(), radius);
+        dBodySetMass(rigidBody, &mass);
+    } else {
+        dBodySetKinematic(rigidBody);
+    }
+
+    auto collisionShape = dCreateSphere(nullptr, radius);
+    m_collisionShapes.insert({ name, collisionShape });
+    dGeomSetBody(collisionShape, rigidBody);
+
+    dBodySetPosition(rigidBody, position.x, position.y, position.z);
+    dQuaternion quaternion;
+    glmQuatToDQuaternion(rotation, quaternion);
+    dBodySetQuaternion(rigidBody, quaternion);
+
+    dSpaceAdd(m_physicsSpaceID, collisionShape);
+    m_collisionShapeToGameObjectMap.insert({ collisionShape, gameObject });
+
+    auto motor = dJointCreateLMotor(m_physicsWorldID, nullptr);
+    dJointSetLMotorNumAxes(motor, 3);
+    dJointSetLMotorAxis(motor, 0, 0, 1, 0, 0);
+    dJointSetLMotorAxis(motor, 1, 0, 0, 1, 0);
+    dJointSetLMotorAxis(motor, 2, 0, 0, 0, 1);
+    dJointSetLMotorParam(motor, dParamFMax, maxMotorForceX);
+    dJointSetLMotorParam(motor, dParamFMax2, maxMotorForceY);
+    dJointSetLMotorParam(motor, dParamFMax3, maxMotorForceZ);
+    dJointSetLMotorParam(motor, dParamVel, 0);
+    dJointSetLMotorParam(motor, dParamVel2, 0);
+    dJointSetLMotorParam(motor, dParamVel3, 0);
+    dJointAttach(motor, rigidBody, nullptr);
+    m_linearMotors.insert({ name, motor });
+
+    auto angularMotor = dJointCreateAMotor(m_physicsWorldID, nullptr);
+    dJointSetAMotorNumAxes(angularMotor, 3);
+    dJointSetAMotorAxis(angularMotor, 0, 0, 1, 0, 0);
+    dJointSetAMotorAxis(angularMotor, 1, 0, 0, 1, 0);
+    dJointSetAMotorAxis(angularMotor, 2, 0, 0, 0, 1);
+    dJointSetAMotorParam(angularMotor, dParamFMax, maxMotorTorqueX);
+    dJointSetAMotorParam(angularMotor, dParamFMax2, maxMotorTorqueY);
+    dJointSetAMotorParam(angularMotor, dParamFMax3, maxMotorTorqueZ);
+    dJointSetAMotorParam(angularMotor, dParamVel, 0);
+    dJointSetAMotorParam(angularMotor, dParamVel2, 0);
+    dJointSetAMotorParam(angularMotor, dParamVel3, 0);
+    dJointAttach(angularMotor, rigidBody, nullptr);
+    m_angularMotors.insert({ name, angularMotor });
 }
 
 void OdePhysicsEngine::createBoxRigidBody(

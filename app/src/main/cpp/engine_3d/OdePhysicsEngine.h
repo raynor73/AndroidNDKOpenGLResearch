@@ -7,12 +7,52 @@
 
 
 #include <ode/ode.h>
+#include <unordered_map>
+#include <string>
+#include <memory>
+#include <utility>
+#include <engine_3d/GameObject.h>
 #include "PhysicsEngine.h"
+
+/*namespace std {
+
+    template<>
+    struct hash<dGeomID> {
+        size_t operator()(const dGeomID& value) const {
+            size_t typeHash;
+            size_t valueHash;
+            if (std::holds_alternative<PercentValue>(complexValue)) {
+                auto percentValue = std::get<PercentValue>(complexValue);
+
+                typeHash = std::hash<std::string>{}("%");
+                valueHash = std::hash<float>{}(percentValue.value);
+            } else if (std::holds_alternative<DpValue>(complexValue)) {
+                auto dpValue = std::get<DpValue>(complexValue);
+
+                typeHash = std::hash<std::string>{}("dp");
+                valueHash = std::hash<float>{}(dpValue.value);
+            } else {
+                auto plainValue = std::get<PlainValue>(complexValue);
+
+                typeHash = std::hash<std::string>{}("px");
+                valueHash = std::hash<float>{}(plainValue.value);
+            }
+
+            return typeHash ^ (valueHash << 1);
+        }
+    };
+}*/
 
 class OdePhysicsEngine : public PhysicsEngine {
 
     dWorldID m_physicsWorldID;
     dSpaceID m_physicsSpaceID;
+
+    std::unordered_map<std::string, dBodyID> m_rigidBodies;
+    std::unordered_map<std::string, dGeomID> m_collisionShapes;
+    std::unordered_map<dGeomID, std::shared_ptr<GameObject>> m_collisionShapeToGameObjectMap;
+    std::unordered_map<std::string, dJointID> m_linearMotors;
+    std::unordered_map<std::string, dJointID> m_angularMotors;
 
 public:
     OdePhysicsEngine();
@@ -44,6 +84,8 @@ public:
     ) override;
 
     virtual void setAngularVelocityViaMotor(const std::string& rigidBodyName, const glm::vec3& velocity) override;
+
+    virtual void setRigidBodyEnabled(const std::string& rigidBodyName, bool isEnabled) override;
 
     virtual void createCylinderRigidBody(
             std::shared_ptr<GameObject> gameObject,

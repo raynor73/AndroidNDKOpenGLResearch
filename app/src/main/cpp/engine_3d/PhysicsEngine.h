@@ -32,6 +32,8 @@ public:
     virtual void setAngularVelocityDirectly(const std::string& rigidBodyName, const glm::vec3& angularVelocity) = 0;
     virtual void setAngularVelocityViaMotor(const std::string& rigidBodyName, const glm::vec3& velocity) = 0;
 
+    virtual void setRigidBodyEnabled(const std::string& rigidBodyName, bool isEnabled) = 0;
+
     virtual void createCylinderRigidBody(
             std::shared_ptr<GameObject> gameObject,
             std::string name,

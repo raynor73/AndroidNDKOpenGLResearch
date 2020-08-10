@@ -36,7 +36,7 @@ glm::mat4 OrthoCameraComponent::calculateViewMatrix() {
 }
 
 glm::mat4 OrthoCameraComponent::calculateProjectionMatrix() {
-    if (isDisplayInfoUpdated()) {
+    if (isDisplayInfoUpdated()) { // TODO Detect not only display info change but also change of viewport as for Perspective Camera
         m_projectionMatrix = glm::ortho(
                 m_unitsConverter->complexValueToPixels(m_left),
                 m_unitsConverter->complexValueToPixels(m_right),
