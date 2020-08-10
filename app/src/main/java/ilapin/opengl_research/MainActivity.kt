@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         glView.setEGLContextClientVersion(2)
+        glView.setEGLConfigChooser(8, 8, 8, 8, 16, 0)
         glView.setRenderer(renderer)
         glView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         containerLayout.addView(glView, 0)

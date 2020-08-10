@@ -77,6 +77,7 @@ RenderingEngine::RenderingEngine(
     glEnable(GL_DEPTH_TEST);
     glFrontFace(GL_CCW);
     glEnable(GL_SCISSOR_TEST);
+    glClearDepthf(1);
 }
 
 void RenderingEngine::render(Scene &scene) {
