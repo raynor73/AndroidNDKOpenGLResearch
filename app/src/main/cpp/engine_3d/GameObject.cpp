@@ -85,11 +85,15 @@ void GameObject::update() {
 }
 
 void GameObject::onAttachedToParent() {
-    // do nothing
+    for (auto& component : m_components) {
+        component.second->onGameObjectAttachedToParent();
+    }
 }
 
 void GameObject::onDetachedFromParent() {
-    // do nothing
+    for (auto& component : m_components) {
+        component.second->onGameObjectDetachedFromParent();
+    }
 }
 
 std::shared_ptr<GameObjectComponent> GameObject::findComponent(const std::string &name) {

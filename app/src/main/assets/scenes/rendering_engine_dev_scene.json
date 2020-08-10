@@ -18,6 +18,9 @@
     { "name": "cancel", "path": "outline_cancel_white_48.png", "displayDensityFactorAware": true },
     { "name": "unlit", "path": "unlit.png", "displayDensityFactorAware": false }
   ],
+  "physicsParams": {
+    "gravity": [0, -9.8, 0]
+  },
   "gameObjects": [
     {
       "name": "root",

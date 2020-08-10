@@ -15,11 +15,13 @@
 #include <game/touch_screen/ScrollDetectorComponent.h>
 #include <engine_3d/Utils.h>
 #include <game/SimpleJoystick.h>
+#include <engine_3d/PhysicsEngine.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<SceneManager> m_sceneManager;
+    std::shared_ptr<PhysicsEngine> m_physicsEngine;
 
     FpsCalculator m_fpsCalculator;
     std::shared_ptr<SceneCloser> m_sceneCloser;

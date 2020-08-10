@@ -45,6 +45,8 @@ public:
     virtual void update() {};
     virtual void onAttachedToGameObject() {};
     virtual void onDetachedFromGameObject() {};
+    virtual void onGameObjectAttachedToParent() {};
+    virtual void onGameObjectDetachedFromParent() {};
 
     GameObjectComponent& operator=(const GameObjectComponent&) = delete;
     GameObjectComponent& operator=(GameObjectComponent&&) = delete;

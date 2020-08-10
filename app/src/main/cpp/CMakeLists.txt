@@ -39,6 +39,7 @@ add_library(
         engine_3d/PerspectiveCameraComponent.cpp
         engine_3d/DirectionalLightComponent.cpp
         engine_3d/OdePhysicsEngine.cpp
+        engine_3d/RigidBodyComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

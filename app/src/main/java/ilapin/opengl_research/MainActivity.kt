@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.microedition.khronos.egl.EGL10
+import javax.microedition.khronos.egl.EGLConfig
+import javax.microedition.khronos.egl.EGLDisplay
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         glView.setEGLContextClientVersion(2)
-        glView.setEGLConfigChooser(8, 8, 8, 8, 16, 0)
+        //glView.setEGLConfigChooser(8, 8, 8, 8, 24, 8)
         glView.setRenderer(renderer)
         glView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         containerLayout.addView(glView, 0)
