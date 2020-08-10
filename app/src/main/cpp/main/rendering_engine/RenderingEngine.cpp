@@ -74,10 +74,7 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createFragmentShader("directionalLight", directionalLightFragmentShaderSource);
     shadersRepository->createShaderProgram("directionalLight", "directionalLight", "directionalLight");
 
-    glEnable(GL_DEPTH_TEST);
-    glFrontFace(GL_CCW);
-    glEnable(GL_SCISSOR_TEST);
-    glClearDepthf(1);
+    setupOpenGL();
 }
 
 void RenderingEngine::render(Scene &scene) {
@@ -393,6 +390,8 @@ void RenderingEngine::renderText(
 }
 
 void RenderingEngine::onOpenGlContextRecreated() {
+    setupOpenGL();
+
     m_shadersRepository->restoreShaders();
     m_geometryBuffersStorage->restoreBuffers();
     m_texturesRepository->restoreTextures();
@@ -455,4 +454,11 @@ void RenderingEngine::putMeshInGeometryBuffersIfNecessary(const std::string& nam
     if (!m_geometryBuffersStorage->findIbo(name)) {
         m_geometryBuffersStorage->createStaticIndexBuffer(name, mesh.indices());
     }
+}
+
+void RenderingEngine::setupOpenGL() {
+    glEnable(GL_DEPTH_TEST);
+    glFrontFace(GL_CCW);
+    glEnable(GL_SCISSOR_TEST);
+    glClearDepthf(1);
 }

@@ -78,6 +78,8 @@ private:
     void pushOpenGLState(const OpenGLState& state);
     void popOpenGLState();
     void applyOpenGLState(const OpenGLState& state);
+
+    void setupOpenGL();
 };
 
 

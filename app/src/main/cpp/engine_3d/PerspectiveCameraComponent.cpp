@@ -34,14 +34,15 @@ glm::mat4 PerspectiveCameraComponent::calculateViewMatrix() {
 }
 
 glm::mat4 PerspectiveCameraComponent::calculateProjectionMatrix() {
-    if (m_lastViewportWidth != m_viewportWidth || m_lastViewportHeight != m_viewportHeight) {
-        m_lastViewportWidth = m_viewportWidth;
-        m_lastViewportHeight = m_viewportHeight;
+    float currentViewportWidth = m_unitsConverter->complexValueToPixels(m_viewportWidth);
+    float currentViewportHeight = m_unitsConverter->complexValueToPixels(m_viewportHeight);
+    if (m_lastViewportWidth != currentViewportWidth || m_lastViewportHeight != currentViewportHeight) {
+        m_lastViewportWidth = currentViewportWidth;
+        m_lastViewportHeight = currentViewportHeight;
 
         m_projectionMatrix = glm::perspective(
                 m_fov,
-                m_unitsConverter->complexValueToPixels(m_lastViewportWidth) /
-                m_unitsConverter->complexValueToPixels(m_lastViewportHeight),
+                currentViewportWidth / currentViewportHeight,
                 m_zNear,
                 m_zFar
         );

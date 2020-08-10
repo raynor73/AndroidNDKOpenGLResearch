@@ -17,8 +17,8 @@ class PerspectiveCameraComponent : public CameraComponent {
     std::shared_ptr<UnitsConverter> m_unitsConverter;
 
     float m_fov;
-    ComplexValue m_lastViewportWidth = PlainValue { NAN };
-    ComplexValue m_lastViewportHeight = PlainValue { NAN };
+    float m_lastViewportWidth = NAN;
+    float m_lastViewportHeight = NAN;
 
     glm::mat4 m_projectionMatrix;
 
