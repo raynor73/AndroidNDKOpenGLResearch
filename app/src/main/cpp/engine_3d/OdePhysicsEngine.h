@@ -26,6 +26,7 @@ class OdePhysicsEngine : public PhysicsEngine {
 
     dWorldID m_physicsWorldID;
     dSpaceID m_physicsSpaceID;
+    dJointGroupID m_contactGroup;
 
     std::unordered_map<std::string, dBodyID> m_rigidBodies;
     std::unordered_map<std::string, dGeomID> m_collisionShapes;
@@ -37,6 +38,8 @@ public:
     OdePhysicsEngine();
     OdePhysicsEngine(const OdePhysicsEngine&) = delete;
     OdePhysicsEngine(OdePhysicsEngine&&) = delete;
+
+    friend void nearCallback(void *userData, dGeomID shape1, dGeomID shape2);
 
     virtual ~OdePhysicsEngine() override;
 

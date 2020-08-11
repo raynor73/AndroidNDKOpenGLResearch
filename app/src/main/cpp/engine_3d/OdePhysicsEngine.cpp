@@ -10,6 +10,87 @@
 
 using namespace Engine3D::Utils;
 
+void nearCallback(void *userData, dGeomID shape1, dGeomID shape2) {
+    auto physicsEngine = reinterpret_cast<OdePhysicsEngine*>(userData);
+    dContact contactsBuffer[OdePhysicsEngine::MAX_CONTACTS];
+
+    for (size_t i = 0; i < OdePhysicsEngine::MAX_CONTACTS; i++) {
+        auto contact = contactsBuffer[i];
+        contact.surface.mode = dContactBounce | dContactSoftCFM;
+        contact.surface.mu = 50.0;
+        contact.surface.mu2 = 50.0;
+        contact.surface.bounce = 0.1;
+        contact.surface.bounce_vel = 0.1;
+        contact.surface.soft_cfm = 0.01;
+    }
+
+    auto numberOfCollisions = dCollide(
+            shape1,
+            shape2,
+            OdePhysicsEngine::MAX_CONTACTS,
+            &contactsBuffer[0].geom,
+            sizeof(dContact)
+    );
+
+    for (size_t i = 0; i < numberOfCollisions; i++) {
+        auto contactJoint = dJointCreateContact(
+                physicsEngine->m_physicsWorldID,
+                physicsEngine->m_contactGroup,
+                &contactsBuffer[i]
+        );
+        dJointAttach(contactJoint, dGeomGetBody(contactsBuffer[i].geom.g1), dGeomGetBody(contactsBuffer[i].geom.g2));
+        /*val gameObject1 = gameObjects[o1] ?: error("No game object found #1")
+        val gameObject2 = gameObjects[o2] ?: error("No game object found #2")
+
+        gameObject1.getComponent(CollisionsInfoComponent::class.java)?.let {
+                it.collisions += CollisionsInfoComponent.Collision(
+                        gameObject2,
+                        contact.contactGeom.pos.toVector(),
+                        contact.contactGeom.normal.toVector(),
+                        contact.contactGeom.depth.toFloat()
+                )
+        }
+
+        gameObject2.getComponent(CollisionsInfoComponent::class.java)?.let {
+                it.collisions += CollisionsInfoComponent.Collision(
+                        gameObject1,
+                        contact.contactGeom.pos.toVector(),
+                        contact.contactGeom.normal.toVector(),
+                        contact.contactGeom.depth.toFloat()
+                )
+        }*/
+    }
+
+    /*
+
+    for (i in 0 until n) {
+        val contact = contactsBuffer[i]
+        val contactJoint = OdeHelper.createContactJoint(world, contactGroup, contact)
+        contactJoint.attach(o1.body, o2.body)
+
+        val gameObject1 = gameObjects[o1] ?: error("No game object found #1")
+        val gameObject2 = gameObjects[o2] ?: error("No game object found #2")
+
+        gameObject1.getComponent(CollisionsInfoComponent::class.java)?.let {
+                it.collisions += CollisionsInfoComponent.Collision(
+                        gameObject2,
+                        contact.contactGeom.pos.toVector(),
+                        contact.contactGeom.normal.toVector(),
+                        contact.contactGeom.depth.toFloat()
+                )
+        }
+
+        gameObject2.getComponent(CollisionsInfoComponent::class.java)?.let {
+                it.collisions += CollisionsInfoComponent.Collision(
+                        gameObject1,
+                        contact.contactGeom.pos.toVector(),
+                        contact.contactGeom.normal.toVector(),
+                        contact.contactGeom.depth.toFloat()
+                )
+        }
+    }*/
+}
+
 OdePhysicsEngine::OdePhysicsEngine() {
     initODE();
 }
@@ -22,11 +103,14 @@ void OdePhysicsEngine::initODE() {
     dInitODE2(0);
     m_physicsWorldID = dWorldCreate();
     m_physicsSpaceID = dSimpleSpaceCreate(nullptr);
+    m_contactGroup = dJointGroupCreate(MAX_CONTACTS);
 }
 
 void OdePhysicsEngine::deinitODE() {
     dWorldDestroy(m_physicsWorldID);
     dSpaceDestroy(m_physicsSpaceID);
+    dJointGroupEmpty(m_contactGroup);
+    dJointGroupDestroy(m_contactGroup);
     dCloseODE();
 }
 
@@ -284,7 +368,11 @@ void OdePhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
 
 void OdePhysicsEngine::update(float dt) {
     for (int i = 0; i < std::min(int(ceil(dt / SIMULATION_STEP_TIME)), MAX_SIMULATION_STEPS); i++) {
+        dSpaceCollide(m_physicsSpaceID, this, nearCallback);
+
         dWorldStep(m_physicsWorldID, SIMULATION_STEP_TIME);
+
+        dJointGroupEmpty(m_contactGroup);
     }
     /*val collisionInfoContainers = gameObjects
             .values
