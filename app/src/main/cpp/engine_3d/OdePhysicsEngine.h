@@ -14,36 +14,15 @@
 #include <engine_3d/GameObject.h>
 #include "PhysicsEngine.h"
 
-/*namespace std {
-
-    template<>
-    struct hash<dGeomID> {
-        size_t operator()(const dGeomID& value) const {
-            size_t typeHash;
-            size_t valueHash;
-            if (std::holds_alternative<PercentValue>(complexValue)) {
-                auto percentValue = std::get<PercentValue>(complexValue);
-
-                typeHash = std::hash<std::string>{}("%");
-                valueHash = std::hash<float>{}(percentValue.value);
-            } else if (std::holds_alternative<DpValue>(complexValue)) {
-                auto dpValue = std::get<DpValue>(complexValue);
-
-                typeHash = std::hash<std::string>{}("dp");
-                valueHash = std::hash<float>{}(dpValue.value);
-            } else {
-                auto plainValue = std::get<PlainValue>(complexValue);
-
-                typeHash = std::hash<std::string>{}("px");
-                valueHash = std::hash<float>{}(plainValue.value);
-            }
-
-            return typeHash ^ (valueHash << 1);
-        }
-    };
-}*/
-
 class OdePhysicsEngine : public PhysicsEngine {
+
+    static const int NUMBER_OF_MEANINGFUL_ODE_ROTATION_MATRIX_COLUMNS = 3;
+    static const int TOTAL_NUMBER_OF_ODE_ROTATION_MATRIX_COLUMNS = 4;
+    static const int TOTAL_NUMBER_OF_ODE_ROTATION_MATRIX_ROWS = 4;
+
+    static constexpr float SIMULATION_STEP_TIME = 0.01f; // second
+    static constexpr int MAX_SIMULATION_STEPS = 10;
+    static const int MAX_CONTACTS = 64;
 
     dWorldID m_physicsWorldID;
     dSpaceID m_physicsSpaceID;
@@ -110,12 +89,8 @@ public:
             float radius,
             const glm::vec3& position,
             const glm::quat& rotation,
-            float maxMotorForceX,
-            float maxMotorForceY,
-            float maxMotorForceZ,
-            float maxMotorTorqueX,
-            float maxMotorTorqueY,
-            float maxMotorTorqueZ
+            const glm::vec3& maxMotorForce,
+            const glm::vec3& maxMotorTorque
     ) override;
 
     virtual void createBoxRigidBody(
@@ -160,7 +135,7 @@ public:
 
     virtual void getRigidBodyRotationAndPosition(
             const std::string& rigidBodyName,
-            glm::mat4x3& destRotationMatrix,
+            glm::mat4x4& destRotationMatrix,
             glm::vec3& destPosition
     ) override;
 
@@ -180,7 +155,7 @@ private:
         return glm::vec3(vector[0], vector[1], vector[2]);
     }
 
-    void dVector3ToGlmVec3(const dVector3& vector, glm::vec3& destVector) {
+    void dVector3ToGlmVec3(const dReal* vector, glm::vec3& destVector) {
         destVector.x = vector[0];
         destVector.y = vector[1];
         destVector.z = vector[2];
@@ -196,6 +171,8 @@ private:
     glm::quat dQuaternionToGlmQuat(const dQuaternion& quaternion) {
         return glm::quat(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
     }
+
+    dBodyID getRigidBody(const std::string& name);
 };
 
 

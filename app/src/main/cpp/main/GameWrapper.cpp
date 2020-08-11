@@ -52,7 +52,8 @@ GameWrapper::GameWrapper(
             bridgeClass,
             bridgeObject
     )),
-    m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue))
+    m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue)),
+    m_physicsEngine(std::make_shared<OdePhysicsEngine>())
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
         m_sceneManager = std::shared_ptr<SceneManager>(this);
@@ -67,6 +68,7 @@ void GameWrapper::onDrawFrame() {
         m_textRendererFactory->removeAllCharacters();
         m_texturesRepository->removeAllTextures();
         m_geometryBuffersStorage->removeAllBuffers();
+        m_physicsEngine->reset();
 
         switch (m_requestedSceneTypeOptional.value()) {
 
@@ -80,7 +82,8 @@ void GameWrapper::onDrawFrame() {
                         m_textRendererFactory,
                         m_touchScreen,
                         m_sceneManager,
-                        m_texturesRepository
+                        m_texturesRepository,
+                        m_physicsEngine
                 );
                 m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
                 break;
@@ -95,7 +98,8 @@ void GameWrapper::onDrawFrame() {
                         m_textRendererFactory,
                         m_touchScreen,
                         m_texturesRepository,
-                        m_sceneManager
+                        m_sceneManager,
+                        m_physicsEngine
                 );
                 m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
                 break;
@@ -109,7 +113,8 @@ void GameWrapper::onDrawFrame() {
                         m_meshRendererFactory,
                         m_textRendererFactory,
                         m_touchScreen,
-                        m_texturesRepository
+                        m_texturesRepository,
+                        m_physicsEngine
                 );
                 break;
 
@@ -123,7 +128,8 @@ void GameWrapper::onDrawFrame() {
                         m_textRendererFactory,
                         m_touchScreen,
                         m_texturesRepository,
-                        m_sceneManager
+                        m_sceneManager,
+                        m_physicsEngine
                 );
                 m_sceneDataLoader->loadSceneData("scenes/multitouch_test_scene.json", *m_scene);
                 break;

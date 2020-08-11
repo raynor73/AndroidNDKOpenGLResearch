@@ -1,11 +1,13 @@
 {
   "meshes": [
     { "name": "quad", "path": "meshes/vertical_plane.obj" },
-    { "name": "box", "path": "meshes/box.obj" }
+    { "name": "box", "path": "meshes/box.obj" },
+    { "name": "sphere", "path": "meshes/sphere.obj" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
     { "name": "green", "diffuseColor": [0, 0.5, 0, 1] },
+    { "name": "red", "diffuseColor": [0.5, 0, 0, 1] },
     { "name": "blueUnlit", "textureName": "unlit", "isUnlit": true },
     { "name": "close", "textureName": "close", "isTranslucent": true, "isUnlit": true },
     { "name": "cancel", "textureName": "cancel", "isTranslucent": true, "isUnlit": true }
@@ -178,6 +180,23 @@
           "order": 10
         },
         { "type": "AmbientLight", "color": [0.1, 0.1, 0.1], "layerNames": ["scene"] }
+      ]
+    },
+    {
+      "name": "ballPrefab",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "sphere" },
+        { "type": "Material", "materialName": "red" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] },
+        {
+          "type": "SphereRigidBody",
+          "mass": 1,
+          "radius": 1
+        }
       ]
     }
   ]

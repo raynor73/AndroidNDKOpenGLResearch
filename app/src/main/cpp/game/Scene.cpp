@@ -30,6 +30,7 @@
 #include <engine_3d/PerspectiveCameraComponent.h>
 #include <engine_3d/DirectionalLightComponent.h>
 #include <engine_3d/Constants.h>
+#include <engine_3d/RigidBodyComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -40,7 +41,8 @@ Scene::Scene(
         std::shared_ptr<MeshRendererFactory> meshRendererFactory,
         std::shared_ptr<TextRendererFactory> textRendererFactory,
         std::shared_ptr<TouchScreen> touchScreen,
-        std::shared_ptr<TexturesRepository> texturesRepository
+        std::shared_ptr<TexturesRepository> texturesRepository,
+        std::shared_ptr<PhysicsEngine> physicsEngine
 ) :
     m_rootGameObject(std::make_shared<GameObject>("root")),
     m_timeProvider(std::move(timeProvider)),
@@ -53,6 +55,7 @@ Scene::Scene(
     m_textRendererFactory(std::move(textRendererFactory)),
     m_touchScreen(std::move(touchScreen)),
     m_texturesRepository(std::move(texturesRepository)),
+    m_physicsEngine(std::move(physicsEngine)),
     m_gesturesDispatcher(std::make_shared<GesturesDispatcher>())
 {
     m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
@@ -76,6 +79,8 @@ void Scene::update() {
     }
     m_prevTimestamp = currentTimestamp;
     m_hasPrevTimestamp = true;
+
+    m_physicsEngine->update(dt);
 
     update(dt);
 }
@@ -120,6 +125,14 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
     } catch (nlohmann::json::parse_error& e) {
         L::e(App::Constants::LOG_TAG, "Error restoring scene", e);
     }
+
+    auto physicsParamsJson = sceneJson["physicsParams"];
+    auto gravityJson = physicsParamsJson["gravity"];
+    m_physicsEngine->setGravity(glm::vec3(
+            parseFloatNumber(gravityJson[0]),
+            parseFloatNumber(gravityJson[1]),
+            parseFloatNumber(gravityJson[2])
+    ));
 
     auto meshesJsonArray = sceneJson["meshes"];
     if (meshesJsonArray.is_array()) {
@@ -315,11 +328,12 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
             auto componentsJsonArray = gameObjectJson["components"];
             if (componentsJsonArray.is_array()) {
                 for (auto& componentJson : componentsJsonArray) {
-                    auto ptr = gameObject.get();
-                    auto component = parseComponent(componentJson, materialsMap, textAppearancesMap);
-                    if (ptr != gameObject.get()) {
-                        throw std::domain_error("WTF");
-                    }
+                    auto component = parseComponent(
+                            gameObject,
+                            componentJson,
+                            materialsMap,
+                            textAppearancesMap
+                    );
                     gameObject->addComponent(component);
                 }
             }
@@ -328,6 +342,7 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
 }
 
 std::shared_ptr<GameObjectComponent> Scene::parseComponent(
+        const std::shared_ptr<GameObject>& gameObject,
         const nlohmann::json& componentJson,
         const std::unordered_map<std::string, Material>& materialsMap,
         const std::unordered_map<std::string, TextAppearance>& textAppearancesMap
@@ -648,6 +663,47 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         );
     } else if (type == "ScrollDetector") {
         return std::make_shared<ScrollDetectorComponent>();
+    } else if (type == "SphereRigidBody") {
+        auto mass = parseFloatNumber(componentJson["mass"]);
+        auto radius = parseFloatNumber(componentJson["radius"]);
+        auto transform = std::static_pointer_cast<TransformationComponent>(
+                gameObject->findComponent(TransformationComponent::TYPE_NAME)
+        );
+        glm::vec3 maxMotorForce { 0 };
+        glm::vec3 maxMotorTorque { 0 };
+        if (
+                componentJson.contains("maxMotorForce") &&
+                componentJson["maxMotorForce"].is_array() &&
+                componentJson["maxMotorForce"].size() ==3
+        ) {
+            maxMotorForce[0] = parseFloatNumber(componentJson["maxMotorForce"][0]);
+            maxMotorForce[1] = parseFloatNumber(componentJson["maxMotorForce"][1]);
+            maxMotorForce[2] = parseFloatNumber(componentJson["maxMotorForce"][2]);
+        }
+        if (
+                componentJson.contains("maxMotorTorque") &&
+                componentJson["maxMotorTorque"].is_array() &&
+                componentJson["maxMotorTorque"].size() ==3
+        ) {
+            maxMotorTorque[0] = parseFloatNumber(componentJson["maxMotorTorque"][0]);
+            maxMotorTorque[1] = parseFloatNumber(componentJson["maxMotorTorque"][1]);
+            maxMotorTorque[2] = parseFloatNumber(componentJson["maxMotorTorque"][2]);
+        }
+        auto rigidBodyName = gameObject->name();
+        m_physicsEngine->createSphereRigidBody(
+                gameObject,
+                rigidBodyName,
+                mass,
+                radius,
+                transform->position(),
+                transform->rotation(),
+                maxMotorForce,
+                maxMotorTorque
+        );
+        return std::make_shared<RigidBodyComponent>(
+                rigidBodyName,
+                m_physicsEngine
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

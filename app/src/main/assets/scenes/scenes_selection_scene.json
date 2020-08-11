@@ -4,6 +4,9 @@
   "textAppearances": [
     { "name": "menuItemText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
   ],
+  "physicsParams": {
+    "gravity": [0, -9.8, 0]
+  },
   "gameObjects": [
     {
       "name": "root",

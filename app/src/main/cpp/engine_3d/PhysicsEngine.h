@@ -57,12 +57,8 @@ public:
             float radius,
             const glm::vec3& position,
             const glm::quat& rotation,
-            float maxMotorForceX,
-            float maxMotorForceY,
-            float maxMotorForceZ,
-            float maxMotorTorqueX,
-            float maxMotorTorqueY,
-            float maxMotorTorqueZ
+            const glm::vec3& maxMotorForce,
+            const glm::vec3& maxMotorTorque
     ) = 0;
 
     virtual void createBoxRigidBody(
@@ -107,7 +103,7 @@ public:
 
     virtual void getRigidBodyRotationAndPosition(
             const std::string& rigidBodyName,
-            glm::mat4x3& destRotationMatrix,
+            glm::mat4x4& destRotationMatrix,
             glm::vec3& destPosition
     ) = 0;
 

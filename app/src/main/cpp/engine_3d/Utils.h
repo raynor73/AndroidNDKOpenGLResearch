@@ -9,6 +9,7 @@
 #include <memory>
 #include <exception>
 #include <string>
+#include <functional>
 
 namespace Engine3D {
 
@@ -17,6 +18,13 @@ namespace Utils {
     inline void throwErrorIfNull(const std::shared_ptr<T>& ptr, const std::string& message) {
         if (ptr == nullptr) {
             throw std::domain_error(message);
+        }
+    }
+
+    template<typename T>
+    inline void throwErrorIfNull(const std::shared_ptr<T>& ptr, std::function<std::string(void)> getErrorMessage) {
+        if (ptr == nullptr) {
+            throw std::domain_error(getErrorMessage());
         }
     }
 }

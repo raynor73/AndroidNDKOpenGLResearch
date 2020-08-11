@@ -4,7 +4,11 @@
 
 #include <sstream>
 #include <exception>
+#include <algorithm>
+#include <engine_3d/Utils.h>
 #include "OdePhysicsEngine.h"
+
+using namespace Engine3D::Utils;
 
 OdePhysicsEngine::OdePhysicsEngine() {
     initODE();
@@ -90,12 +94,8 @@ void OdePhysicsEngine::createSphereRigidBody(
         float radius,
         const glm::vec3& position,
         const glm::quat& rotation,
-        float maxMotorForceX,
-        float maxMotorForceY,
-        float maxMotorForceZ,
-        float maxMotorTorqueX,
-        float maxMotorTorqueY,
-        float maxMotorTorqueZ
+        const glm::vec3& maxMotorForce,
+        const glm::vec3& maxMotorTorque
 ) {
     if (m_rigidBodies.count(name) > 0) {
         std::stringstream ss;
@@ -132,9 +132,9 @@ void OdePhysicsEngine::createSphereRigidBody(
     dJointSetLMotorAxis(motor, 0, 0, 1, 0, 0);
     dJointSetLMotorAxis(motor, 1, 0, 0, 1, 0);
     dJointSetLMotorAxis(motor, 2, 0, 0, 0, 1);
-    dJointSetLMotorParam(motor, dParamFMax, maxMotorForceX);
-    dJointSetLMotorParam(motor, dParamFMax2, maxMotorForceY);
-    dJointSetLMotorParam(motor, dParamFMax3, maxMotorForceZ);
+    dJointSetLMotorParam(motor, dParamFMax, maxMotorForce.x);
+    dJointSetLMotorParam(motor, dParamFMax2, maxMotorForce.y);
+    dJointSetLMotorParam(motor, dParamFMax3, maxMotorForce.z);
     dJointSetLMotorParam(motor, dParamVel, 0);
     dJointSetLMotorParam(motor, dParamVel2, 0);
     dJointSetLMotorParam(motor, dParamVel3, 0);
@@ -146,9 +146,9 @@ void OdePhysicsEngine::createSphereRigidBody(
     dJointSetAMotorAxis(angularMotor, 0, 0, 1, 0, 0);
     dJointSetAMotorAxis(angularMotor, 1, 0, 0, 1, 0);
     dJointSetAMotorAxis(angularMotor, 2, 0, 0, 0, 1);
-    dJointSetAMotorParam(angularMotor, dParamFMax, maxMotorTorqueX);
-    dJointSetAMotorParam(angularMotor, dParamFMax2, maxMotorTorqueY);
-    dJointSetAMotorParam(angularMotor, dParamFMax3, maxMotorTorqueZ);
+    dJointSetAMotorParam(angularMotor, dParamFMax, maxMotorTorque.x);
+    dJointSetAMotorParam(angularMotor, dParamFMax2, maxMotorTorque.y);
+    dJointSetAMotorParam(angularMotor, dParamFMax3, maxMotorTorque.z);
     dJointSetAMotorParam(angularMotor, dParamVel, 0);
     dJointSetAMotorParam(angularMotor, dParamVel2, 0);
     dJointSetAMotorParam(angularMotor, dParamVel3, 0);
@@ -204,17 +204,68 @@ void OdePhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
 }
 
 void OdePhysicsEngine::update(float dt) {
+    for (int i = 0; i < std::min(int(ceil(dt / SIMULATION_STEP_TIME)), MAX_SIMULATION_STEPS); i++) {
+        dWorldStep(m_physicsWorldID, SIMULATION_STEP_TIME);
+    }
+    /*val collisionInfoContainers = gameObjects
+            .values
+            .mapNotNull { it.getComponent(CollisionsInfoComponent::class.java) }
 
+    repeat(min(ceil(dt / SIMULATION_STEP_TIME).toInt(), MAX_SIMULATION_STEPS)) {
+        collisionInfoContainers.forEach { it.collisions.clear() }
+
+        OdeHelper.spaceCollide(space, null, this)
+        world?.step(SIMULATION_STEP_TIME)
+        characterCapsules.values.forEach {
+            tmpQuaternion.identity().rotateX(-(PI / 2).toFloat()).toQuaternion(tmpDQuaternion)
+            it.quaternion = tmpDQuaternion
+        }
+        contactGroup.empty()
+    }*/
 }
 
 void OdePhysicsEngine::getRigidBodyRotationAndPosition(
         const std::string& rigidBodyName,
-        glm::mat4x3& destRotationMatrix,
+        glm::mat4x4& destRotationMatrix,
         glm::vec3& destPosition
 ) {
+    auto rigidBody = getRigidBody(rigidBodyName);
 
+    auto rotationMatrix3x4 = dBodyGetRotation(rigidBody);
+    destRotationMatrix = glm::identity<glm::mat4x4>();
+    for (int i = 0; i < TOTAL_NUMBER_OF_ODE_ROTATION_MATRIX_ROWS; i++) {
+        std::memcpy(
+                &destRotationMatrix[0][i],
+                &rotationMatrix3x4[TOTAL_NUMBER_OF_ODE_ROTATION_MATRIX_COLUMNS * i],
+                sizeof(dReal) * NUMBER_OF_MEANINGFUL_ODE_ROTATION_MATRIX_COLUMNS
+        );
+    }
+    destRotationMatrix[3][3] = 1;
+    destRotationMatrix = glm::transpose(destRotationMatrix);
+
+    dVector3ToGlmVec3(dBodyGetPosition(rigidBody), destPosition);
 }
 
 void OdePhysicsEngine::reset() {
+    dCloseODE();
 
+    //characterCapsules.clear()
+    m_rigidBodies.clear();
+    //contactGroup.clear()
+    m_collisionShapes.clear();
+    m_collisionShapeToGameObjectMap.clear();
+    m_linearMotors.clear();
+    m_angularMotors.clear();
+
+    initODE();
+}
+
+dBodyID OdePhysicsEngine::getRigidBody(const std::string& name) {
+    if (m_rigidBodies.count(name) == 0) {
+        std::stringstream ss;
+        ss << "Rigid body " << name << " not found";
+        throw std::domain_error(ss.str());
+    }
+
+    return m_rigidBodies.at(name);
 }

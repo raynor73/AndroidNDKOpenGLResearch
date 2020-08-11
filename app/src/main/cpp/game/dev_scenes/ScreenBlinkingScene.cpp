@@ -15,7 +15,8 @@ ScreenBlinkingScene::ScreenBlinkingScene(
         std::shared_ptr<MeshRendererFactory> meshRendererFactory,
         std::shared_ptr<TextRendererFactory> textRendererFactory,
         std::shared_ptr<TouchScreen> touchScreen,
-        std::shared_ptr<TexturesRepository> texturesRepository
+        std::shared_ptr<TexturesRepository> texturesRepository,
+        std::shared_ptr<PhysicsEngine> physicsEngine
 ) : m_elapsed(0),
     m_isWhite(true),
     Scene(
@@ -26,7 +27,8 @@ ScreenBlinkingScene::ScreenBlinkingScene(
             std::move(meshRendererFactory),
             std::move(textRendererFactory),
             std::move(touchScreen),
-            std::move(texturesRepository)
+            std::move(texturesRepository),
+            std::move(physicsEngine)
     )
 {
     // do nothing

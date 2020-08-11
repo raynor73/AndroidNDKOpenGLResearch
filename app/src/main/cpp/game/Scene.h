@@ -21,6 +21,7 @@
 #include <game/touch_screen/GesturesDispatcher.h>
 #include <game/TexturesRepository.h>
 #include <main/L.h>
+#include <engine_3d/PhysicsEngine.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
 
@@ -38,7 +39,8 @@ public:
             std::shared_ptr<MeshRendererFactory> meshRendererFactory,
             std::shared_ptr<TextRendererFactory> textRendererFactory,
             std::shared_ptr<TouchScreen> touchScreen,
-            std::shared_ptr<TexturesRepository> texturesRepository
+            std::shared_ptr<TexturesRepository> texturesRepository,
+            std::shared_ptr<PhysicsEngine> physicsEngine
     );
     virtual ~Scene() = default;
 
@@ -56,6 +58,7 @@ protected:
     std::shared_ptr<TextRendererFactory> m_textRendererFactory;
     std::shared_ptr<TouchScreen> m_touchScreen;
     std::shared_ptr<TexturesRepository> m_texturesRepository;
+    std::shared_ptr<PhysicsEngine> m_physicsEngine;
 
     MeshStorage m_meshStorage;
     std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;
@@ -77,6 +80,7 @@ private:
     );
     static std::vector<std::string> parseLayerNames(const nlohmann::json& layerNamesJsonArray);
     std::shared_ptr<GameObjectComponent> parseComponent(
+            const std::shared_ptr<GameObject>& gameObject,
             const nlohmann::json& componentJson,
             const std::unordered_map<std::string, Material>& materialsMap,
             const std::unordered_map<std::string, TextAppearance>& textAppearancesMap
