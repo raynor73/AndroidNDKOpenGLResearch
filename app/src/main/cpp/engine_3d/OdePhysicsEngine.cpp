@@ -152,10 +152,13 @@ void OdePhysicsEngine::setAngularVelocityViaMotor(const std::string& rigidBodyNa
 }
 
 void OdePhysicsEngine::setRigidBodyEnabled(const std::string& rigidBodyName, bool isEnabled) {
+    auto rigidBody = getRigidBody(rigidBodyName);
     if (isEnabled) {
-        dBodyEnable(getRigidBody(rigidBodyName));
+        dBodyEnable(rigidBody);
+        dBodySetAutoDisableFlag(rigidBody, true);
+        dBodySetAutoDisableDefaults(rigidBody);
     } else {
-        dBodyDisable(getRigidBody(rigidBodyName));
+        dBodyDisable(rigidBody);
     }
 }
 

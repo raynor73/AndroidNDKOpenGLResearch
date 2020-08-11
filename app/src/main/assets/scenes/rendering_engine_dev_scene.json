@@ -202,7 +202,7 @@
     {
       "name": "ballPrefab2",
       "parent": "root",
-      "position" : [0.0, -100.0, 0.0],
+      "position" : [0.2, -50.0, 0.0],
       "rotation" : [0.0, 0.0, 0.0],
       "scale": [1, 1, 1],
       "components": [
