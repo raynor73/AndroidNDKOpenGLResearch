@@ -131,7 +131,7 @@ void OdePhysicsEngine::createSphereRigidBody(
     dBodySetQuaternion(rigidBody, quaternion);
 
     dSpaceAdd(m_physicsSpaceID, collisionShape);
-    m_collisionShapeToGameObjectMap.insert({ collisionShape, gameObject });
+    m_collisionShapeToGameObjectNameMap.insert({collisionShape, gameObject->name() });
 
     auto motor = dJointCreateLMotor(m_physicsWorldID, nullptr);
     dJointSetLMotorNumAxes(motor, 3);
@@ -190,7 +190,51 @@ void OdePhysicsEngine::createCharacterCapsuleRigidBody(
         float maxMotorForceY,
         float maxMotorForceZ
 ) {
+    /*if (m_rigidBodies.count(name) > 0) {
+        std::stringstream ss;
+        ss << "Already has " << name << " rigid body";
+        throw std::domain_error(ss.str());
+    }
 
+    dMass mass;
+
+    auto rigidBody = dBodyCreate(m_physicsWorldID);
+    m_rigidBodies.insert({ name, rigidBody });
+
+    if (massValue) {
+        mass.setSphereTotal(massValue.value(), radius);
+        dBodySetMass(rigidBody, &mass);
+    } else {
+        dBodySetKinematic(rigidBody);
+    }
+
+    auto collisionShape = dCreateSphere(nullptr, radius);*/
+
+    /*val triMeshData = OdeHelper.createTriMeshData()
+
+    triMeshData.build(mesh.vertexCoordinatesOnlyAsArray(), mesh.indices.map { it.toInt() }.toIntArray())
+    triMeshData.preprocess()
+
+    val triMesh = OdeHelper.createTriMesh(space, triMeshData, null, null, null)
+    collisionShapes[name] = triMesh
+    gameObjects[triMesh] = gameObject
+
+    val mass = OdeHelper.createMass()
+
+    val rigidBody = OdeHelper.createBody(world)
+    rigidBodies[name] = rigidBody
+
+    if (massValue != null) {
+        mass.setTrimeshTotal(massValue.toDouble(), triMesh)
+        rigidBody.mass = mass
+    } else {
+        rigidBody.setKinematic()
+    }
+
+    triMesh.body = rigidBody
+
+    rigidBody.position = position.toVector()
+    rigidBody.quaternion = rotation.toQuaternion()*/
 }
 
 void
@@ -206,7 +250,36 @@ OdePhysicsEngine::createTriMeshRigidBody(
 }
 
 void OdePhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
+    if (m_linearMotors.count(rigidBodyName) == 0) {
+        std::stringstream ss;
+        ss << "Linear motor for " << rigidBodyName << " not found";
+        throw std::domain_error(ss.str());
+    }
+    dJointDestroy(m_linearMotors.at(rigidBodyName));
+    m_linearMotors.erase(rigidBodyName);
+    
+    if (m_angularMotors.count(rigidBodyName) == 0) {
+        std::stringstream ss;
+        ss << "Angular motor for " << rigidBodyName << " not found";
+        throw std::domain_error(ss.str());
+    }
+    dJointDestroy(m_angularMotors.at(rigidBodyName));
+    m_angularMotors.erase(rigidBodyName);
+    
+    if (m_collisionShapes.count(rigidBodyName) == 0) {
+        std::stringstream ss;
+        ss << "Collision shape for " << rigidBodyName << " not found";
+        throw std::domain_error(ss.str());
+    }
+    auto collisionShape = m_collisionShapes.at(rigidBodyName);
+    m_collisionShapeToGameObjectNameMap.erase(collisionShape);
+    dGeomDestroy(collisionShape);
+    m_collisionShapes.erase(rigidBodyName);
 
+    //characterCapsules.remove(rigidBodyName)
+
+    dBodyDestroy(getRigidBody(rigidBodyName));
+    m_rigidBodies.erase(rigidBodyName);
 }
 
 void OdePhysicsEngine::update(float dt) {
@@ -253,13 +326,13 @@ void OdePhysicsEngine::getRigidBodyRotationAndPosition(
 }
 
 void OdePhysicsEngine::reset() {
-    dCloseODE();
+    deinitODE();
 
     //characterCapsules.clear()
     m_rigidBodies.clear();
     //contactGroup.clear()
     m_collisionShapes.clear();
-    m_collisionShapeToGameObjectMap.clear();
+    m_collisionShapeToGameObjectNameMap.clear();
     m_linearMotors.clear();
     m_angularMotors.clear();
 

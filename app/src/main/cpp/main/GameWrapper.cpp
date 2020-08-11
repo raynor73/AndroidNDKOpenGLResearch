@@ -68,6 +68,8 @@ void GameWrapper::onDrawFrame() {
         m_textRendererFactory->removeAllCharacters();
         m_texturesRepository->removeAllTextures();
         m_geometryBuffersStorage->removeAllBuffers();
+
+        m_scene.reset();
         m_physicsEngine->reset();
 
         switch (m_requestedSceneTypeOptional.value()) {

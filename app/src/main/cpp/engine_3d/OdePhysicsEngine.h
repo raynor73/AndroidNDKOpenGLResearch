@@ -29,7 +29,7 @@ class OdePhysicsEngine : public PhysicsEngine {
 
     std::unordered_map<std::string, dBodyID> m_rigidBodies;
     std::unordered_map<std::string, dGeomID> m_collisionShapes;
-    std::unordered_map<dGeomID, std::shared_ptr<GameObject>> m_collisionShapeToGameObjectMap;
+    std::unordered_map<dGeomID, std::string> m_collisionShapeToGameObjectNameMap;
     std::unordered_map<std::string, dJointID> m_linearMotors;
     std::unordered_map<std::string, dJointID> m_angularMotors;
 

@@ -31,6 +31,7 @@
 #include <engine_3d/DirectionalLightComponent.h>
 #include <engine_3d/Constants.h>
 #include <engine_3d/RigidBodyComponent.h>
+#include <engine_3d/OdePhysicsEngine.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -664,7 +665,7 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
     } else if (type == "ScrollDetector") {
         return std::make_shared<ScrollDetectorComponent>();
     } else if (type == "SphereRigidBody") {
-        auto mass = parseFloatNumber(componentJson["mass"]);
+        auto mass = componentJson.contains("mass") ? parseFloatNumber(componentJson["mass"]) : std::optional<float>();
         auto radius = parseFloatNumber(componentJson["radius"]);
         auto transform = std::static_pointer_cast<TransformationComponent>(
                 gameObject->findComponent(TransformationComponent::TYPE_NAME)
