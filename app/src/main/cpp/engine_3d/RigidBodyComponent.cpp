@@ -45,6 +45,13 @@ void RigidBodyComponent::update() {
 void RigidBodyComponent::onGameObjectAttachedToParent() {
     GameObjectComponent::onGameObjectAttachedToParent();
 
+    throwErrorIfNoGameObject();
+
+    auto transform = m_gameObject->findComponent<TransformationComponent>();
+    throwErrorIfNull(transform, "No transform to update rigid body");
+
+    m_physicsEngine->setPosition(m_rigidBodyName, transform->position());
+    m_physicsEngine->setRotation(m_rigidBodyName, transform->rotation());
     m_physicsEngine->setRigidBodyEnabled(m_rigidBodyName, true);
 }
 

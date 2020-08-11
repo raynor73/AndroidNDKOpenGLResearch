@@ -35,10 +35,12 @@ void OdePhysicsEngine::setGravity(const glm::vec3 gravity) {
 }
 
 void OdePhysicsEngine::setPosition(const std::string& rigidBodyName, const glm::vec3& position) {
+    dBodySetPosition(getRigidBody(rigidBodyName), position.x, position.y, position.z);
 }
 
 void OdePhysicsEngine::setRotation(const std::string& rigidBodyName, const glm::quat& rotation) {
-
+    dQuaternion quaternion = { rotation.w, rotation.x, rotation.y, rotation.z };
+    dBodySetQuaternion(getRigidBody(rigidBodyName), quaternion);
 }
 
 void OdePhysicsEngine::addForce(const std::string& rigidBodyName, const glm::vec3& force) {
@@ -66,7 +68,11 @@ void OdePhysicsEngine::setAngularVelocityViaMotor(const std::string& rigidBodyNa
 }
 
 void OdePhysicsEngine::setRigidBodyEnabled(const std::string& rigidBodyName, bool isEnabled) {
-
+    if (isEnabled) {
+        dBodyEnable(getRigidBody(rigidBodyName));
+    } else {
+        dBodyDisable(getRigidBody(rigidBodyName));
+    }
 }
 
 void OdePhysicsEngine::createCylinderRigidBody(

@@ -14,7 +14,7 @@
 #include <sstream>
 #include "GameObjectComponent.h"
 
-class GameObject /*: public std::enable_shared_from_this<GameObject>*/ {
+class GameObject {
 
     bool m_isEnabled;
     std::string m_name;
@@ -36,7 +36,6 @@ public:
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
-    //std::shared_ptr<GameObject> parent() { return m_parent.lock(); }
     GameObject* parent() { return m_parent; }
     const std::unordered_map<std::string, std::shared_ptr<GameObject>>& children() const { return m_children; }
 
@@ -51,6 +50,14 @@ public:
     void onDetachedFromParent();
 
     std::shared_ptr<GameObjectComponent> findComponent(const std::string &name);
+    template<typename T>
+    std::shared_ptr<T> findComponent() {
+        if (m_components.count(T::TYPE_NAME) > 0) {
+            return std::static_pointer_cast<T>(m_components.at(T::TYPE_NAME));
+        } else {
+            return nullptr;
+        }
+    }
 
     GameObject& operator=(const GameObject&) = delete;
     GameObject& operator=(GameObject&&) = delete;
