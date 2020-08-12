@@ -60,35 +60,6 @@ void nearCallback(void *userData, dGeomID shape1, dGeomID shape2) {
                 )
         }*/
     }
-
-    /*
-
-    for (i in 0 until n) {
-        val contact = contactsBuffer[i]
-        val contactJoint = OdeHelper.createContactJoint(world, contactGroup, contact)
-        contactJoint.attach(o1.body, o2.body)
-
-        val gameObject1 = gameObjects[o1] ?: error("No game object found #1")
-        val gameObject2 = gameObjects[o2] ?: error("No game object found #2")
-
-        gameObject1.getComponent(CollisionsInfoComponent::class.java)?.let {
-                it.collisions += CollisionsInfoComponent.Collision(
-                        gameObject2,
-                        contact.contactGeom.pos.toVector(),
-                        contact.contactGeom.normal.toVector(),
-                        contact.contactGeom.depth.toFloat()
-                )
-        }
-
-        gameObject2.getComponent(CollisionsInfoComponent::class.java)?.let {
-                it.collisions += CollisionsInfoComponent.Collision(
-                        gameObject1,
-                        contact.contactGeom.pos.toVector(),
-                        contact.contactGeom.normal.toVector(),
-                        contact.contactGeom.depth.toFloat()
-                )
-        }
-    }*/
 }
 
 OdePhysicsEngine::OdePhysicsEngine() {
@@ -277,27 +248,38 @@ void OdePhysicsEngine::createCharacterCapsuleRigidBody(
         float maxMotorForceY,
         float maxMotorForceZ
 ) {
-    /*if (m_rigidBodies.count(name) > 0) {
+}
+
+void
+OdePhysicsEngine::createTriMeshRigidBody(
+        std::shared_ptr<GameObject> gameObject,
+        std::string name,
+        const Mesh& mesh,
+        std::optional<float> massValue,
+        const glm::vec3& position,
+        const glm::quat& rotation
+) {
+    if (m_rigidBodies.count(name) > 0) {
         std::stringstream ss;
         ss << "Already has " << name << " rigid body";
         throw std::domain_error(ss.str());
     }
 
-    dMass mass;
-
-    auto rigidBody = dBodyCreate(m_physicsWorldID);
-    m_rigidBodies.insert({ name, rigidBody });
-
-    if (massValue) {
-        mass.setSphereTotal(massValue.value(), radius);
-        dBodySetMass(rigidBody, &mass);
-    } else {
-        dBodySetKinematic(rigidBody);
+    auto triMeshData = dGeomTriMeshDataCreate();
+    auto vertexData = new dReal[mesh.vertices().size() * Vertex::VERTEX_POSITION_COMPONENTS];
+    auto indexData = new dTriIndex[mesh.indices().size()];
+    for (size_t i = 0; i < mesh.vertices().size(); i++) {
+        vertexData[i * Vertex::VERTEX_POSITION_COMPONENTS + 0] = mesh.vertices()[i].position().x;
+        vertexData[i * Vertex::VERTEX_POSITION_COMPONENTS + 1] = mesh.vertices()[i].position().y;
+        vertexData[i * Vertex::VERTEX_POSITION_COMPONENTS + 2] = mesh.vertices()[i].position().z;
     }
-
-    auto collisionShape = dCreateSphere(nullptr, radius);*/
-
-    /*val triMeshData = OdeHelper.createTriMeshData()
+    for (size_t i = 0; i < mesh.indices().size(); i++) {
+        indexData[i] = mesh.indices()[i];
+    }
+    dGeomTriMeshDataBuildSimple(triMeshData, vertexData, mesh.vertices().size(), indexData, mesh.indices().size());
+    delete[] vertexData;
+    delete[] indexData;
+    /*
 
     triMeshData.build(mesh.vertexCoordinatesOnlyAsArray(), mesh.indices.map { it.toInt() }.toIntArray())
     triMeshData.preprocess()
@@ -322,18 +304,6 @@ void OdePhysicsEngine::createCharacterCapsuleRigidBody(
 
     rigidBody.position = position.toVector()
     rigidBody.quaternion = rotation.toQuaternion()*/
-}
-
-void
-OdePhysicsEngine::createTriMeshRigidBody(
-        std::shared_ptr<GameObject> gameObject,
-        std::string name,
-        const Mesh& mesh,
-        std::optional<float> massValue,
-        const glm::vec3& position,
-        const glm::quat& rotation
-) {
-
 }
 
 void OdePhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
