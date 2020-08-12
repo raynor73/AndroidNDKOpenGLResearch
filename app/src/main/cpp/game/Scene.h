@@ -88,6 +88,12 @@ private:
     static glm::vec3 parseColor3f(const nlohmann::json& colorJson);
     static glm::vec4 parseColor4f(const nlohmann::json& colorJson);
     static float parseFloatNumber(const nlohmann::json& jsonValue);
+    static Mesh createTransformedMesh(
+            const Mesh& mesh,
+            const glm::vec3& position,
+            const glm::quat& rotation,
+            const glm::vec3& scale
+    );
 };
 
 

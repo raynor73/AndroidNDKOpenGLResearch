@@ -1,6 +1,7 @@
 {
   "meshes": [
     { "name": "quad", "path": "meshes/vertical_plane.obj" },
+    { "name": "plane", "path": "meshes/planeUV.obj" },
     { "name": "box", "path": "meshes/box.obj" },
     { "name": "sphere", "path": "meshes/sphere.obj" }
   ],
@@ -183,6 +184,25 @@
       ]
     },
     {
+      "name": "ground",
+      "parent": "root",
+      "position" : [0.0, -50.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [100, 1, 100],
+      "components": [
+        { "type": "Mesh", "meshName": "plane" },
+        { "type": "Material", "materialName": "green" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] },
+        {
+          "type": "TriMeshRigidBody",
+          "meshName": "plane",
+          "meshPosition": [0, 0, 0],
+          "meshRotation": [0, 0, 0],
+          "meshScale": [100, 1, 100]
+        }
+      ]
+    },
+    {
       "name": "ballPrefab",
       "parent": "root",
       "position" : [0.0, 0.0, 0.0],
@@ -202,7 +222,7 @@
     {
       "name": "ballPrefab2",
       "parent": "root",
-      "position" : [0.2, -50.0, 0.0],
+      "position" : [0.2, -25.0, 0.0],
       "rotation" : [0.0, 0.0, 0.0],
       "scale": [1, 1, 1],
       "components": [

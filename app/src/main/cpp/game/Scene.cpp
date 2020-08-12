@@ -12,6 +12,7 @@
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <engine_3d/TransformationComponent.h>
 #include <engine_3d/MeshComponent.h>
 #include <engine_3d/OrthoCameraComponent.h>
@@ -32,6 +33,7 @@
 #include <engine_3d/Constants.h>
 #include <engine_3d/RigidBodyComponent.h>
 #include <engine_3d/OdePhysicsEngine.h>
+#include <glm/gtx/quaternion.hpp>
 #include "Scene.h"
 
 Scene::Scene(
@@ -705,6 +707,41 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 rigidBodyName,
                 m_physicsEngine
         );
+    } else if (type == "TriMeshRigidBody") {
+        auto mass = componentJson.contains("mass") ? parseFloatNumber(componentJson["mass"]) : std::optional<float>();
+        auto meshName = componentJson["meshName"].get<std::string>();
+
+        auto transform = std::static_pointer_cast<TransformationComponent>(
+                gameObject->findComponent(TransformationComponent::TYPE_NAME)
+        );
+
+        auto meshPosition = parseColor3f(componentJson["meshPosition"]);
+        auto meshRotationAngles = parseColor3f(componentJson["meshRotation"]);
+        auto meshScale = parseColor3f(componentJson["meshScale"]);
+
+        auto rigidBodyName = gameObject->name();
+
+        auto rotationMatrix = glm::identity<glm::mat4>();
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(meshRotationAngles.z), glm::vec3(0, 0, 1));
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(meshRotationAngles.x), glm::vec3(1, 0, 0));
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(meshRotationAngles.y), glm::vec3(0, 1, 0));
+        auto meshRotation = glm::quat_cast(rotationMatrix);
+
+        auto mesh = createTransformedMesh(m_meshStorage.getMesh(meshName), meshPosition, meshRotation, meshScale);
+
+        m_physicsEngine->createTriMeshRigidBody(
+                gameObject,
+                rigidBodyName,
+                mesh,
+                mass,
+                transform->position(),
+                transform->rotation()
+        );
+
+        return std::make_shared<RigidBodyComponent>(
+                rigidBodyName,
+                m_physicsEngine
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
@@ -806,4 +843,24 @@ ComplexValue Scene::parseComplexValue(
     } else {
         throw std::domain_error("JSON value is not a number or string");
     }
+}
+
+Mesh Scene::createTransformedMesh(
+        const Mesh& mesh,
+        const glm::vec3& position,
+        const glm::quat& rotation,
+        const glm::vec3& scale
+) {
+    std::vector<Vertex> transformedVertices;
+    auto transformMatrix = glm::translate(glm::identity<glm::mat4>(), position);
+    transformMatrix *= glm::toMat4(rotation);
+    transformMatrix = glm::scale(transformMatrix, scale);
+
+    for (auto& vertex : mesh.vertices()) {
+        auto transformedPosition = transformMatrix * glm::vec4(vertex.position(), 1);
+        auto transformedNormal = glm::normalize(transformMatrix * glm::vec4(vertex.normal(), 0));
+        transformedVertices.emplace_back(Vertex { transformedPosition, transformedNormal, vertex.uv() });
+    }
+
+    return Mesh(transformedVertices, mesh.indices());
 }

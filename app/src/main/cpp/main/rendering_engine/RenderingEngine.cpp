@@ -342,7 +342,6 @@ void RenderingEngine::renderMesh(
         throw std::domain_error(ss.str());
     }
 
-
     auto modelMatrix = glm::translate(glm::identity<glm::mat4>(), transform->position());
     modelMatrix *= glm::toMat4(transform->rotation());
     modelMatrix = glm::scale(modelMatrix, transform->scale());
