@@ -53,7 +53,7 @@ GameWrapper::GameWrapper(
             bridgeObject
     )),
     m_touchScreen(std::make_shared<AndroidTouchScreen>(m_messageQueue)),
-    m_physicsEngine(std::make_shared<OdePhysicsEngine>())
+    m_physicsEngine(std::make_shared<BulletPhysicsEngine>())
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
         m_sceneManager = std::shared_ptr<SceneManager>(this);

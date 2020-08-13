@@ -40,6 +40,7 @@ add_library(
         engine_3d/DirectionalLightComponent.cpp
         engine_3d/OdePhysicsEngine.cpp
         engine_3d/RigidBodyComponent.cpp
+        engine_3d/BulletPhysicsEngine.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -89,6 +90,7 @@ add_library(
 )
 
 target_include_directories(native-lib PUBLIC .)
+target_include_directories(native-lib PUBLIC ./bullet/)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -125,3 +127,15 @@ target_link_libraries(native-lib ${opengl-lib})
 target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libassimp.so)
 target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libfreetype.so)
 target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libode.so)
+
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBullet2FileLoader.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBullet3Common.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBullet3Dynamics.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBullet3Collision.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBullet3Geometry.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBullet3OpenCL_clew.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBulletDynamics.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBulletCollision.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBulletInverseDynamics.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libBulletSoftBody.a)
+target_link_libraries(native-lib ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libLinearMath.a)
