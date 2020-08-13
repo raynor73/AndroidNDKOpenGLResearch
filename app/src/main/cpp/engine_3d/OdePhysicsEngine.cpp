@@ -71,18 +71,21 @@ void nearCallback(void *userData, dGeomID shape1, dGeomID shape2) {
 }
 
 OdePhysicsEngine::OdePhysicsEngine() {
+    dInitODE2(0);
     initODE();
 }
 
 OdePhysicsEngine::~OdePhysicsEngine() {
     deinitODE();
+    dCloseODE();
 }
 
 void OdePhysicsEngine::initODE() {
-    dInitODE2(0);
+    //dInitODE2(0);
     m_physicsWorldID = dWorldCreate();
     m_physicsSpaceID = dSimpleSpaceCreate(nullptr);
     m_contactGroup = dJointGroupCreate(MAX_CONTACTS);
+    dWorldSetCFM(m_physicsWorldID, 1e-5);
 }
 
 void OdePhysicsEngine::deinitODE() {
@@ -90,7 +93,7 @@ void OdePhysicsEngine::deinitODE() {
     dSpaceDestroy(m_physicsSpaceID);
     dJointGroupEmpty(m_contactGroup);
     dJointGroupDestroy(m_contactGroup);
-    dCloseODE();
+    //dCloseODE();
 }
 
 void OdePhysicsEngine::setGravity(const glm::vec3 gravity) {
@@ -134,8 +137,8 @@ void OdePhysicsEngine::setRigidBodyEnabled(const std::string& rigidBodyName, boo
     auto rigidBody = getRigidBody(rigidBodyName);
     if (isEnabled) {
         dBodyEnable(rigidBody);
-        dBodySetAutoDisableFlag(rigidBody, true);
-        dBodySetAutoDisableDefaults(rigidBody);
+        /*dBodySetAutoDisableFlag(rigidBody, true);
+        dBodySetAutoDisableDefaults(rigidBody);*/
     } else {
         dBodyDisable(rigidBody);
     }
@@ -210,7 +213,7 @@ void OdePhysicsEngine::createSphereRigidBody(
     dJointSetLMotorParam(motor, dParamVel, 0);
     dJointSetLMotorParam(motor, dParamVel2, 0);
     dJointSetLMotorParam(motor, dParamVel3, 0);
-    dJointAttach(motor, rigidBody, nullptr);
+    //dJointAttach(motor, rigidBody, nullptr);
     m_linearMotors.insert({ name, motor });
 
     auto angularMotor = dJointCreateAMotor(m_physicsWorldID, nullptr);
@@ -224,7 +227,7 @@ void OdePhysicsEngine::createSphereRigidBody(
     dJointSetAMotorParam(angularMotor, dParamVel, 0);
     dJointSetAMotorParam(angularMotor, dParamVel2, 0);
     dJointSetAMotorParam(angularMotor, dParamVel3, 0);
-    dJointAttach(angularMotor, rigidBody, nullptr);
+    //dJointAttach(angularMotor, rigidBody, nullptr);
     m_angularMotors.insert({ name, angularMotor });
 }
 
@@ -258,8 +261,7 @@ void OdePhysicsEngine::createCharacterCapsuleRigidBody(
 ) {
 }
 
-void
-OdePhysicsEngine::createTriMeshRigidBody(
+void OdePhysicsEngine::createTriMeshRigidBody(
         std::shared_ptr<GameObject> gameObject,
         std::string name,
         const Mesh& mesh,
@@ -362,13 +364,22 @@ void OdePhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
 }
 
 void OdePhysicsEngine::update(float dt) {
-    for (int i = 0; i < std::min(int(ceil(dt / SIMULATION_STEP_TIME)), MAX_SIMULATION_STEPS); i++) {
+    for (int i = 0; i < int(ceil(dt / SIMULATION_STEP_TIME)); i++) {
         dSpaceCollide(m_physicsSpaceID, this, nearCallback);
 
         dWorldStep(m_physicsWorldID, SIMULATION_STEP_TIME);
 
         dJointGroupEmpty(m_contactGroup);
     }
+
+    /*for (int i = 0; i < std::min(int(ceil(dt / SIMULATION_STEP_TIME)), MAX_SIMULATION_STEPS); i++) {
+        dSpaceCollide(m_physicsSpaceID, this, nearCallback);
+
+        dWorldStep(m_physicsWorldID, SIMULATION_STEP_TIME);
+
+        dJointGroupEmpty(m_contactGroup);
+    }*/
+
     /*val collisionInfoContainers = gameObjects
             .values
             .mapNotNull { it.getComponent(CollisionsInfoComponent::class.java) }

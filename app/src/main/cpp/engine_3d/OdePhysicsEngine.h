@@ -20,8 +20,8 @@ class OdePhysicsEngine : public PhysicsEngine {
     static const int TOTAL_NUMBER_OF_ODE_ROTATION_MATRIX_COLUMNS = 4;
     static const int TOTAL_NUMBER_OF_ODE_ROTATION_MATRIX_ROWS = 4;
 
-    static constexpr float SIMULATION_STEP_TIME = 0.01f; // second
-    static constexpr int MAX_SIMULATION_STEPS = 10;
+    static constexpr float SIMULATION_STEP_TIME = 0.05f; // second
+    //static constexpr int MAX_SIMULATION_STEPS = 100;
     static const int MAX_CONTACTS = 64;
 
     dWorldID m_physicsWorldID;
