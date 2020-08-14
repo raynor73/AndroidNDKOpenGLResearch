@@ -21,9 +21,6 @@ void tickCallback(btDynamicsWorld* world, btScalar) {
         auto gameObject0 = physicsEngine->m_btRigidBodyToGameObjectMap.at(body0);
         auto gameObject1 = physicsEngine->m_btRigidBodyToGameObjectMap.at(body1);
 
-        throwErrorIfNull(gameObject0, "Can't find first game object for collision");
-        throwErrorIfNull(gameObject1, "Can't find second game object for collision");
-
         auto numberOfContacts = manifold->getNumContacts();
         for (int j = 0; j < numberOfContacts; j++) {
             auto contact = manifold->getContactPoint(j);
@@ -179,7 +176,7 @@ void BulletPhysicsEngine::createSphereRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
-        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject.get() });
 
         m_dynamicsWorld->addRigidBody(body.get());
     } else {
@@ -196,7 +193,7 @@ void BulletPhysicsEngine::createSphereRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
-        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject.get() });
 
         m_dynamicsWorld->addRigidBody(body.get());
     }
@@ -258,7 +255,7 @@ BulletPhysicsEngine::createTriMeshRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
-        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject.get() });
 
         m_dynamicsWorld->addRigidBody(body.get());
     } else {
@@ -275,7 +272,7 @@ BulletPhysicsEngine::createTriMeshRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
-        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject.get() });
 
         m_dynamicsWorld->addRigidBody(body.get());
     }

@@ -212,6 +212,7 @@
         { "type": "Mesh", "meshName": "sphere" },
         { "type": "Material", "materialName": "red" },
         { "type": "MeshRenderer", "layerNames": ["scene"] },
+        { "type": "CollisionsInfoContainer" },
         {
           "type": "SphereRigidBody",
           "mass": 1,

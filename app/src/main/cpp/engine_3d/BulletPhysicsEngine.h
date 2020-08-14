@@ -22,7 +22,7 @@ class BulletPhysicsEngine : public PhysicsEngine {
     btDiscreteDynamicsWorld* m_dynamicsWorld;
 
     std::unordered_map<std::string, std::shared_ptr<btRigidBody>> m_rigidBodies;
-    std::unordered_map<const btRigidBody*, std::shared_ptr<GameObject>> m_btRigidBodyToGameObjectMap;
+    std::unordered_map<const btRigidBody*, GameObject*> m_btRigidBodyToGameObjectMap;
 
 public:
     BulletPhysicsEngine();

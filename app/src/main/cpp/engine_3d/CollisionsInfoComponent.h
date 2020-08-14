@@ -12,7 +12,7 @@
 #include "GameObjectComponent.h"
 
 struct Collision {
-    std::shared_ptr<GameObject> gameObject;
+    GameObject* gameObject;
     glm::vec3 position;
     glm::vec3 normal;
     float depth;

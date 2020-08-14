@@ -7,6 +7,7 @@
 #include <engine_3d/TextComponent.h>
 #include <main/L.h>
 #include <engine_3d/Constants.h>
+#include <engine_3d/CollisionsInfoComponent.h>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
@@ -23,15 +24,15 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::shared_ptr<SceneManager> sceneManager,
         std::shared_ptr<PhysicsEngine> physicsEngine
 ) : Scene(
-        timeProvider,
-        displayInfo,
-        unitsConverter,
-        meshLoadingRepository,
-        meshRendererFactory,
-        textRendererFactory,
-        touchScreen,
-        texturesRepository,
-        physicsEngine
+        std::move(timeProvider),
+        std::move(displayInfo),
+        std::move(unitsConverter),
+        std::move(meshLoadingRepository),
+        std::move(meshRendererFactory),
+        std::move(textRendererFactory),
+        std::move(touchScreen),
+        std::move(texturesRepository),
+        std::move(physicsEngine)
     ),
     m_sceneManager(std::move(sceneManager))
 {
@@ -118,6 +119,13 @@ void RenderingEngineDevScene::update(float dt) {
                 movementJoystickPosition.x;
         m_cameraTransform->setPosition(m_cameraTransform->position() + strafe);
     }
+
+    auto collisionsInfo = m_ball->findComponent<CollisionsInfoComponent>();
+    for (auto& collision : collisionsInfo->collisions) {
+        std::stringstream ss;
+        ss << "Collision with " << collision.gameObject->name() << " at [" << collision.position.x << "; " << collision.position.y << "; " << collision.position.z << "] has depth: " << collision.depth;
+        L::d("!@£", ss.str());
+    }
 }
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
@@ -159,4 +167,6 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             DpValue { 150 },
             DpValue { 150 }
     );
+
+    m_ball = m_gameObjectsMap.at("ballPrefab");
 }

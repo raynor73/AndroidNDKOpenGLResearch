@@ -16,6 +16,7 @@
 #include <engine_3d/MaterialComponent.h>
 #include <engine_3d/Utils.h>
 #include <engine_3d/PerspectiveCameraComponent.h>
+#include <engine_3d/CollisionsInfoComponent.h>
 #include "RenderingEngine.h"
 
 using namespace Engine3D::Utils;
@@ -98,6 +99,11 @@ void RenderingEngine::render(Scene &scene) {
     std::unordered_multimap<std::string, std::shared_ptr<OpenGLFreeTypeTextRendererComponent>> layerNameToTextRenderersMap;
 
     traverseSceneHierarchy(*scene.rootGameObject(), [&](GameObject& gameObject) {
+        // TODO This is very very bad to update physics related components in Rendering Engine. This added here to not to traverse whole hierarchy multiple times. But this should be moved out from here ASAP.
+        if (auto collisionsInfo = gameObject.findComponent<CollisionsInfoComponent>(); collisionsInfo != nullptr) {
+            collisionsInfo->collisions.clear();
+        }
+
         if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
             if (camera->isEnabled()) {
                 activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));

@@ -34,6 +34,7 @@
 #include <engine_3d/RigidBodyComponent.h>
 #include <engine_3d/OdePhysicsEngine.h>
 #include <glm/gtx/quaternion.hpp>
+#include <engine_3d/CollisionsInfoComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -742,6 +743,8 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
                 rigidBodyName,
                 m_physicsEngine
         );
+    } else if (type == "CollisionsInfoContainer") {
+        return std::make_shared<CollisionsInfoComponent>();
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

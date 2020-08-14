@@ -33,6 +33,8 @@ class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<TransformationComponent> m_cameraTransform;
 
+    std::shared_ptr<GameObject> m_ball;
+
     float m_cameraRotationSensitivity;
     float m_cameraMovementMaxSpeed;
 
