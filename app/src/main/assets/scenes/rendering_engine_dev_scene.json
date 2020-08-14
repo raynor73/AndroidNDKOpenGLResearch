@@ -3,7 +3,8 @@
     { "name": "quad", "path": "meshes/vertical_plane.obj" },
     { "name": "plane", "path": "meshes/planeUV.obj" },
     { "name": "box", "path": "meshes/box.obj" },
-    { "name": "sphere", "path": "meshes/sphere.obj" }
+    { "name": "sphere", "path": "meshes/sphere.obj" },
+    { "name": "house", "path": "meshes/house.obj" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
@@ -11,7 +12,8 @@
     { "name": "red", "diffuseColor": [0.5, 0, 0, 1] },
     { "name": "blueUnlit", "textureName": "unlit", "isUnlit": true },
     { "name": "close", "textureName": "close", "isTranslucent": true, "isUnlit": true },
-    { "name": "cancel", "textureName": "cancel", "isTranslucent": true, "isUnlit": true }
+    { "name": "cancel", "textureName": "cancel", "isTranslucent": true, "isUnlit": true },
+    { "name": "house", "textureName": "house", "isTranslucent": false, "isUnlit": false }
   ],
   "textAppearances": [
     { "name": "fpsText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
@@ -19,7 +21,8 @@
   "textures": [
     { "name": "close", "path": "baseline_close_white_48.png", "displayDensityFactorAware": true },
     { "name": "cancel", "path": "outline_cancel_white_48.png", "displayDensityFactorAware": true },
-    { "name": "unlit", "path": "unlit.png", "displayDensityFactorAware": false }
+    { "name": "unlit", "path": "unlit.png", "displayDensityFactorAware": false },
+    { "name": "house", "path": "house_diffuse.png", "displayDensityFactorAware": false }
   ],
   "physicsParams": {
     "gravity": [0, -9.8, 0]
@@ -38,10 +41,10 @@
       "name": "directionalLight",
       "parent": "root",
       "position" : [0.0, 0.0, 0.0],
-      "rotation" : [0.0, 0.0, 0.0],
+      "rotation" : [-45.0, -45.0, 0.0],
       "scale": [1.0, 1.0, 1.0],
       "components": [
-        { "type": "DirectionalLight", "color": [0.5, 0.5, 0.5], "layerNames": ["scene"] }
+        { "type": "DirectionalLight", "color": [0.8, 0.8, 0.8], "layerNames": ["scene"] }
       ]
     },
     {
@@ -199,6 +202,25 @@
           "meshPosition": [0, 0, 0],
           "meshRotation": [0, 0, 0],
           "meshScale": [100, 1, 100]
+        }
+      ]
+    },
+    {
+      "name": "house",
+      "parent": "root",
+      "position" : [10.0, 0.0, 10.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "house" },
+        { "type": "Material", "materialName": "house" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] },
+        {
+          "type": "TriMeshRigidBody",
+          "meshName": "house",
+          "meshPosition": [0, 0, 0],
+          "meshRotation": [0, 0, 0],
+          "meshScale": [1, 1, 1]
         }
       ]
     },

@@ -314,12 +314,14 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
             );
         }
         if (auto directionUniform = shaderProgramContainer.directionalLightDirectionUniform(); directionUniform >= 0) {
-            auto direction = it->second->direction();
+            auto transform = it->second->gameObject()->findComponent<TransformationComponent>();
+            throwErrorIfNull(transform, "Directional light have no transform while rendering");
+            auto direction = transform->rotation() * it->second->direction();
             glUniform3f(
                     directionUniform,
-                    direction.r,
-                    direction.g,
-                    direction.b
+                    direction.x,
+                    direction.y,
+                    direction.z
             );
         }
         renderMesh(camera, meshRenderer, ShaderType::LIGHT, shaderProgramContainer);
