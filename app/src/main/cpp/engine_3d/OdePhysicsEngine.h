@@ -46,7 +46,7 @@ public:
     OdePhysicsEngine& operator=(const OdePhysicsEngine&) = delete;
     OdePhysicsEngine& operator=(OdePhysicsEngine&&) = delete;
 
-    virtual void setGravity(const glm::vec3 gravity) override;
+    virtual void setGravity(const glm::vec3& gravity) override;
 
     virtual void setPosition(const std::string& rigidBodyName, const glm::vec3& position) override;
 

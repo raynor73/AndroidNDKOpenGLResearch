@@ -18,7 +18,7 @@ class PhysicsEngine {
 public:
     virtual ~PhysicsEngine() = default;
 
-    virtual void setGravity(const glm::vec3 gravity) = 0;
+    virtual void setGravity(const glm::vec3& gravity) = 0;
 
     virtual void setPosition(const std::string& rigidBodyName, const glm::vec3& position) = 0;
     virtual void setRotation(const std::string& rigidBodyName, const glm::quat& rotation) = 0;

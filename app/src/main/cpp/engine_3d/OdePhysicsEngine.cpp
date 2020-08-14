@@ -96,7 +96,7 @@ void OdePhysicsEngine::deinitODE() {
     //dCloseODE();
 }
 
-void OdePhysicsEngine::setGravity(const glm::vec3 gravity) {
+void OdePhysicsEngine::setGravity(const glm::vec3& gravity) {
     dWorldSetGravity(m_physicsWorldID, gravity.x, gravity.y, gravity.z);
 }
 
