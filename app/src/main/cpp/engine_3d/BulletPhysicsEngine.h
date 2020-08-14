@@ -22,6 +22,7 @@ class BulletPhysicsEngine : public PhysicsEngine {
     btDiscreteDynamicsWorld* m_dynamicsWorld;
 
     std::unordered_map<std::string, std::shared_ptr<btRigidBody>> m_rigidBodies;
+    std::unordered_map<const btRigidBody*, std::shared_ptr<GameObject>> m_btRigidBodyToGameObjectMap;
 
 public:
     BulletPhysicsEngine();
@@ -84,10 +85,17 @@ public:
 
     virtual void reset() override;
 
+    friend void tickCallback(btDynamicsWorld* world, btScalar timeStep);
+
     BulletPhysicsEngine& operator=(const BulletPhysicsEngine&) = delete;
     BulletPhysicsEngine& operator=(BulletPhysicsEngine&&) = delete;
 
 private:
+    void initBulletPhysics();
+    void deinitBulletPhysics();
+
+    void removeAllRigidBodies();
+
     std::shared_ptr<btRigidBody> getRigidBody(const std::string& name) const;
 
     static btVector3 glmVec3ToBtVector3(const glm::vec3& vector) {

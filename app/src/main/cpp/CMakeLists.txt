@@ -41,6 +41,7 @@ add_library(
         engine_3d/OdePhysicsEngine.cpp
         engine_3d/RigidBodyComponent.cpp
         engine_3d/BulletPhysicsEngine.cpp
+        engine_3d/CollisionsInfoComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

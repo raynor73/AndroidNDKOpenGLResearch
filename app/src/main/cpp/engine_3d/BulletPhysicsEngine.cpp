@@ -2,9 +2,70 @@
 // Created by Igor Lapin on 13/08/2020.
 //
 
+#include <engine_3d/Utils.h>
+#include "CollisionsInfoComponent.h"
 #include "BulletPhysicsEngine.h"
 
+using namespace Engine3D::Utils;
+
+void tickCallback(btDynamicsWorld* world, btScalar) {
+    auto physicsEngine = reinterpret_cast<BulletPhysicsEngine*>(world->getWorldUserInfo());
+    auto dispatcher = world->getDispatcher();
+    auto numberOfManifolds = dispatcher->getNumManifolds();
+    for (int i = 0; i < numberOfManifolds; i++) {
+        auto manifold = dispatcher->getManifoldByIndexInternal(i);
+
+        auto body0 = static_cast<const btRigidBody*>(manifold->getBody0());
+        auto body1 = static_cast<const btRigidBody*>(manifold->getBody1());
+
+        auto gameObject0 = physicsEngine->m_btRigidBodyToGameObjectMap.at(body0);
+        auto gameObject1 = physicsEngine->m_btRigidBodyToGameObjectMap.at(body1);
+
+        throwErrorIfNull(gameObject0, "Can't find first game object for collision");
+        throwErrorIfNull(gameObject1, "Can't find second game object for collision");
+
+        auto numberOfContacts = manifold->getNumContacts();
+        for (int j = 0; j < numberOfContacts; j++) {
+            auto contact = manifold->getContactPoint(j);
+
+            {
+                Collision collision;
+                collision.gameObject = gameObject0;
+                collision.position = BulletPhysicsEngine::btVector3ToGlmVec3(contact.m_positionWorldOnB);
+                collision.normal = BulletPhysicsEngine::btVector3ToGlmVec3(contact.m_normalWorldOnB);
+                collision.depth = contact.m_distance1;
+
+                auto collisionsInfo = gameObject1->findComponent<CollisionsInfoComponent>();
+                if (collisionsInfo != nullptr) {
+                    collisionsInfo->collisions.push_back(collision);
+                }
+            }
+
+            {
+                Collision collision;
+                collision.gameObject = gameObject1;
+                collision.position = BulletPhysicsEngine::btVector3ToGlmVec3(contact.m_positionWorldOnB);
+                collision.normal = BulletPhysicsEngine::btVector3ToGlmVec3(contact.m_normalWorldOnB);
+                collision.depth = contact.m_distance1;
+
+                auto collisionsInfo = gameObject0->findComponent<CollisionsInfoComponent>();
+                if (collisionsInfo != nullptr) {
+                    collisionsInfo->collisions.push_back(collision);
+                }
+            }
+        }
+    }
+}
+
 BulletPhysicsEngine::BulletPhysicsEngine() {
+    initBulletPhysics();
+}
+
+BulletPhysicsEngine::~BulletPhysicsEngine() {
+    deinitBulletPhysics();
+}
+
+void BulletPhysicsEngine::initBulletPhysics() {
     m_collisionConfiguration = new btDefaultCollisionConfiguration();
     m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
     m_overlappingPairCache = new btDbvtBroadphase();
@@ -14,14 +75,29 @@ BulletPhysicsEngine::BulletPhysicsEngine() {
             m_overlappingPairCache, m_solver,
             m_collisionConfiguration
     );
+
+    m_dynamicsWorld->setInternalTickCallback(tickCallback, this);
 }
 
-BulletPhysicsEngine::~BulletPhysicsEngine() {
+void BulletPhysicsEngine::deinitBulletPhysics() {
+    removeAllRigidBodies();
+
     delete m_dynamicsWorld;
     delete m_solver;
     delete m_overlappingPairCache;
     delete m_dispatcher;
     delete m_collisionConfiguration;
+}
+
+void BulletPhysicsEngine::removeAllRigidBodies() {
+    for (auto& entry : m_rigidBodies) {
+        auto rigidBody = entry.second;
+        delete rigidBody->getMotionState();
+        delete rigidBody->getCollisionShape();
+    }
+
+    m_rigidBodies.clear();
+    m_btRigidBodyToGameObjectMap.clear();
 }
 
 void BulletPhysicsEngine::setGravity(const glm::vec3& gravity) {
@@ -103,6 +179,7 @@ void BulletPhysicsEngine::createSphereRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
 
         m_dynamicsWorld->addRigidBody(body.get());
     } else {
@@ -119,19 +196,10 @@ void BulletPhysicsEngine::createSphereRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
 
         m_dynamicsWorld->addRigidBody(body.get());
     }
-    //_body->setUserPointer((__bridge void*)self);
-    //body->setLinearFactor(btVector3(1,1,0));
-
-    /*if (_body)
-    {
-        delete _body->getMotionState();
-        delete _body;
-    }
-
-    delete _shape;*/
 }
 
 void BulletPhysicsEngine::createBoxRigidBody(std::shared_ptr<GameObject> gameObject, std::string name,
@@ -190,6 +258,7 @@ BulletPhysicsEngine::createTriMeshRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
 
         m_dynamicsWorld->addRigidBody(body.get());
     } else {
@@ -206,17 +275,23 @@ BulletPhysicsEngine::createTriMeshRigidBody(
 
         auto body = std::make_shared<btRigidBody>(bodyCI);
         m_rigidBodies.insert({ name, body });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject });
 
         m_dynamicsWorld->addRigidBody(body.get());
     }
 }
 
 void BulletPhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
+    auto rigidBody = getRigidBody(rigidBodyName);
+    m_rigidBodies.erase(rigidBodyName);
+    m_btRigidBodyToGameObjectMap.erase(rigidBody.get());
 
+    delete rigidBody->getMotionState();
+    delete rigidBody->getCollisionShape();
 }
 
 void BulletPhysicsEngine::update(float dt) {
-    m_dynamicsWorld->stepSimulation(dt, 10);
+    m_dynamicsWorld->stepSimulation(dt/*, 10*/);
 }
 
 void
@@ -230,7 +305,8 @@ BulletPhysicsEngine::getRigidBodyRotationAndPosition(const std::string& rigidBod
 }
 
 void BulletPhysicsEngine::reset() {
-
+    deinitBulletPhysics();
+    initBulletPhysics();
 }
 
 std::shared_ptr<btRigidBody> BulletPhysicsEngine::getRigidBody(const std::string& name) const {
