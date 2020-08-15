@@ -16,6 +16,7 @@
 #include <engine_3d/Utils.h>
 #include <game/SimpleJoystick.h>
 #include <engine_3d/PhysicsEngine.h>
+#include <game/FreeFlyCameraController.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -24,20 +25,13 @@ class RenderingEngineDevScene : public Scene {
 
     FpsCalculator m_fpsCalculator;
     std::shared_ptr<SceneCloser> m_sceneCloser;
-    std::shared_ptr<SimpleJoystick> m_movementJoystick;
 
     std::shared_ptr<TransformationComponent> m_boxTransform;
     std::shared_ptr<TransformationComponent> m_box2Transform;
 
-    std::shared_ptr<ScrollDetectorComponent> m_rightControllerAreaScrollDetector;
+    std::shared_ptr<FreeFlyCameraController> m_freeFlyCameraController;
 
-    std::shared_ptr<TransformationComponent> m_cameraTransform;
-
-    std::shared_ptr<GameObject> m_ball;
     std::shared_ptr<GameObject> m_player;
-
-    float m_cameraRotationSensitivity;
-    float m_cameraMovementMaxSpeed;
 
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;
@@ -46,9 +40,6 @@ class RenderingEngineDevScene : public Scene {
     float m_box2AngleX = 0;
     float m_box2AngleY = 0;
     float m_box2AngleZ = 0;
-
-    float m_cameraAngleX = 0;
-    float m_cameraAngleY = 0;
 
 public:
     RenderingEngineDevScene(

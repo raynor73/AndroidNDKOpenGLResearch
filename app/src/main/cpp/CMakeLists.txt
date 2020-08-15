@@ -62,6 +62,7 @@ add_library(
         game/DisplayInfoUpdateDetector.cpp
         game/touch_screen/ScrollDetectorComponent.cpp
         game/SimpleJoystick.cpp
+        game/FreeFlyCameraController.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp
