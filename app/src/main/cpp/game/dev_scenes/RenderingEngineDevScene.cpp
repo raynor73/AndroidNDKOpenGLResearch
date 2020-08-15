@@ -8,6 +8,7 @@
 #include <main/L.h>
 #include <engine_3d/Constants.h>
 #include <engine_3d/CollisionsInfoComponent.h>
+#include <engine_3d/RigidBodyComponent.h>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
@@ -126,6 +127,8 @@ void RenderingEngineDevScene::update(float dt) {
         ss << "Collision with " << collision.gameObject->name() << " at [" << collision.position.x << "; " << collision.position.y << "; " << collision.position.z << "] has depth: " << collision.depth;
         L::d("!@£", ss.str());
     }
+
+    m_physicsEngine->addForce("player", glm::vec3(0, 0, 1));
 }
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
@@ -169,4 +172,5 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     );
 
     m_ball = m_gameObjectsMap.at("ballPrefab");
+    m_player = m_gameObjectsMap.at("player");
 }

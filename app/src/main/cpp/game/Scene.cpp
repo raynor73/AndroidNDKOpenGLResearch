@@ -745,6 +745,29 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         );
     } else if (type == "CollisionsInfoContainer") {
         return std::make_shared<CollisionsInfoComponent>();
+    } else if (type == "CharacterCapsuleRigidBody") {
+        auto mass = componentJson.contains("mass") ? parseFloatNumber(componentJson["mass"]) : std::optional<float>();
+        auto radius = parseFloatNumber(componentJson["radius"]);
+        auto height = parseFloatNumber(componentJson["height"]);
+        auto transform = std::static_pointer_cast<TransformationComponent>(
+                gameObject->findComponent(TransformationComponent::TYPE_NAME)
+        );
+        auto rigidBodyName = gameObject->name();
+        m_physicsEngine->createCharacterCapsuleRigidBody(
+                gameObject,
+                rigidBodyName,
+                mass,
+                radius,
+                height,
+                transform->position(),
+                0,
+                0,
+                0
+        );
+        return std::make_shared<RigidBodyComponent>(
+                rigidBodyName,
+                m_physicsEngine
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

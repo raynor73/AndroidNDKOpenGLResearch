@@ -4,12 +4,15 @@
     { "name": "plane", "path": "meshes/planeUV.obj" },
     { "name": "box", "path": "meshes/box.obj" },
     { "name": "sphere", "path": "meshes/sphere.obj" },
-    { "name": "house", "path": "meshes/house.obj" }
+    { "name": "house", "path": "meshes/house.obj" },
+    { "name": "capsule", "path": "meshes/vertical_capsule.obj" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
     { "name": "green", "diffuseColor": [0, 0.5, 0, 1] },
     { "name": "red", "diffuseColor": [0.5, 0, 0, 1] },
+    { "name": "greenWireframe", "diffuseColor": [0, 1, 0, 1], "isUnlit": true, "isWireframe": true },
+    { "name": "greenTranslucent", "diffuseColor": [0, 1, 0, 0.5], "isUnlit": true, "isTranslucent": true },
     { "name": "blueUnlit", "textureName": "unlit", "isUnlit": true },
     { "name": "close", "textureName": "close", "isTranslucent": true, "isUnlit": true },
     { "name": "cancel", "textureName": "cancel", "isTranslucent": true, "isUnlit": true },
@@ -184,6 +187,28 @@
           "order": 10
         },
         { "type": "AmbientLight", "color": [0.1, 0.1, 0.1], "layerNames": ["scene"] }
+      ]
+    },
+    {
+      "name": "player",
+      "parent": "root",
+      "position" : [0.0, 2.0, -5.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "capsule" },
+        { "type": "Material", "materialName": "green" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] },
+        {
+          "type": "CharacterCapsuleRigidBody",
+          "meshName": "capsule",
+          "mass": 1,
+          "radius": 1,
+          "height": 2,
+          "meshPosition": [0, 0, 0],
+          "meshRotation": [0, 0, 0],
+          "meshScale": [1, 1, 1]
+        }
       ]
     },
     {

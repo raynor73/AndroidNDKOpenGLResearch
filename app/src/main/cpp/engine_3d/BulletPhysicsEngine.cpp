@@ -110,7 +110,7 @@ void BulletPhysicsEngine::setRotation(const std::string& rigidBodyName, const gl
 }
 
 void BulletPhysicsEngine::addForce(const std::string& rigidBodyName, const glm::vec3& force) {
-
+    getRigidBody(rigidBodyName)->applyCentralForce(glmVec3ToBtVector3(force));
 }
 
 void BulletPhysicsEngine::addTorque(const std::string& rigidBodyName, const glm::vec3& torque) {
@@ -207,11 +207,60 @@ void BulletPhysicsEngine::createBoxRigidBody(std::shared_ptr<GameObject> gameObj
 
 }
 
-void BulletPhysicsEngine::createCharacterCapsuleRigidBody(std::shared_ptr<GameObject> gameObject, std::string name,
-                                                          std::optional<float> massValue, float radius, float length,
-                                                          const glm::vec3& position, float maxMotorForceX,
-                                                          float maxMotorForceY, float maxMotorForceZ) {
+void BulletPhysicsEngine::createCharacterCapsuleRigidBody(
+        std::shared_ptr<GameObject> gameObject,
+        std::string name,
+        std::optional<float> massValue,
+        float radius,
+        float length,
+        const glm::vec3& position,
+        float maxMotorForceX,
+        float maxMotorForceY,
+        float maxMotorForceZ
+) {
+    auto shape = new btCapsuleShape(radius, length);
 
+    auto btVector3Position = glmVec3ToBtVector3(position);
+
+    auto motionState = new btDefaultMotionState(btTransform(btQuaternion::getIdentity(), btVector3Position));
+
+    if (massValue) {
+        btVector3 bodyInertia;
+        shape->calculateLocalInertia(massValue.value(), bodyInertia);
+        btRigidBody::btRigidBodyConstructionInfo bodyCI = btRigidBody::btRigidBodyConstructionInfo(
+                massValue.value(),
+                motionState,
+                shape,
+                bodyInertia
+        );
+        bodyCI.m_restitution = 0;
+        bodyCI.m_friction = 0.001f;
+
+        auto body = std::make_shared<btRigidBody>(bodyCI);
+        body->setAngularFactor(btVector3(0, 0, 0));
+        m_rigidBodies.insert({ name, body });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject.get() });
+
+        m_dynamicsWorld->addRigidBody(body.get());
+    } else {
+        btVector3 bodyInertia;
+        shape->calculateLocalInertia(0, bodyInertia);
+        btRigidBody::btRigidBodyConstructionInfo bodyCI = btRigidBody::btRigidBodyConstructionInfo(
+                0,
+                motionState,
+                shape,
+                bodyInertia
+        );
+        bodyCI.m_restitution = 0;
+        bodyCI.m_friction = 0.001;
+
+        auto body = std::make_shared<btRigidBody>(bodyCI);
+        body->setAngularFactor(btVector3(0, 0, 0));
+        m_rigidBodies.insert({ name, body });
+        m_btRigidBodyToGameObjectMap.insert({ body.get(), gameObject.get() });
+
+        m_dynamicsWorld->addRigidBody(body.get());
+    }
 }
 
 void
@@ -288,12 +337,14 @@ void BulletPhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
 }
 
 void BulletPhysicsEngine::update(float dt) {
-    m_dynamicsWorld->stepSimulation(dt/*, 10*/);
+    m_dynamicsWorld->stepSimulation(dt);
 }
 
-void
-BulletPhysicsEngine::getRigidBodyRotationAndPosition(const std::string& rigidBodyName, glm::mat4x4& destRotationMatrix,
-                                                     glm::vec3& destPosition) {
+void BulletPhysicsEngine::getRigidBodyRotationAndPosition(
+        const std::string& rigidBodyName,
+        glm::mat4x4& destRotationMatrix,
+        glm::vec3& destPosition
+) {
     auto body = getRigidBody(rigidBodyName);
     auto transform = body->getWorldTransform();
 
