@@ -107,6 +107,10 @@ public:
             glm::vec3& destPosition
     ) = 0;
 
+    virtual glm::vec3 getRigidBodyVelocity(const std::string& rigidBodyName) = 0;
+
+    virtual void setRigidBodyFriction(const std::string& rigidBodyName, float friction) = 0;
+
     virtual void reset() = 0;
 };
 

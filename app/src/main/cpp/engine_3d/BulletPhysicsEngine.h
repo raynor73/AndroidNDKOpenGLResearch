@@ -80,8 +80,15 @@ public:
 
     virtual void update(float dt) override;
 
-    virtual void getRigidBodyRotationAndPosition(const std::string& rigidBodyName, glm::mat4x4& destRotationMatrix,
-                                                 glm::vec3& destPosition) override;
+    virtual void getRigidBodyRotationAndPosition(
+            const std::string& rigidBodyName,
+            glm::mat4x4& destRotationMatrix,
+            glm::vec3& destPosition
+    ) override;
+
+    virtual glm::vec3 getRigidBodyVelocity(const std::string& rigidBodyName) override;
+
+    virtual void setRigidBodyFriction(const std::string& rigidBodyName, float friction) override;
 
     virtual void reset() override;
 

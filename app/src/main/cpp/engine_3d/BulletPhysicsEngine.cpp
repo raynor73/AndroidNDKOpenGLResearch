@@ -110,7 +110,9 @@ void BulletPhysicsEngine::setRotation(const std::string& rigidBodyName, const gl
 }
 
 void BulletPhysicsEngine::addForce(const std::string& rigidBodyName, const glm::vec3& force) {
-    getRigidBody(rigidBodyName)->applyCentralForce(glmVec3ToBtVector3(force));
+    auto rigidBody = getRigidBody(rigidBodyName);
+    rigidBody->activate();
+    rigidBody->applyCentralForce(glmVec3ToBtVector3(force));
 }
 
 void BulletPhysicsEngine::addTorque(const std::string& rigidBodyName, const glm::vec3& torque) {
@@ -365,6 +367,14 @@ void BulletPhysicsEngine::getRigidBodyRotationAndPosition(
 
     destPosition = btVector3ToGlmVec3(transform.getOrigin());
     destRotationMatrix = glm::mat4_cast(btQuaternionToGlmQuat(transform.getRotation()));
+}
+
+glm::vec3 BulletPhysicsEngine::getRigidBodyVelocity(const std::string& rigidBodyName) {
+    return btVector3ToGlmVec3(getRigidBody(rigidBodyName)->getLinearVelocity());
+}
+
+void BulletPhysicsEngine::setRigidBodyFriction(const std::string& rigidBodyName, float friction) {
+    getRigidBody(rigidBodyName)->setFriction(friction);
 }
 
 void BulletPhysicsEngine::reset() {

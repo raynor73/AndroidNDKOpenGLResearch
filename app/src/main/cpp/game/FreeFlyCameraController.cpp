@@ -25,8 +25,6 @@ void FreeFlyCameraController::update() {
         return;
     }
 
-    m_movementJoystick->update();
-
     auto optionalRightControllerScrollEvent = m_rightControllerAreaScrollDetector->scrollEvent();
     if (optionalRightControllerScrollEvent) {
         auto scrollEvent = optionalRightControllerScrollEvent.value();
