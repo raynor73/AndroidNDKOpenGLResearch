@@ -30,11 +30,16 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<TransformationComponent> m_boxTransform;
     std::shared_ptr<TransformationComponent> m_box2Transform;
 
+    std::shared_ptr<GameObject> m_ballPrefab;
+
+    std::shared_ptr<SimpleJoystick> m_movementJoystick;
+
     std::shared_ptr<PerspectiveCameraComponent> m_freeFlyCamera;
     std::shared_ptr<FreeFlyCameraController> m_freeFlyCameraController;
 
     std::shared_ptr<GameObject> m_player;
     std::shared_ptr<PerspectiveCameraComponent> m_playerCamera;
+
     std::shared_ptr<ClickDetectorComponent> m_cameraButtonClickDetector;
     bool m_shouldUsePlayerCamera = false;
 

@@ -25,6 +25,8 @@ class FreeFlyCameraController {
     float m_cameraAngleX = 0;
     float m_cameraAngleY = 0;
 
+    bool m_isEnabled;
+
 public:
     FreeFlyCameraController(
             const std::shared_ptr<DisplayInfo>& displayInfo,
@@ -32,7 +34,9 @@ public:
             std::shared_ptr<SimpleJoystick> movementJoystick,
             std::shared_ptr<ScrollDetectorComponent> viewDirectionScrollDetector
     );
-    
+
+    void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
+
     void update();
 };
 

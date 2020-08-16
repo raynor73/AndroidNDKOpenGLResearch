@@ -7,6 +7,10 @@
 #include "SimpleJoystick.h"
 
 void SimpleJoystick::update() {
+    if (!m_isEnabled) {
+        return;
+    }
+
     if (isDisplayInfoUpdated()) {
         m_width = m_unitsConverter->complexValueToPixels(m_widthComplexValue);
         m_height = m_unitsConverter->complexValueToPixels(m_heightComplexValue);

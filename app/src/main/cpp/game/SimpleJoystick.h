@@ -30,6 +30,8 @@ class SimpleJoystick : public Joystick, DisplayInfoUpdateDetector {
     float m_draggingStartX = NAN;
     float m_draggingStartY = NAN;
 
+    bool m_isEnabled = true;
+
 public:
     SimpleJoystick(
             std::shared_ptr<GestureConsumerComponent> gestureConsumer,
@@ -45,6 +47,8 @@ public:
     {}
 
     virtual const JoystickPosition& position() override { return m_position; }
+
+    void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
     void update();
 };

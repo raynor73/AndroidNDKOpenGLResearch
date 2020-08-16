@@ -135,6 +135,16 @@ void BulletPhysicsEngine::setAngularVelocityViaMotor(const std::string& rigidBod
 }
 
 void BulletPhysicsEngine::setRigidBodyEnabled(const std::string& rigidBodyName, bool isEnabled) {
+    auto rigidBody = getRigidBody(rigidBodyName);
+    if (isEnabled) {
+        if (!rigidBody->isInWorld()) {
+            m_dynamicsWorld->addRigidBody(rigidBody.get());
+        }
+    } else {
+        if (rigidBody->isInWorld()) {
+            m_dynamicsWorld->removeRigidBody(rigidBody.get());
+        }
+    }
 }
 
 void BulletPhysicsEngine::createCylinderRigidBody(std::shared_ptr<GameObject> gameObject, std::string name,
@@ -329,6 +339,11 @@ BulletPhysicsEngine::createTriMeshRigidBody(
 
 void BulletPhysicsEngine::removeRigidBody(const std::string& rigidBodyName) {
     auto rigidBody = getRigidBody(rigidBodyName);
+
+    if (rigidBody->isInWorld()) {
+        m_dynamicsWorld->removeRigidBody(rigidBody.get());
+    }
+
     m_rigidBodies.erase(rigidBodyName);
     m_btRigidBodyToGameObjectMap.erase(rigidBody.get());
 

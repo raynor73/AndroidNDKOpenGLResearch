@@ -106,7 +106,10 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     ));
     throwErrorIfNull(m_box2Transform, "Box has not transform");
 
-    auto movementJoystick = std::make_shared<SimpleJoystick>(
+    m_ballPrefab = m_gameObjectsMap.at("ballPrefab");
+    removeGameObject("ballPrefab");
+
+    m_movementJoystick = std::make_shared<SimpleJoystick>(
             findComponent<GestureConsumerComponent>("leftControllerArea"),
             m_unitsConverter,
             m_displayInfo,
@@ -116,7 +119,7 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     m_freeFlyCameraController = std::make_shared<FreeFlyCameraController>(
             m_displayInfo,
             findComponent<TransformationComponent>("sceneCamera"),
-            movementJoystick,
+            m_movementJoystick,
             m_gameObjectsMap.at("rightControllerArea")->findComponent<ScrollDetectorComponent>()
     );
 
@@ -135,9 +138,13 @@ void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
 
     if (m_shouldUsePlayerCamera) {
         m_playerCamera->setEnabled(true);
+
         m_freeFlyCamera->setEnabled(false);
+        m_freeFlyCameraController->setEnabled(false);
     } else {
         m_playerCamera->setEnabled(false);
+
         m_freeFlyCamera->setEnabled(true);
+        m_freeFlyCameraController->setEnabled(true);
     }
 }
