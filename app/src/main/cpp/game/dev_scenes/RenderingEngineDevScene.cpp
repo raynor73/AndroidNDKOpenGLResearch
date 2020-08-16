@@ -77,6 +77,10 @@ void RenderingEngineDevScene::update(float dt) {
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(m_box2AngleY), glm::vec3(0, 1, 0));
     rotationQuaternion = glm::quat_cast(rotationMatrix);
     m_box2Transform->setRotation(rotationQuaternion);
+
+    if (m_cameraButtonClickDetector->isClickDetected()) {
+        switchCamera(!m_shouldUsePlayerCamera);
+    }
 }
 
 void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
@@ -103,7 +107,7 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     throwErrorIfNull(m_box2Transform, "Box has not transform");
 
     auto movementJoystick = std::make_shared<SimpleJoystick>(
-            findComponent<GestureConsumerComponent>("leftControllerArea", GestureConsumerComponent::TYPE_NAME),
+            findComponent<GestureConsumerComponent>("leftControllerArea"),
             m_unitsConverter,
             m_displayInfo,
             DpValue { 150 },
@@ -111,10 +115,29 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     );
     m_freeFlyCameraController = std::make_shared<FreeFlyCameraController>(
             m_displayInfo,
-            findComponent<TransformationComponent>("sceneCamera", TransformationComponent::TYPE_NAME),
+            findComponent<TransformationComponent>("sceneCamera"),
             movementJoystick,
             m_gameObjectsMap.at("rightControllerArea")->findComponent<ScrollDetectorComponent>()
     );
 
+    m_cameraButtonClickDetector = findComponent<ClickDetectorComponent>("cameraButton");
+
     m_player = m_gameObjectsMap.at("player");
+    m_playerCamera = findComponent<PerspectiveCameraComponent>("playerCamera");
+
+    m_freeFlyCamera = findComponent<PerspectiveCameraComponent>("sceneCamera");
+
+    switchCamera(m_shouldUsePlayerCamera);
+}
+
+void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
+    m_shouldUsePlayerCamera = shouldUsePlayerCamera;
+
+    if (m_shouldUsePlayerCamera) {
+        m_playerCamera->setEnabled(true);
+        m_freeFlyCamera->setEnabled(false);
+    } else {
+        m_playerCamera->setEnabled(false);
+        m_freeFlyCamera->setEnabled(true);
+    }
 }

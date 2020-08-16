@@ -104,23 +104,23 @@ void RenderingEngine::render(Scene &scene) {
             collisionsInfo->collisions.clear();
         }
 
-        if (auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME); camera != nullptr) {
-            if (camera->isEnabled()) {
-                activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
-            }
-        }
-
-        if (auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME); camera != nullptr) {
-            if (camera->isEnabled()) {
-                activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
-            }
+        if (
+                auto camera = gameObject.findComponent(OrthoCameraComponent::TYPE_NAME);
+                camera != nullptr && camera->isEnabled()
+        ) {
+            activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
         }
 
         if (
-                auto meshRenderer = std::static_pointer_cast<OpenGlMeshRendererComponent>(
-                        gameObject.findComponent(OpenGlMeshRendererComponent::TYPE_NAME)
-                );
-                meshRenderer != nullptr
+                auto camera = gameObject.findComponent(PerspectiveCameraComponent::TYPE_NAME);
+                camera != nullptr && camera->isEnabled()
+        ) {
+            activeCameras.push_back(std::static_pointer_cast<CameraComponent>(camera));
+        }
+
+        if (
+                auto meshRenderer = gameObject.findComponent<OpenGlMeshRendererComponent>();
+                meshRenderer != nullptr && meshRenderer->isEnabled()
         ) {
             for (auto& layerName : meshRenderer->layerNames()) {
                 auto materialComponent = std::static_pointer_cast<MaterialComponent>(
@@ -136,10 +136,8 @@ void RenderingEngine::render(Scene &scene) {
         }
 
         if (
-                auto textRenderer = std::static_pointer_cast<OpenGLFreeTypeTextRendererComponent>(
-                        gameObject.findComponent(OpenGLFreeTypeTextRendererComponent::TYPE_NAME)
-                );
-                textRenderer != nullptr
+                auto textRenderer = gameObject.findComponent<OpenGLFreeTypeTextRendererComponent>();
+                textRenderer != nullptr && textRenderer->isEnabled()
         ) {
             for (auto& layerName : textRenderer->layerNames()) {
                 layerNameToTextRenderersMap.insert({layerName, textRenderer });
@@ -147,19 +145,15 @@ void RenderingEngine::render(Scene &scene) {
         }
 
         if (
-                auto meshComponent = std::static_pointer_cast<MeshComponent>(
-                        gameObject.findComponent(MeshComponent::TYPE_NAME)
-                );
-                meshComponent != nullptr
+                auto meshComponent = gameObject.findComponent<MeshComponent>();
+                meshComponent != nullptr && meshComponent->isEnabled()
         ) {
             putMeshInGeometryBuffersIfNecessary(meshComponent->meshName(), meshComponent->mesh());
         }
 
         if (
-                auto ambientLight = std::static_pointer_cast<AmbientLightComponent>(
-                        gameObject.findComponent(AmbientLightComponent::TYPE_NAME)
-                );
-                ambientLight != nullptr
+                auto ambientLight = gameObject.findComponent<AmbientLightComponent>();
+                ambientLight != nullptr && ambientLight->isEnabled()
         ) {
             for (auto& layerName : ambientLight->layerNames()) {
                 layerNameToAmbientLightMap.insert({ layerName, ambientLight });
@@ -167,10 +161,8 @@ void RenderingEngine::render(Scene &scene) {
         }
 
         if (
-                auto directionalLight = std::static_pointer_cast<DirectionalLightComponent>(
-                        gameObject.findComponent(DirectionalLightComponent::TYPE_NAME)
-                );
-                directionalLight != nullptr
+                auto directionalLight = gameObject.findComponent<DirectionalLightComponent>();
+                directionalLight != nullptr && directionalLight->isEnabled()
         ) {
             for (auto& layerName : directionalLight->layerNames()) {
                 layerNameToDirectionalLightsMap.insert({layerName, directionalLight });

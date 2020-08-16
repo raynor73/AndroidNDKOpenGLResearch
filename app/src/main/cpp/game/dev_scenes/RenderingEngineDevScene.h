@@ -17,6 +17,7 @@
 #include <game/SimpleJoystick.h>
 #include <engine_3d/PhysicsEngine.h>
 #include <game/FreeFlyCameraController.h>
+#include <engine_3d/PerspectiveCameraComponent.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -29,9 +30,13 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<TransformationComponent> m_boxTransform;
     std::shared_ptr<TransformationComponent> m_box2Transform;
 
+    std::shared_ptr<PerspectiveCameraComponent> m_freeFlyCamera;
     std::shared_ptr<FreeFlyCameraController> m_freeFlyCameraController;
 
     std::shared_ptr<GameObject> m_player;
+    std::shared_ptr<PerspectiveCameraComponent> m_playerCamera;
+    std::shared_ptr<ClickDetectorComponent> m_cameraButtonClickDetector;
+    bool m_shouldUsePlayerCamera = false;
 
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;
@@ -61,13 +66,15 @@ public:
 
 private:
     template<typename T>
-    std::shared_ptr<T> findComponent(const std::string& gameObjectName, const std::string& typeName) {
+    std::shared_ptr<T> findComponent(const std::string& gameObjectName) {
         auto gameObject = m_gameObjectsMap.at(gameObjectName);
         Engine3D::Utils::throwErrorIfNull(gameObject, "Game object not found");
-        auto component = std::static_pointer_cast<T>(gameObject->findComponent(typeName));
+        auto component = std::static_pointer_cast<T>(gameObject->findComponent(T::TYPE_NAME));
         Engine3D::Utils::throwErrorIfNull(m_boxTransform, "Game object has no required component");
         return component;
     }
+
+    void switchCamera(bool shouldUsePlayerCamera);
 };
 
 
