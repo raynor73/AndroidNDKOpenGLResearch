@@ -8,6 +8,7 @@
 #include <game/SceneManager.h>
 #include <game/dev_scenes/ScreenBlinkingScene.h>
 #include <game/dev_scenes/MultitouchTestScene.h>
+#include <game/dev_scenes/LoadingScene.h>
 
 const std::string GameWrapper::TOUCH_EVENT_MESSAGE_TYPE_NAME = "TouchEvent";
 
@@ -135,6 +136,23 @@ void GameWrapper::onDrawFrame() {
                 );
                 m_sceneDataLoader->loadSceneData("scenes/multitouch_test_scene.json", *m_scene);
                 break;
+
+            case SceneType::LOADING_SCENE:
+                m_scene = std::make_shared<LoadingScene>(
+                        m_requestedSceneArgs,
+                        m_timeProvider,
+                        m_displayInfo,
+                        m_unitsConverter,
+                        m_meshLoadingRepository,
+                        m_meshRendererFactory,
+                        m_textRendererFactory,
+                        m_touchScreen,
+                        m_texturesRepository,
+                        m_sceneManager,
+                        m_physicsEngine
+                );
+                m_sceneDataLoader->loadSceneData("scenes/loading_scene.json", *m_scene);
+                break;
         }
         m_requestedSceneTypeOptional.reset();
     }
@@ -195,7 +213,15 @@ void GameWrapper::onSurfaceCreated() {
     // do nothing
 }
 
-void GameWrapper::requestSceneLoadAndStart(SceneType type) {
+void GameWrapper::requestSceneLoadAndStart(
+        SceneType type,
+        std::unordered_map<std::string, RequestedSceneArgValue> args
+) {
     m_requestedSceneTypeOptional = type;
+    m_requestedSceneArgs = std::move(args);
+}
+
+void GameWrapper::requestSceneLoadAndStart(SceneType type) {
+    requestSceneLoadAndStart(type, {});
 }
 

@@ -62,6 +62,7 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<BulletPhysicsEngine> m_physicsEngine;
 
     std::optional<SceneType> m_requestedSceneTypeOptional;
+    std::unordered_map<std::string, RequestedSceneArgValue> m_requestedSceneArgs;
 
 public:
     explicit GameWrapper(
@@ -78,7 +79,12 @@ public:
     void onSurfaceChanged(int width, int height);
     void onSurfaceCreated();
 
-    virtual void requestSceneLoadAndStart(SceneType type) override;
+    virtual void requestSceneLoadAndStart(
+            SceneType type,
+            std::unordered_map<std::string, RequestedSceneArgValue> args
+    ) override;
+
+    void requestSceneLoadAndStart(SceneType type) override;
 
     GameWrapper& operator=(const GameWrapper&) = delete;
     GameWrapper& operator=(GameWrapper&&) = delete;
