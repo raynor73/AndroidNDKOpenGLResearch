@@ -18,6 +18,7 @@
 #include <engine_3d/PhysicsEngine.h>
 #include <game/FreeFlyCameraController.h>
 #include <engine_3d/PerspectiveCameraComponent.h>
+#include <game/PlayerController.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -38,9 +39,7 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<FreeFlyCameraController> m_freeFlyCameraController;
 
     std::shared_ptr<PerspectiveCameraComponent> m_playerCamera;
-    std::shared_ptr<ScrollDetectorComponent> m_playerViewDirectionScrollDetector;
-    std::shared_ptr<TransformationComponent> m_playerRotorTransform;
-    float m_playerAngle = 0;
+    std::shared_ptr<PlayerController> m_playerController;
 
     std::shared_ptr<ClickDetectorComponent> m_cameraButtonClickDetector;
     bool m_shouldUsePlayerCamera = false;

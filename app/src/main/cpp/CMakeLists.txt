@@ -64,6 +64,7 @@ add_library(
         game/SimpleJoystick.cpp
         game/FreeFlyCameraController.cpp
         game/dev_scenes/LoadingScene.cpp
+        game/PlayerController.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

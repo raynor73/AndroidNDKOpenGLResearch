@@ -41,6 +41,7 @@ RenderingEngineDevScene::RenderingEngineDevScene(
 void RenderingEngineDevScene::update(float dt) {
     m_movementJoystick->update();
     m_freeFlyCameraController->update();
+    m_playerController->update();
     m_fpsCalculator.update(dt);
 
     if (m_sceneCloser != nullptr) {
@@ -75,35 +76,6 @@ void RenderingEngineDevScene::update(float dt) {
 
     if (m_cameraButtonClickDetector->isClickDetected()) {
         switchCamera(!m_shouldUsePlayerCamera);
-    }
-
-    if (m_shouldUsePlayerCamera) {
-        auto optionalScrollEvent = m_playerViewDirectionScrollDetector->scrollEvent();
-        if (optionalScrollEvent) {
-            // around 180 degrees per screen half-width scroll gesture
-            float m_cameraRotationSensitivity = 360 / m_displayInfo->width();
-            auto scrollEvent = optionalScrollEvent.value();
-            m_playerAngle += glm::radians(-scrollEvent.dx * m_cameraRotationSensitivity);
-        }
-        if (m_movementJoystick->position().y > 0.5f) {
-            m_physicsEngine->setRigidBodyFriction("player", 0.001);
-            auto velocity = m_physicsEngine->getRigidBodyVelocity("player");
-            if (glm::length(velocity) < 5) {
-                auto forceDirection = eulerZXY(0, 0, m_playerAngle) * Engine3D::Constants::DEFAULT_FORWARD_DIRECTION;
-
-                auto perpendicularToForceDirection = glm::vec3(forceDirection.z, forceDirection.y, -forceDirection.x);
-                auto velocityProjectionOnPerpendicularForceDirection =
-                        glm::dot(velocity, perpendicularToForceDirection) / glm::length(perpendicularToForceDirection);
-                auto unwantedVelocityCompensationForce =
-                        -perpendicularToForceDirection * velocityProjectionOnPerpendicularForceDirection;
-
-                forceDirection += unwantedVelocityCompensationForce;
-                m_physicsEngine->addForce("player", forceDirection * 100.0f);
-            }
-        } else {
-            m_physicsEngine->setRigidBodyFriction("player", 100);
-        }
-        m_playerRotorTransform->setRotation(eulerZXY(0, 0, m_playerAngle));
     }
 }
 
@@ -144,16 +116,20 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             m_displayInfo,
             findComponent<TransformationComponent>("sceneCamera"),
             m_movementJoystick,
-            m_gameObjectsMap.at("rightControllerArea")->findComponent<ScrollDetectorComponent>()
+            findComponent<ScrollDetectorComponent>("rightControllerArea")
     );
+    m_freeFlyCamera = findComponent<PerspectiveCameraComponent>("sceneCamera");
 
     m_cameraButtonClickDetector = findComponent<ClickDetectorComponent>("cameraButton");
 
+    m_playerController = std::make_shared<PlayerController>(
+            m_physicsEngine,
+            m_displayInfo,
+            m_movementJoystick,
+            findComponent<ScrollDetectorComponent>("rightControllerArea"),
+            findComponent<TransformationComponent>("playerRotor")
+    );
     m_playerCamera = findComponent<PerspectiveCameraComponent>("playerCamera");
-    m_playerViewDirectionScrollDetector = findComponent<ScrollDetectorComponent>("rightControllerArea");
-    m_playerRotorTransform = findComponent<TransformationComponent>("playerRotor");
-
-    m_freeFlyCamera = findComponent<PerspectiveCameraComponent>("sceneCamera");
 
     switchCamera(m_shouldUsePlayerCamera);
 }
@@ -163,11 +139,13 @@ void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
 
     if (m_shouldUsePlayerCamera) {
         m_playerCamera->setEnabled(true);
+        m_playerController->setEnabled(true);
 
         m_freeFlyCamera->setEnabled(false);
         m_freeFlyCameraController->setEnabled(false);
     } else {
         m_playerCamera->setEnabled(false);
+        m_playerController->setEnabled(false);
 
         m_freeFlyCamera->setEnabled(true);
         m_freeFlyCameraController->setEnabled(true);
