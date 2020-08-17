@@ -87,8 +87,17 @@ void RenderingEngineDevScene::update(float dt) {
         }
         if (m_movementJoystick->position().y > 0.5f) {
             m_physicsEngine->setRigidBodyFriction("player", 0.001);
-            if (glm::length(m_physicsEngine->getRigidBodyVelocity("player")) < 5) {
+            auto velocity = m_physicsEngine->getRigidBodyVelocity("player");
+            if (glm::length(velocity) < 5) {
                 auto forceDirection = eulerZXY(0, 0, m_playerAngle) * Engine3D::Constants::DEFAULT_FORWARD_DIRECTION;
+
+                auto perpendicularToForceDirection = glm::vec3(forceDirection.z, forceDirection.y, -forceDirection.x);
+                auto velocityProjectionOnPerpendicularForceDirection =
+                        glm::dot(velocity, perpendicularToForceDirection) / glm::length(perpendicularToForceDirection);
+                auto unwantedVelocityCompensationForce =
+                        -perpendicularToForceDirection * velocityProjectionOnPerpendicularForceDirection;
+
+                forceDirection += unwantedVelocityCompensationForce;
                 m_physicsEngine->addForce("player", forceDirection * 100.0f);
             }
         } else {
