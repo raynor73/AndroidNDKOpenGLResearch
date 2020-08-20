@@ -39,7 +39,8 @@ public:
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<TexturesRepository> texturesRepository,
             std::shared_ptr<SceneManager> sceneManager,
-            std::shared_ptr<PhysicsEngine> physicsEngine
+            std::shared_ptr<PhysicsEngine> physicsEngine,
+            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
     );
 
     virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;

@@ -24,6 +24,7 @@
 #include <engine_3d/PhysicsEngine.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
+#include <game/SkeletalAnimationLoadingRepository.h>
 
 class Scene {
 
@@ -40,7 +41,8 @@ public:
             std::shared_ptr<TextRendererFactory> textRendererFactory,
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<TexturesRepository> texturesRepository,
-            std::shared_ptr<PhysicsEngine> physicsEngine
+            std::shared_ptr<PhysicsEngine> physicsEngine,
+            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository
     );
     virtual ~Scene() = default;
 
@@ -59,6 +61,7 @@ protected:
     std::shared_ptr<TouchScreen> m_touchScreen;
     std::shared_ptr<TexturesRepository> m_texturesRepository;
     std::shared_ptr<PhysicsEngine> m_physicsEngine;
+    std::shared_ptr<SkeletalAnimationLoadingRepository> m_skeletalAnimationLoadingRepository;
 
     MeshStorage m_meshStorage;
     std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;

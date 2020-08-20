@@ -46,7 +46,8 @@ Scene::Scene(
         std::shared_ptr<TextRendererFactory> textRendererFactory,
         std::shared_ptr<TouchScreen> touchScreen,
         std::shared_ptr<TexturesRepository> texturesRepository,
-        std::shared_ptr<PhysicsEngine> physicsEngine
+        std::shared_ptr<PhysicsEngine> physicsEngine,
+        std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository
 ) :
     m_rootGameObject(std::make_shared<GameObject>("root")),
     m_timeProvider(std::move(timeProvider)),
@@ -60,6 +61,7 @@ Scene::Scene(
     m_touchScreen(std::move(touchScreen)),
     m_texturesRepository(std::move(texturesRepository)),
     m_physicsEngine(std::move(physicsEngine)),
+    m_skeletalAnimationLoadingRepository(std::move(skeletalAnimationLoadingRepository)),
     m_gesturesDispatcher(std::make_shared<GesturesDispatcher>())
 {
     m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
@@ -248,6 +250,17 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
             }
             TextAppearance textAppearance { textSize, fontPathJson.get<std::string>() };
             textAppearancesMap.insert({ nameJson.get<std::string>(), textAppearance });
+        }
+    }
+
+    if (sceneJson.contains("skeletalAnimations")) {
+        auto skeletalAnimationsJsonArray = sceneJson["skeletalAnimations"];
+        if (skeletalAnimationsJsonArray.is_array()) {
+            for (auto& skeletalAnimationJson : skeletalAnimationsJsonArray) {
+                auto animatedMesh = m_skeletalAnimationLoadingRepository->loadAnimation(
+                        skeletalAnimationJson["path"].get<std::string>()
+                );
+            }
         }
     }
 

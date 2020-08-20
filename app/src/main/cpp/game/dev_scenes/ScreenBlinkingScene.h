@@ -7,7 +7,7 @@
 
 
 #include <memory>
-#include "../Scene.h"
+#include <game/Scene.h>
 
 class ScreenBlinkingScene : public Scene {
 
@@ -24,7 +24,8 @@ public:
             std::shared_ptr<TextRendererFactory> textRendererFactory,
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<TexturesRepository> texturesRepository,
-            std::shared_ptr<PhysicsEngine> physicsEngine
+            std::shared_ptr<PhysicsEngine> physicsEngine,
+            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
     );
 
 protected:

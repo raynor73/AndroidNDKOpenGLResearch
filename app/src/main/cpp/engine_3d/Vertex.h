@@ -13,6 +13,8 @@ class Vertex {
     glm::vec3 m_position;
     glm::vec3 m_normal;
     glm::vec2 m_uv;
+    glm::ivec3 jointIndices;
+    glm::vec3 jointWeights;
 
 public:
     static constexpr int VERTEX_POSITION_COMPONENTS = 3;

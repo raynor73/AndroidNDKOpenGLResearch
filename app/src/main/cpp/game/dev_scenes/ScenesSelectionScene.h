@@ -30,7 +30,8 @@ public:
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<SceneManager> sceneManager,
             std::shared_ptr<TexturesRepository> texturesRepository,
-            std::shared_ptr<PhysicsEngine> physicsEngine
+            std::shared_ptr<PhysicsEngine> physicsEngine,
+            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
     ) : Scene(
             timeProvider,
             displayInfo,
@@ -40,7 +41,8 @@ public:
             textRendererFactory,
             touchScreen,
             texturesRepository,
-            physicsEngine
+            physicsEngine,
+            skeletalAnimationRepository
     ), m_sceneManager(sceneManager) {}
 
     virtual void update(float dt) override;

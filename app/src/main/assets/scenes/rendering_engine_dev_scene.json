@@ -31,6 +31,9 @@
     { "name": "unlit", "path": "unlit.png", "displayDensityFactorAware": false },
     { "name": "house", "path": "house_diffuse.png", "displayDensityFactorAware": false }
   ],
+  "skeletalAnimations": [
+    { "name": "female_idle", "path": "meshes/female_idle2.dae" }
+  ],
   "physicsParams": {
     "gravity": [0, -9.8, 0]
   },

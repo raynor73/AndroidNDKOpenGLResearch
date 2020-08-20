@@ -25,6 +25,7 @@
 #include <game/SceneManager.h>
 #include <game/TimeProvider.h>
 #include <engine_3d/BulletPhysicsEngine.h>
+#include <main/AndroidSkeletalAnimationLoadingRepository.h>
 #include "AndroidBitmapDataLoader.h"
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
@@ -60,6 +61,7 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<AndroidTouchScreen> m_touchScreen;
     std::shared_ptr<SceneManager> m_sceneManager;
     std::shared_ptr<BulletPhysicsEngine> m_physicsEngine;
+    std::shared_ptr<AndroidSkeletalAnimationLoadingRepository> m_skeletalAnimationsRepository;
 
     std::optional<SceneType> m_requestedSceneTypeOptional;
     std::unordered_map<std::string, RequestedSceneArgValue> m_requestedSceneArgs;

@@ -42,6 +42,7 @@ add_library(
         engine_3d/RigidBodyComponent.cpp
         engine_3d/BulletPhysicsEngine.cpp
         engine_3d/CollisionsInfoComponent.cpp
+        engine_3d/SkeletalAnimationComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -91,6 +92,7 @@ add_library(
         main/AndroidFontDataLoader.cpp
         main/AndroidTouchScreen.cpp
         main/AndroidBitmapDataLoader.cpp
+        main/AndroidSkeletalAnimationLoadingRepository.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

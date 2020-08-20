@@ -23,7 +23,8 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::shared_ptr<TouchScreen> touchScreen,
         std::shared_ptr<TexturesRepository> texturesRepository,
         std::shared_ptr<SceneManager> sceneManager,
-        std::shared_ptr<PhysicsEngine> physicsEngine
+        std::shared_ptr<PhysicsEngine> physicsEngine,
+        std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
 ) : Scene(
         std::move(timeProvider),
         std::move(displayInfo),
@@ -33,7 +34,8 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::move(textRendererFactory),
         std::move(touchScreen),
         std::move(texturesRepository),
-        std::move(physicsEngine)
+        std::move(physicsEngine),
+        std::move(skeletalAnimationRepository)
     ),
     m_sceneManager(std::move(sceneManager))
 {}
