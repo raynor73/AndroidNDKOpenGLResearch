@@ -5,7 +5,8 @@
     { "name": "box", "path": "meshes/box.obj" },
     { "name": "sphere", "path": "meshes/sphere.obj" },
     { "name": "house", "path": "meshes/house.obj" },
-    { "name": "capsule", "path": "meshes/vertical_capsule.obj" }
+    { "name": "capsule", "path": "meshes/vertical_capsule.obj" },
+    { "name": "femaleIdle", "path": "meshes/female_idle2.dae" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
@@ -17,6 +18,7 @@
     { "name": "close", "textureName": "close", "isTranslucent": true, "isUnlit": true },
     { "name": "cancel", "textureName": "cancel", "isTranslucent": true, "isUnlit": true },
     { "name": "house", "textureName": "house", "isTranslucent": false, "isUnlit": false },
+    { "name": "female", "textureName": "female", "isTranslucent": false, "isUnlit": false },
     { "name": "videoCamera", "textureName": "videoCamera", "isTranslucent": true, "isUnlit": true },
     { "name": "outlinedVideoCamera", "textureName": "outlinedVideoCamera", "isTranslucent": true, "isUnlit": true }
   ],
@@ -29,7 +31,8 @@
     { "name": "videoCamera", "path": "baseline_videocam_white_48.png", "displayDensityFactorAware": true },
     { "name": "outlinedVideoCamera", "path": "outline_videocam_white_48.png", "displayDensityFactorAware": true },
     { "name": "unlit", "path": "unlit.png", "displayDensityFactorAware": false },
-    { "name": "house", "path": "house_diffuse.png", "displayDensityFactorAware": false }
+    { "name": "house", "path": "house_diffuse.png", "displayDensityFactorAware": false },
+    { "name": "female", "path": "female.png", "displayDensityFactorAware": false }
   ],
   "skeletalAnimations": [
     { "name": "female_idle", "path": "meshes/female_idle2.dae" }
@@ -229,9 +232,6 @@
       "rotation" : [0.0, 0.0, 0.0],
       "scale": [0.5, 0.5, 0.5],
       "components": [
-        { "type": "Mesh", "meshName": "capsule" },
-        { "type": "Material", "materialName": "greenWireframe" },
-        { "type": "MeshRenderer", "layerNames": ["scene"] },
         {
           "type": "CharacterCapsuleRigidBody",
           "meshName": "capsule",
@@ -250,6 +250,18 @@
       "position" : [0.0, 0.0, 0],
       "rotation" : [0.0, 0.0, 0.0],
       "scale": [1.0, 1.0, 1.0]
+    },
+    {
+      "name": "femaleIdle",
+      "parent": "playerRotor",
+      "position" : [0.0, -1.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [2, 2, 2],
+      "components": [
+        { "type": "Mesh", "meshName": "femaleIdle" },
+        { "type": "Material", "materialName": "female" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] }
+      ]
     },
     {
       "name": "playerCamera",
