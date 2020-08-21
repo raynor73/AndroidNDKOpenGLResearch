@@ -18,6 +18,8 @@ class OpenGlShaderProgramContainer {
     GLint m_positionAttribute;
     GLint m_normalAttribute;
     GLint m_uvAttribute;
+    GLint m_jointIndicesAttribute;
+    GLint m_jointWeightsAttribute;
 
     GLint m_mvpMatrixUniform;
     GLint m_modelMatrixUniform;
@@ -40,6 +42,9 @@ public:
     GLint positionAttribute() const { return m_positionAttribute; }
     GLint normalAttribute() const { return m_normalAttribute; }
     GLint uvAttribute() const { return m_uvAttribute; }
+
+    GLint jointIndicesAttribute() const { return m_jointIndicesAttribute; }
+    GLint jointWeightsAttribute() const { return m_jointWeightsAttribute; }
 
     GLint mvpMatrixUniform() const { return m_mvpMatrixUniform; }
     GLint modelMatrixUniform() const { return m_modelMatrixUniform; }

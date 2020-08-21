@@ -898,7 +898,13 @@ Mesh Scene::createTransformedMesh(
     for (auto& vertex : mesh.vertices()) {
         auto transformedPosition = transformMatrix * glm::vec4(vertex.position(), 1);
         auto transformedNormal = glm::normalize(transformMatrix * glm::vec4(vertex.normal(), 0));
-        transformedVertices.emplace_back(Vertex { transformedPosition, transformedNormal, vertex.uv() });
+        transformedVertices.emplace_back(Vertex {
+            transformedPosition,
+            transformedNormal,
+            vertex.uv(),
+            vertex.jointIndices(),
+            vertex.jointWeights()
+        });
     }
 
     return Mesh(transformedVertices, mesh.indices());

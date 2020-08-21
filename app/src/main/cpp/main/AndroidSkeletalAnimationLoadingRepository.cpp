@@ -29,10 +29,11 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
     jsize lengthOfResultArray = env->GetArrayLength(resultByteArray);
 
     Assimp::Importer importer;
+    importer.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, 3);
     const aiScene* scene = importer.ReadFileFromMemory(
             static_cast<void*>(resultJBytes),
             lengthOfResultArray,
-            aiProcess_Triangulate,
+            aiProcess_Triangulate | aiProcess_LimitBoneWeights,
             nullptr
     );
 
@@ -105,10 +106,15 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
         for (auto& keyFrame : timeToKeyFrameMap) {
             keyFrames.push_back(keyFrame.second);
         }
-        std::stringstream ss;
-        ss << "Number of key frames: " << keyFrames.size();
-        L::d("!@£", ss.str());
-        /*if (scene->mNumMeshes > 0) {
+        {
+            std::stringstream ss;
+            ss << "Number of key frames: " << keyFrames.size();
+            L::d("!@£", ss.str());
+        }
+
+        if (scene->mNumMeshes == 1) {
+            /*if (scene->mMeshes[0]->mNumAnimMeshes == 1) {
+                L::d("!@£", "#1");*/
             auto assimpMesh = scene->mMeshes[0];
 
             if (assimpMesh->mNumVertices == 0) {
@@ -141,18 +147,25 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
                     Vertex vertex {
                             glm::vec3 { assimpVertex.x, assimpVertex.y, assimpVertex.z },
                             glm::vec3 { assimpNormal.x, assimpNormal.y, assimpNormal.z },
-                            glm::vec2 { assimpUv.x, assimpUv.y }
+                            glm::vec2 { assimpUv.x, assimpUv.y },
+                            glm::ivec3(0),
+                            glm::vec3(0)
                     };
 
                     vertices.push_back(vertex);
                     indices.push_back(index);
                 }
             }
+            /*} else {
+                std::stringstream ss;
+                ss << "Number of animated meshes found in " << path << " is: " << scene->mMeshes[0]->mNumAnimMeshes << " but should be exactly 1";
+                throw std::domain_error(ss.str());
+            }*/
         } else {
             std::stringstream ss;
-            ss << "No meshes found in " << path;
+            ss << "Number of meshes found in " << path << " is: " << scene->mNumMeshes << " but should be exactly 1";
             throw std::domain_error(ss.str());
-        }*/
+        }
     } else {
         std::stringstream ss;
         ss << "Error importing skeletal animation " << path;

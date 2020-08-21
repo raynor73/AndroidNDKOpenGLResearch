@@ -13,6 +13,8 @@ OpenGlShaderProgramContainer::OpenGlShaderProgramContainer(
     m_positionAttribute(glGetAttribLocation(m_shaderProgram, "positionAttribute")),
     m_normalAttribute(glGetAttribLocation(shaderProgram, "normalAttribute")),
     m_uvAttribute(glGetAttribLocation(shaderProgram, "uvAttribute")),
+    m_jointIndicesAttribute(glGetAttribLocation(shaderProgram, "jointIndicesAttribute")),
+    m_jointWeightsAttribute(glGetAttribLocation(shaderProgram, "jointWeightsAttribute")),
     m_mvpMatrixUniform(glGetUniformLocation(shaderProgram, "mvpMatrixUniform")),
     m_modelMatrixUniform(glGetUniformLocation(shaderProgram, "modelMatrixUniform")),
     m_textureUniform(glGetUniformLocation(shaderProgram, "textureUniform")),

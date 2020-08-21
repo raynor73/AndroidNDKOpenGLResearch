@@ -73,7 +73,9 @@ Mesh AndroidMeshLoadingRepository::loadMesh(const std::string& path) {
                     Vertex vertex {
                         glm::vec3 { assimpVertex.x, assimpVertex.y, assimpVertex.z },
                         glm::vec3 { assimpNormal.x, assimpNormal.y, assimpNormal.z },
-                        glm::vec2 { assimpUv.x, assimpUv.y }
+                        glm::vec2 { assimpUv.x, assimpUv.y },
+                        glm::ivec3(0),
+                        glm::vec3(0)
                     };
 
                     vertices.push_back(vertex);

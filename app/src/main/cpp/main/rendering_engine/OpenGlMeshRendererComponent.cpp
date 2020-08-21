@@ -125,34 +125,40 @@ void OpenGlMeshRendererComponent::render(
         glEnableVertexAttribArray(vertexUvAttribute);
     }
 
-    /*shaderProgram.jointIndicesAttribute.takeIf { it >= 0 }?.let { jointIndicesAttribute ->
-            GLES20.glVertexAttribPointer(
-            jointIndicesAttribute,
-            NUMBER_OF_JOINT_INDICES,
-            GLES20.GL_FLOAT,
-            false,
-            VERTEX_COMPONENTS * BYTES_IN_FLOAT,
-            (VERTEX_COORDINATE_COMPONENTS +
-             NORMAL_COMPONENTS +
-             TEXTURE_COORDINATE_COMPONENTS) * BYTES_IN_FLOAT
-    )
-            GLES20.glEnableVertexAttribArray(jointIndicesAttribute)
+    auto vertexJointIndicesAttribute = shaderProgramContainer.jointIndicesAttribute();
+    if (vertexJointIndicesAttribute >= 0) {
+        glVertexAttribPointer(
+                vertexJointIndicesAttribute,
+                Vertex::VERTEX_JOINT_INDICES_COMPONENTS,
+                GL_FLOAT,
+                false,
+                Vertex::VERTEX_COMPONENTS * sizeof(float),
+                reinterpret_cast<void*>((
+                        Vertex::VERTEX_POSITION_COMPONENTS +
+                        Vertex::VERTEX_NORMAL_COMPONENTS +
+                        Vertex::VERTEX_UV_COMPONENTS
+                ) * sizeof(float))
+        );
+        glEnableVertexAttribArray(vertexJointIndicesAttribute);
     }
 
-    shaderProgram.jointWeightsAttribute.takeIf { it >= 0 }?.let { jointWeightsAttribute ->
-            GLES20.glVertexAttribPointer(
-            jointWeightsAttribute,
-            NUMBER_OF_JOINT_WEIGHTS,
-            GLES20.GL_FLOAT,
-            false,
-            VERTEX_COMPONENTS * BYTES_IN_FLOAT,
-            (VERTEX_COORDINATE_COMPONENTS +
-             NORMAL_COMPONENTS +
-             TEXTURE_COORDINATE_COMPONENTS +
-             NUMBER_OF_JOINT_INDICES) * BYTES_IN_FLOAT
-    )
-            GLES20.glEnableVertexAttribArray(jointWeightsAttribute)
-    }*/
+    auto vertexJointWeightsAttribute = shaderProgramContainer.jointWeightsAttribute();
+    if (vertexJointWeightsAttribute >= 0) {
+        glVertexAttribPointer(
+                vertexJointWeightsAttribute,
+                Vertex::VERTEX_JOINT_WEIGHTS_COMPONENTS,
+                GL_FLOAT,
+                false,
+                Vertex::VERTEX_COMPONENTS * sizeof(float),
+                reinterpret_cast<void*>((
+                        Vertex::VERTEX_POSITION_COMPONENTS +
+                        Vertex::VERTEX_NORMAL_COMPONENTS +
+                        Vertex::VERTEX_UV_COMPONENTS +
+                        Vertex::VERTEX_JOINT_INDICES_COMPONENTS
+                ) * sizeof(float))
+        );
+        glEnableVertexAttribArray(vertexJointWeightsAttribute);
+    }
 
     if (auto mvpMatrixUniform = shaderProgramContainer.mvpMatrixUniform(); mvpMatrixUniform >= 0) {
         glm::mat4x4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
@@ -279,13 +285,12 @@ void OpenGlMeshRendererComponent::render(
     if (vertexUvAttribute >= 0) {
         glDisableVertexAttribArray(vertexUvAttribute);
     }
-
-    /*shaderProgram.jointIndicesAttribute.takeIf { it >= 0 }?.let { jointIndicesAttribute ->
-            GLES20.glDisableVertexAttribArray(jointIndicesAttribute)
+    if (vertexJointIndicesAttribute >= 0) {
+        glDisableVertexAttribArray(vertexJointIndicesAttribute);
     }
-    shaderProgram.jointWeightsAttribute.takeIf { it >= 0 }?.let { jointWeightsAttribute ->
-            GLES20.glDisableVertexAttribArray(jointWeightsAttribute)
-    }*/
+    if (vertexJointWeightsAttribute >= 0) {
+        glDisableVertexAttribArray(vertexJointWeightsAttribute);
+    }
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
