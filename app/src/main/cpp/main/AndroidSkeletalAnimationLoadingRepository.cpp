@@ -29,7 +29,7 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
     jsize lengthOfResultArray = env->GetArrayLength(resultByteArray);
 
     Assimp::Importer importer;
-    importer.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, 3);
+    importer.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, MAX_WEIGHTS);
     const aiScene* scene = importer.ReadFileFromMemory(
             static_cast<void*>(resultJBytes),
             lengthOfResultArray,
@@ -113,8 +113,6 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
         }
 
         if (scene->mNumMeshes == 1) {
-            /*if (scene->mMeshes[0]->mNumAnimMeshes == 1) {
-                L::d("!@£", "#1");*/
             auto assimpMesh = scene->mMeshes[0];
 
             if (assimpMesh->mNumVertices == 0) {
@@ -156,11 +154,41 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
                     indices.push_back(index);
                 }
             }
-            /*} else {
+
+            {
                 std::stringstream ss;
-                ss << "Number of animated meshes found in " << path << " is: " << scene->mMeshes[0]->mNumAnimMeshes << " but should be exactly 1";
-                throw std::domain_error(ss.str());
-            }*/
+                ss << "Number of bones: " << assimpMesh->mNumBones;
+                L::d("!@£", ss.str());
+            }
+            std::multimap<int, float> vertexIndexToWeightsMap;
+            for (int i = 0; i < assimpMesh->mNumBones; i++) {
+                auto bone = assimpMesh->mBones[i];
+                for (int j = 0; j < bone->mNumWeights; j++) {
+                    auto weightInfo = bone->mWeights[j];
+                    vertexIndexToWeightsMap.insert({ weightInfo.mVertexId, weightInfo.mWeight });
+                }
+            }
+            for (
+                    auto vertexIndexIterator = vertexIndexToWeightsMap.begin();
+                    vertexIndexIterator != vertexIndexToWeightsMap.end();
+                    vertexIndexIterator = vertexIndexToWeightsMap.upper_bound(vertexIndexIterator->first)
+            ) {
+                if (vertexIndexToWeightsMap.count(vertexIndexIterator->first) > MAX_WEIGHTS) {
+                    std::stringstream ss;
+                    ss << "Maximum " << MAX_WEIGHTS << " weight(s) allowed per vertex but " << vertexIndexToWeightsMap.count(vertexIndexIterator->first) << " found in " << path;
+                    throw std::domain_error(ss.str());
+                }
+                glm::vec3 weightsVector;
+                auto weightIterators = vertexIndexToWeightsMap.equal_range(vertexIndexIterator->first);
+                for (
+                        auto [i, it] = std::tuple { 0, weightIterators.first };
+                        it != weightIterators.second;
+                        i++, it++
+                ) {
+                    weightsVector[i] = it->second;
+                }
+                vertices[vertexIndexIterator->first].setJointWeights(weightsVector);
+            }
         } else {
             std::stringstream ss;
             ss << "Number of meshes found in " << path << " is: " << scene->mNumMeshes << " but should be exactly 1";

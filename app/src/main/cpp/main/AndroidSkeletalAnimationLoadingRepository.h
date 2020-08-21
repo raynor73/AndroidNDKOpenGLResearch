@@ -33,6 +33,8 @@ public:
     AndroidSkeletalAnimationLoadingRepository& operator=(AndroidSkeletalAnimationLoadingRepository&&) = delete;
 
 private:
+    static constexpr int MAX_WEIGHTS = 3;
+
     inline static glm::vec3 aiVector3DToGlmVec3(const aiVector3D& vector) {
         return glm::vec3(vector.x, vector.y, vector.z);
     }
