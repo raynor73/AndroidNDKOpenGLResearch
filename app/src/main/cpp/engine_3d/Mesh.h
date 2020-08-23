@@ -23,6 +23,9 @@ public:
 
     const std::vector<Vertex>& vertices() const { return m_vertices; }
     const std::vector<uint16_t>& indices() const { return m_indices; }
+
+    void setJointIndices(size_t vertexIndex, const glm::ivec3& indices);
+    void setJointWeights(size_t vertexIndex, const glm::vec3 weights);
 };
 
 

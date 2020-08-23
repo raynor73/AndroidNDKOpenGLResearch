@@ -291,6 +291,7 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
 
     shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("directionalLight");
     glUseProgram(shaderProgramContainer.shaderProgram());
+    // TODO Fix incorrect iteration through directional lights of layer (fix with upper_bound etc).
     for (
             auto it = layerNameToDirectionalLightsMap.find(layerName);
             it != layerNameToDirectionalLightsMap.end();

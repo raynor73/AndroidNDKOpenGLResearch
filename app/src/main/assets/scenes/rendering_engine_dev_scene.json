@@ -35,7 +35,7 @@
     { "name": "female", "path": "female.png", "displayDensityFactorAware": false }
   ],
   "skeletalAnimations": [
-    { "name": "female_idle", "path": "meshes/female_idle2.dae" }
+    { "name": "femaleIdle", "meshName": "femaleIdle", "path": "meshes/female_idle2.dae" }
   ],
   "physicsParams": {
     "gravity": [0, -9.8, 0]

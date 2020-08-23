@@ -257,9 +257,14 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
         auto skeletalAnimationsJsonArray = sceneJson["skeletalAnimations"];
         if (skeletalAnimationsJsonArray.is_array()) {
             for (auto& skeletalAnimationJson : skeletalAnimationsJsonArray) {
-                auto animatedMesh = m_skeletalAnimationLoadingRepository->loadAnimation(
+                auto meshName = skeletalAnimationJson["meshName"].get<std::string>();
+                auto animatedMesh = m_meshStorage.getMesh(meshName);
+                auto skeletalAnimation = m_skeletalAnimationLoadingRepository->loadAnimation(
+                        animatedMesh,
                         skeletalAnimationJson["path"].get<std::string>()
                 );
+                m_meshStorage.removeMesh(meshName);
+                m_meshStorage.putMesh(meshName, animatedMesh);
             }
         }
     }

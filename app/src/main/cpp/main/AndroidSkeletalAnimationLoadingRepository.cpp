@@ -2,8 +2,6 @@
 // Created by Igor Lapin on 19/08/2020.
 //
 
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
 #include <sstream>
 #include <glm/ext.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -11,7 +9,10 @@
 #include "AndroidSkeletalAnimationLoadingRepository.h"
 #include "L.h"
 
-AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std::string& path) {
+SkeletalAnimation AndroidSkeletalAnimationLoadingRepository::loadAnimation(
+        Mesh& animatedMesh,
+        const std::string& path
+) {
     JNIEnv *env;
     m_javaVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
     jmethodID method = env->GetMethodID(
@@ -37,20 +38,14 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
             nullptr
     );
 
-    std::vector<Vertex> vertices;
-    std::vector<uint16_t> indices;
     float animationLength;
     std::vector<KeyFrame> keyFrames;
+    std::shared_ptr<Joint> rootJoint;
+    std::vector<std::shared_ptr<Joint>> joints;
     if (scene != nullptr) {
         if (scene->mNumAnimations != 1) {
             std::stringstream ss;
             ss << "No or more than one animation in " << path;
-            throw std::domain_error(ss.str());
-        }
-
-        if (scene->mNumMeshes != 1) {
-            std::stringstream ss;
-            ss << "No or more than one animated mesh in " << path;
             throw std::domain_error(ss.str());
         }
 
@@ -114,80 +109,67 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
 
         if (scene->mNumMeshes == 1) {
             auto assimpMesh = scene->mMeshes[0];
-
-            if (assimpMesh->mNumVertices == 0) {
-                std::stringstream ss;
-                ss << "No vertices found for mesh " << assimpMesh->mName.C_Str() << " in " << path;
-                throw std::domain_error(ss.str());
-            }
-            if (assimpMesh->mNumFaces == 0) {
-                std::stringstream ss;
-                ss << "No faces found for mesh " << assimpMesh->mName.C_Str() << " in " << path;
-                throw std::domain_error(ss.str());
-            }
-
-            for (int faceIndex = 0; faceIndex < assimpMesh->mNumFaces; faceIndex++) {
-                auto face = assimpMesh->mFaces[faceIndex];
-
-                if (face.mNumIndices != 3) {
-                    std::stringstream ss;
-                    ss << "Wrong indices count: " << face.mNumIndices << " for one of face of mesh \"" << assimpMesh->mName.C_Str() << "\" in " << path;
-                    throw std::domain_error(ss.str());
-                }
-
-                for (int i = 0; i < face.mNumIndices; i++) {
-                    auto index = face.mIndices[i];
-
-                    auto assimpVertex = assimpMesh->mVertices[index];
-                    auto assimpNormal = assimpMesh->mNormals[index];
-                    auto assimpUv = assimpMesh->mTextureCoords[0][index];
-
-                    Vertex vertex {
-                            glm::vec3 { assimpVertex.x, assimpVertex.y, assimpVertex.z },
-                            glm::vec3 { assimpNormal.x, assimpNormal.y, assimpNormal.z },
-                            glm::vec2 { assimpUv.x, assimpUv.y },
-                            glm::ivec3(0),
-                            glm::vec3(0)
-                    };
-
-                    vertices.push_back(vertex);
-                    indices.push_back(index);
-                }
-            }
-
+            joints.resize(assimpMesh->mNumBones);
             {
                 std::stringstream ss;
                 ss << "Number of bones: " << assimpMesh->mNumBones;
                 L::d("!@£", ss.str());
             }
-            std::multimap<int, float> vertexIndexToWeightsMap;
+            std::multimap<int, std::pair<int, float>> vertexIndexToJointIndexAndWeightsMap;
+            std::unordered_map<std::string, int> boneNameToJointIndexMap;
+            std::unordered_map<std::string, aiBone*> boneNameToBoneMap;
+            std::unordered_map<std::string, std::shared_ptr<Joint>> jointNameToJointMap;
             for (int i = 0; i < assimpMesh->mNumBones; i++) {
                 auto bone = assimpMesh->mBones[i];
+                boneNameToBoneMap.insert({ bone->mName.C_Str(), bone });
+                boneNameToJointIndexMap.insert({ bone->mName.C_Str(), i });
                 for (int j = 0; j < bone->mNumWeights; j++) {
                     auto weightInfo = bone->mWeights[j];
-                    vertexIndexToWeightsMap.insert({ weightInfo.mVertexId, weightInfo.mWeight });
+                    vertexIndexToJointIndexAndWeightsMap.insert({ weightInfo.mVertexId, { i, weightInfo.mWeight} });
                 }
             }
+            for (auto& [name, bone] : boneNameToBoneMap) {
+                L::d("!@£", name);
+            }
+
+            auto rootBoneNode = findRootBoneNode(scene->mRootNode, boneNameToBoneMap);
+            if (rootBoneNode == nullptr) {
+                throw std::domain_error("Root bone node not found");
+            }
+            std::string rootJointName = rootBoneNode->mName.C_Str();
+            rootJoint = std::make_shared<Joint>(
+                    rootJointName,
+                    aiMatrix4x4toGlmMat4(boneNameToBoneMap.at(rootJointName)->mOffsetMatrix)
+            );
+            buildJointHierarchyFromNodes(rootBoneNode, rootJoint, boneNameToBoneMap, jointNameToJointMap);
+            printJointHierarchy(rootJoint);
+            for (auto& [jointName, joint] : jointNameToJointMap) {
+                joints[boneNameToJointIndexMap.at(jointName)] = joint;
+            }
+
             for (
-                    auto vertexIndexIterator = vertexIndexToWeightsMap.begin();
-                    vertexIndexIterator != vertexIndexToWeightsMap.end();
-                    vertexIndexIterator = vertexIndexToWeightsMap.upper_bound(vertexIndexIterator->first)
+                    auto vertexIndexIterator = vertexIndexToJointIndexAndWeightsMap.begin();
+                    vertexIndexIterator != vertexIndexToJointIndexAndWeightsMap.end();
+                    vertexIndexIterator = vertexIndexToJointIndexAndWeightsMap.upper_bound(vertexIndexIterator->first)
             ) {
-                if (vertexIndexToWeightsMap.count(vertexIndexIterator->first) > MAX_WEIGHTS) {
+                if (vertexIndexToJointIndexAndWeightsMap.count(vertexIndexIterator->first) > MAX_WEIGHTS) {
                     std::stringstream ss;
-                    ss << "Maximum " << MAX_WEIGHTS << " weight(s) allowed per vertex but " << vertexIndexToWeightsMap.count(vertexIndexIterator->first) << " found in " << path;
+                    ss << "Maximum " << MAX_WEIGHTS << " weight(s) allowed per vertex but " << vertexIndexToJointIndexAndWeightsMap.count(vertexIndexIterator->first) << " found in " << path;
                     throw std::domain_error(ss.str());
                 }
-                glm::vec3 weightsVector;
-                auto weightIterators = vertexIndexToWeightsMap.equal_range(vertexIndexIterator->first);
+                glm::vec3 glmVec3Weights;
+                glm::ivec3 glmIvec3indices;
+                auto weightIterators = vertexIndexToJointIndexAndWeightsMap.equal_range(vertexIndexIterator->first);
                 for (
                         auto [i, it] = std::tuple { 0, weightIterators.first };
                         it != weightIterators.second;
                         i++, it++
                 ) {
-                    weightsVector[i] = it->second;
+                    glmVec3Weights[i] = it->second.second;
+                    glmIvec3indices[i] = it->second.first;
                 }
-                vertices[vertexIndexIterator->first].setJointWeights(weightsVector);
+                animatedMesh.setJointWeights(vertexIndexIterator->first, glmVec3Weights);
+                animatedMesh.setJointIndices(vertexIndexIterator->first, glmIvec3indices);
             }
         } else {
             std::stringstream ss;
@@ -203,5 +185,60 @@ AnimatedMesh AndroidSkeletalAnimationLoadingRepository::loadAnimation(const std:
     env->DeleteLocalRef(pathJString);
     env->ReleaseByteArrayElements(resultByteArray, resultJBytes, JNI_ABORT);
 
-    return AnimatedMesh { Mesh { vertices, indices }, SkeletalAnimation { animationLength, keyFrames } };
+    return SkeletalAnimation { animationLength, rootJoint, joints, keyFrames };
+}
+
+void AndroidSkeletalAnimationLoadingRepository::buildJointHierarchyFromNodes(
+        aiNode* node,
+        std::shared_ptr<Joint>& joint,
+        const std::unordered_map<std::string, aiBone*>& boneNameToBoneMap,
+        std::unordered_map<std::string, std::shared_ptr<Joint>>& jointNameToJointMap
+) {
+    for (int i = 0; i < node->mNumChildren; i++) {
+        auto childNode = node->mChildren[i];
+        if (boneNameToBoneMap.count(childNode->mName.C_Str()) == 0) {
+            continue;
+        }
+
+        auto childBone = boneNameToBoneMap.at(childNode->mName.C_Str());
+        auto childJoint = std::make_shared<Joint>(
+                childNode->mName.C_Str(),
+                aiMatrix4x4toGlmMat4(childBone->mOffsetMatrix)
+        );
+        joint->addChild(childJoint);
+        jointNameToJointMap.insert({ childJoint->name(), childJoint });
+
+        buildJointHierarchyFromNodes(childNode, childJoint, boneNameToBoneMap, jointNameToJointMap);
+    }
+}
+
+void AndroidSkeletalAnimationLoadingRepository::printJointHierarchy(const std::shared_ptr<Joint>& joint, int level) {
+    std::stringstream ss;
+    for (int i = 0; i < level; i++) {
+        ss << "    ";
+    }
+    ss << joint->name();
+    L::d("!@£", ss.str());
+    for (auto& child : joint->children()) {
+        printJointHierarchy(child, level + 1);
+    }
+}
+
+aiNode* AndroidSkeletalAnimationLoadingRepository::findRootBoneNode(
+        aiNode* node,
+        const std::unordered_map<std::string, aiBone*>& boneNameToBoneMap
+) {
+    std::string nodeName = node->mName.C_Str();
+    if (boneNameToBoneMap.count(nodeName) > 0) {
+        return node;
+    }
+    
+    for (int i = 0; i < node->mNumChildren; i++) {
+        auto nodeCandidate = findRootBoneNode(node->mChildren[i], boneNameToBoneMap);
+        if (nodeCandidate != nullptr) {
+            return nodeCandidate;
+        }
+    }
+
+    return nullptr;
 }

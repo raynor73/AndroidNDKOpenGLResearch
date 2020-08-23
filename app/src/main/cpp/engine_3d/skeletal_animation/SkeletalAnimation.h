@@ -7,10 +7,14 @@
 
 
 #include <vector>
+#include <memory>
 #include "KeyFrame.h"
+#include "Joint.h"
 
 struct SkeletalAnimation {
     float length;
+    std::shared_ptr<Joint> rootJoint;
+    std::vector<std::shared_ptr<Joint>> joints;
     std::vector<KeyFrame> keyFrames;
 };
 
