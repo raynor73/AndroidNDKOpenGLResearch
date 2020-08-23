@@ -32,6 +32,7 @@ class OpenGlShaderProgramContainer {
     GLint m_directionalLightDirectionUniform;
 
     GLint m_hasSkeletalAnimationUniform;
+    GLint m_jointTransformsUniform;
 
 public:
     OpenGlShaderProgramContainer() = default;
@@ -58,6 +59,7 @@ public:
     GLint directionalLightDirectionUniform() const { return m_directionalLightDirectionUniform; }
 
     GLint hasSkeletalAnimationUniform() const { return m_hasSkeletalAnimationUniform; }
+    GLint jointTransformsUniform() const { return m_jointTransformsUniform; }
 };
 
 

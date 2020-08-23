@@ -11,6 +11,8 @@
 #include <engine_3d/GameObject.h>
 #include <engine_3d/MeshComponent.h>
 #include <engine_3d/MaterialComponent.h>
+#include <engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.h>
+#include <engine_3d/Constants.h>
 #include "OpenGlMeshRendererComponent.h"
 
 const std::string OpenGlMeshRendererComponent::TYPE_NAME = "AndroidMeshRendererComponent";
@@ -71,15 +73,7 @@ void OpenGlMeshRendererComponent::render(
 
     /*if (isShadowMapRendering && !material.castShadows) {
         return
-    }
-
-    if (
-            (material.isUnlit && shaderProgram !is ShaderProgramInfo.UnlitShaderProgram) or
-    (!material.isUnlit && shaderProgram is ShaderProgramInfo.UnlitShaderProgram)
-    ) {
-        return
-    }
-    */
+    }*/
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboInfo.ibo);
@@ -196,13 +190,6 @@ void OpenGlMeshRendererComponent::render(
         glUniform1i(useDiffuseColorUniform, material.useDiffuseColor ? GL_TRUE : GL_FALSE);
     }
 
-    if (
-            auto hasSkeletalAnimationUniform = shaderProgramContainer.hasSkeletalAnimationUniform();
-            hasSkeletalAnimationUniform >= 0
-    ) {
-        glUniform1i(hasSkeletalAnimationUniform, GL_FALSE);
-    }
-
     if (!material.useDiffuseColor) {
         if (auto textureUniform = shaderProgramContainer.textureUniform(); textureUniform >= 0) {
             auto textureInfo = m_texturesRepository->findTexture(material.textureName);
@@ -216,25 +203,31 @@ void OpenGlMeshRendererComponent::render(
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE1)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.texture)
         GLES20.glUniform1i(shadowMapUniform, 1)
-    }
+    }*/
 
-    val hasSkeletalAnimation = safeLet(
-            shaderProgram.jointTransformsUniform.takeIf { it >= 0 },
-    gameObject?.getComponent(SkeletalAnimatorComponent::class.java)?.jointTransforms
-    ) { jointTransformsUniform, jointTransforms ->
-                jointTransforms.forEachIndexed { i, jointTransform ->
-                    jointTransform?.get(tmpJointTransformsFloatArray, i * MATRIX_COMPONENTS)
+    auto skeletalAnimationPlayer = m_gameObject->findComponent<SkeletalAnimationPlayerComponent>();
+    auto hasSkeletalAnimation = false;
+    if (skeletalAnimationPlayer != nullptr && !skeletalAnimationPlayer->jointTransforms().empty()) {
+        if (
+                auto jointTransformsUniform = shaderProgramContainer.jointTransformsUniform();
+                jointTransformsUniform >= 0
+        ) {
+            hasSkeletalAnimation = true;
+
+            glUniformMatrix4fv(
+                    jointTransformsUniform,
+                    Engine3D::Constants::MAX_JOINTS,
+                    false,
+                    &skeletalAnimationPlayer->jointTransforms()[0][0][0]
+            );
         }
-        GLES20.glUniformMatrix4fv(
-                jointTransformsUniform,
-                MAX_JOINTS,
-                false,
-                tmpJointTransformsFloatArray,
-                0
-        )
-        true
-    } ?: false
-    shaderProgram.hasSkeletalAnimationUniform.glUniform1i(hasSkeletalAnimation.toGLBoolean())*/
+    }
+    if (
+            auto hasSkeletalAnimationUniform = shaderProgramContainer.hasSkeletalAnimationUniform();
+            hasSkeletalAnimationUniform >= 0
+    ) {
+        glUniform1i(hasSkeletalAnimationUniform, hasSkeletalAnimation ? GL_TRUE : GL_FALSE);
+    }
 
     /*if (materialComponent.isDoubleSided) {
         GLES20.glDisable(GLES20.GL_CULL_FACE)

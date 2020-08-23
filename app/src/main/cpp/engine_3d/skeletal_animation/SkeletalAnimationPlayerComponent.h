@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <engine_3d/GameObjectComponent.h>
+#include <engine_3d/Constants.h>
 #include <glm/ext/matrix_float4x4.hpp>
 
 class SkeletalAnimationPlayerComponent : public GameObjectComponent {
@@ -16,6 +17,8 @@ class SkeletalAnimationPlayerComponent : public GameObjectComponent {
 
 public:
     static const std::string TYPE_NAME;
+
+    SkeletalAnimationPlayerComponent();
 
     const std::vector<glm::mat4>& jointTransforms() const { return m_jointTransforms; }
 

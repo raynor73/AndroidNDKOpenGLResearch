@@ -23,7 +23,8 @@ OpenGlShaderProgramContainer::OpenGlShaderProgramContainer(
     m_ambientColorUniform(glGetUniformLocation(shaderProgram, "ambientColorUniform")),
     m_directionalLightColorUniform(glGetUniformLocation(shaderProgram, "directionalLightUniform.color")),
     m_directionalLightDirectionUniform(glGetUniformLocation(shaderProgram, "directionalLightUniform.direction")),
-    m_hasSkeletalAnimationUniform(glGetUniformLocation(shaderProgram, "hasSkeletalAnimationUniform"))
+    m_hasSkeletalAnimationUniform(glGetUniformLocation(shaderProgram, "hasSkeletalAnimationUniform")),
+    m_jointTransformsUniform(glGetUniformLocation(shaderProgram, "jointTransformsUniform"))
 {
     m_openGlErrorDetector->checkOpenGLErrors("OpenGlShaderProgramContainer::OpenGlShaderProgramContainer");
 }
