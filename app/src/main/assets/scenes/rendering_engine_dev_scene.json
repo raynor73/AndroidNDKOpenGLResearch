@@ -261,7 +261,8 @@
         { "type": "Mesh", "meshName": "femaleIdle" },
         { "type": "Material", "materialName": "female" },
         { "type": "MeshRenderer", "layerNames": ["scene"] },
-        { "type": "SkeletalAnimation", "animationName": "femaleIdle" }
+        { "type": "SkeletalAnimation", "animationName": "femaleIdle" },
+        { "type": "SkeletalAnimationPlayer" }
       ]
     },
     {

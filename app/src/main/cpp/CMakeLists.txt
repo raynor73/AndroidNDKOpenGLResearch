@@ -44,6 +44,7 @@ add_library(
         engine_3d/CollisionsInfoComponent.cpp
         engine_3d/Mesh.cpp
         engine_3d/skeletal_animation/SkeletalAnimationComponent.cpp
+        engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

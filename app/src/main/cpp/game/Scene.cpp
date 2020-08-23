@@ -36,6 +36,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <engine_3d/CollisionsInfoComponent.h>
 #include <engine_3d/skeletal_animation/SkeletalAnimationComponent.h>
+#include <engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -803,6 +804,8 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             optionalSkeletalAnimation.value(),
             name
         );
+    } else if (type == "SkeletalAnimationPlayer") {
+        return std::make_shared<SkeletalAnimationPlayerComponent>();
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
