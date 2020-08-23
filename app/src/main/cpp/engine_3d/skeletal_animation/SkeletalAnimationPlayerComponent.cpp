@@ -12,7 +12,10 @@ using namespace Engine3D::Utils;
 
 const std::string SkeletalAnimationPlayerComponent::TYPE_NAME = "SkeletalAnimationPlayerComponent";
 
-SkeletalAnimationPlayerComponent::SkeletalAnimationPlayerComponent() {
+SkeletalAnimationPlayerComponent::SkeletalAnimationPlayerComponent(
+        std::shared_ptr<TimeProvider> timeProvider
+) : m_timeProvider(std::move(timeProvider))
+{
     m_jointTransforms.resize(Engine3D::Constants::MAX_JOINTS);
 }
 
@@ -22,7 +25,6 @@ void SkeletalAnimationPlayerComponent::update() {
     if (!m_isEnabled) {
         // TODO Enable GameObjectComponent::setEnabled override
         stop();
-        return;
     }
 
     throwErrorIfNoGameObject();
@@ -35,18 +37,29 @@ void SkeletalAnimationPlayerComponent::update() {
     });
     auto skeletalAnimation = skeletalAnimationComponent->skeletalAnimation();
 
+    int currentFrameIndex = 0;
+    if (m_isPlaying) {
+        auto currentTimestamp = m_timeProvider->getTimestamp();
+        auto elapsedTime = fmod(
+                (currentTimestamp - m_startTimestamp) / TimeProvider::NANOS_IN_SECOND,
+                skeletalAnimation.length
+        );
+        currentFrameIndex = (skeletalAnimation.keyFrames.size() - 1) * elapsedTime / skeletalAnimation.length;
+    }
+
     for (auto& joint : skeletalAnimation.joints) {
         m_preCalculatedJointWorldTransform.clear();
-        calculateJointWorldTransform(*joint, skeletalAnimation.keyFrames[0]);
+        calculateJointWorldTransform(*joint, skeletalAnimation.keyFrames[currentFrameIndex]);
     }
 }
 
 void SkeletalAnimationPlayerComponent::play() {
-
+    m_startTimestamp = m_timeProvider->getTimestamp();
+    m_isPlaying = true;
 }
 
 void SkeletalAnimationPlayerComponent::stop() {
-
+    m_isPlaying = false;
 }
 
 void SkeletalAnimationPlayerComponent::onDetachedFromGameObject() {
@@ -56,7 +69,7 @@ void SkeletalAnimationPlayerComponent::onDetachedFromGameObject() {
 }
 
 std::shared_ptr<GameObjectComponent> SkeletalAnimationPlayerComponent::clone() {
-    auto clone = std::make_shared<SkeletalAnimationPlayerComponent>();
+    auto clone = std::make_shared<SkeletalAnimationPlayerComponent>(m_timeProvider);
     clone->setEnabled(m_isEnabled);
     return clone;
 }

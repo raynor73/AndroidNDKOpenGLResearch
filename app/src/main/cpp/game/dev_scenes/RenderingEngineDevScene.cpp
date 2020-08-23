@@ -9,6 +9,7 @@
 #include <engine_3d/Constants.h>
 #include <engine_3d/CollisionsInfoComponent.h>
 #include <engine_3d/RigidBodyComponent.h>
+#include <engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.h>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
@@ -134,6 +135,8 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
     m_playerCamera = findComponent<PerspectiveCameraComponent>("playerCamera");
 
     switchCamera(m_shouldUsePlayerCamera);
+
+    findComponent<SkeletalAnimationPlayerComponent>("femaleIdle")->play();
 }
 
 void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {

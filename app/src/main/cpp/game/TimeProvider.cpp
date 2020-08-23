@@ -8,7 +8,7 @@ TimeProvider::TimeProvider() {
     m_startTimestamp = std::chrono::high_resolution_clock::now();
 }
 
-int64_t TimeProvider::getTimestamp() {
+uint64_t TimeProvider::getTimestamp() {
     return (std::chrono::high_resolution_clock::now() - m_startTimestamp).count();
 }
 

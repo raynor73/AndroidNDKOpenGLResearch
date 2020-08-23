@@ -16,7 +16,7 @@ class TimeProvider {
 public:
     TimeProvider();
 
-    int64_t getTimestamp();
+    uint64_t getTimestamp();
 
     static const float NANOS_IN_SECOND;
 };

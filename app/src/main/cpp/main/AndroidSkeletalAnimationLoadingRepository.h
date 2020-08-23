@@ -61,7 +61,7 @@ private:
         glm::mat4 glmMatrix;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                glmMatrix[i][j] = matrix[i][j];
+                glmMatrix[j][i] = matrix[i][j];
             }
         }
         return glmMatrix;

@@ -805,7 +805,7 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             name
         );
     } else if (type == "SkeletalAnimationPlayer") {
-        return std::make_shared<SkeletalAnimationPlayerComponent>();
+        return std::make_shared<SkeletalAnimationPlayerComponent>(m_timeProvider);
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;
