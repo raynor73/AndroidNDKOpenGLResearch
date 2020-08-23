@@ -10,10 +10,14 @@
 #include <engine_3d/GameObjectComponent.h>
 #include <engine_3d/Constants.h>
 #include <glm/ext/matrix_float4x4.hpp>
+#include <unordered_map>
+#include "Joint.h"
+#include "KeyFrame.h"
 
 class SkeletalAnimationPlayerComponent : public GameObjectComponent {
 
     std::vector<glm::mat4> m_jointTransforms;
+    std::unordered_map<std::string, glm::mat4> m_preCalculatedJointWorldTransform;
 
 public:
     static const std::string TYPE_NAME;
@@ -31,6 +35,9 @@ public:
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }
     virtual std::shared_ptr<GameObjectComponent> clone() override;
+
+private:
+    glm::mat4 calculateJointWorldTransform(const Joint& joint, const KeyFrame& keyFrame);
 };
 
 

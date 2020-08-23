@@ -41,7 +41,8 @@ private:
             aiNode* node,
             std::shared_ptr<Joint>& joint,
             const std::unordered_map<std::string, aiBone*>& boneNameToBoneMap,
-            std::unordered_map<std::string, std::shared_ptr<Joint>>& jointNameToJointMap
+            std::unordered_map<std::string, std::shared_ptr<Joint>>& jointNameToJointMap,
+            const std::unordered_map<std::string, int>& boneNameToJointIndexMap
     );
 
     static aiNode* findRootBoneNode(aiNode* node, const std::unordered_map<std::string, aiBone*>& boneNameToBoneMap);

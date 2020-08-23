@@ -139,9 +139,17 @@ SkeletalAnimation AndroidSkeletalAnimationLoadingRepository::loadAnimation(
             std::string rootJointName = rootBoneNode->mName.C_Str();
             rootJoint = std::make_shared<Joint>(
                     rootJointName,
+                    boneNameToJointIndexMap.at(rootJointName),
                     aiMatrix4x4toGlmMat4(boneNameToBoneMap.at(rootJointName)->mOffsetMatrix)
             );
-            buildJointHierarchyFromNodes(rootBoneNode, rootJoint, boneNameToBoneMap, jointNameToJointMap);
+            jointNameToJointMap.insert({ rootJointName, rootJoint });
+            buildJointHierarchyFromNodes(
+                    rootBoneNode,
+                    rootJoint,
+                    boneNameToBoneMap,
+                    jointNameToJointMap,
+                    boneNameToJointIndexMap
+            );
             printJointHierarchy(rootJoint);
             for (auto& [jointName, joint] : jointNameToJointMap) {
                 joints[boneNameToJointIndexMap.at(jointName)] = joint;
@@ -192,23 +200,32 @@ void AndroidSkeletalAnimationLoadingRepository::buildJointHierarchyFromNodes(
         aiNode* node,
         std::shared_ptr<Joint>& joint,
         const std::unordered_map<std::string, aiBone*>& boneNameToBoneMap,
-        std::unordered_map<std::string, std::shared_ptr<Joint>>& jointNameToJointMap
+        std::unordered_map<std::string, std::shared_ptr<Joint>>& jointNameToJointMap,
+        const std::unordered_map<std::string, int>& boneNameToJointIndexMap
 ) {
     for (int i = 0; i < node->mNumChildren; i++) {
         auto childNode = node->mChildren[i];
-        if (boneNameToBoneMap.count(childNode->mName.C_Str()) == 0) {
+        std::string childNodeName = childNode->mName.C_Str();
+        if (boneNameToBoneMap.count(childNodeName) == 0) {
             continue;
         }
 
-        auto childBone = boneNameToBoneMap.at(childNode->mName.C_Str());
+        auto childBone = boneNameToBoneMap.at(childNodeName);
         auto childJoint = std::make_shared<Joint>(
-                childNode->mName.C_Str(),
+                childNodeName,
+                boneNameToJointIndexMap.at(childNodeName),
                 aiMatrix4x4toGlmMat4(childBone->mOffsetMatrix)
         );
         joint->addChild(childJoint);
         jointNameToJointMap.insert({ childJoint->name(), childJoint });
 
-        buildJointHierarchyFromNodes(childNode, childJoint, boneNameToBoneMap, jointNameToJointMap);
+        buildJointHierarchyFromNodes(
+                childNode,
+                childJoint,
+                boneNameToBoneMap,
+                jointNameToJointMap,
+                boneNameToJointIndexMap
+        );
     }
 }
 
