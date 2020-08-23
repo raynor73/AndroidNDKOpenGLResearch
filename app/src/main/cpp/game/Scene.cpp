@@ -35,6 +35,7 @@
 #include <engine_3d/OdePhysicsEngine.h>
 #include <glm/gtx/quaternion.hpp>
 #include <engine_3d/CollisionsInfoComponent.h>
+#include <engine_3d/skeletal_animation/SkeletalAnimationComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -265,6 +266,10 @@ void Scene::restoreFromStateRepresentation(const std::string stateRepresentation
                 );
                 m_meshStorage.removeMesh(meshName);
                 m_meshStorage.putMesh(meshName, animatedMesh);
+                m_skeletalAnimationStorage.putAnimation(
+                        skeletalAnimationJson["name"].get<std::string>(),
+                        skeletalAnimation
+                );
             }
         }
     }
@@ -785,6 +790,18 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         return std::make_shared<RigidBodyComponent>(
                 rigidBodyName,
                 m_physicsEngine
+        );
+    } else if (type == "SkeletalAnimation") {
+        const std::string& name = componentJson["animationName"].get<std::string>();
+        auto optionalSkeletalAnimation = m_skeletalAnimationStorage.findAnimation(name);
+        if (!optionalSkeletalAnimation) {
+            std::stringstream ss;
+            ss << "Skeletal animation " << name << " not found";
+            throw std::domain_error(ss.str());
+        }
+        return std::make_shared<SkeletalAnimationComponent>(
+            optionalSkeletalAnimation.value(),
+            name
         );
     } else {
         std::stringstream ss;

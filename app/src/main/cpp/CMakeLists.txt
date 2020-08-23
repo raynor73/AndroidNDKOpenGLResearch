@@ -42,8 +42,8 @@ add_library(
         engine_3d/RigidBodyComponent.cpp
         engine_3d/BulletPhysicsEngine.cpp
         engine_3d/CollisionsInfoComponent.cpp
-        engine_3d/SkeletalAnimationComponent.cpp
         engine_3d/Mesh.cpp
+        engine_3d/skeletal_animation/SkeletalAnimationComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -67,6 +67,7 @@ add_library(
         game/FreeFlyCameraController.cpp
         game/dev_scenes/LoadingScene.cpp
         game/PlayerController.cpp
+        game/SkeletalAnimationStorage.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

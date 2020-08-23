@@ -24,6 +24,7 @@
 #include <engine_3d/PhysicsEngine.h>
 #include "TimeProvider.h"
 #include "DisplayInfo.h"
+#include "SkeletalAnimationStorage.h"
 #include <game/SkeletalAnimationLoadingRepository.h>
 
 class Scene {
@@ -64,6 +65,7 @@ protected:
     std::shared_ptr<SkeletalAnimationLoadingRepository> m_skeletalAnimationLoadingRepository;
 
     MeshStorage m_meshStorage;
+    SkeletalAnimationStorage m_skeletalAnimationStorage;
     std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;
 
     std::shared_ptr<GameObject> m_rootGameObject;
