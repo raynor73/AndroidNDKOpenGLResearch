@@ -6,7 +6,8 @@
     { "name": "sphere", "path": "meshes/sphere.obj" },
     { "name": "house", "path": "meshes/house.obj" },
     { "name": "capsule", "path": "meshes/vertical_capsule.obj" },
-    { "name": "femaleIdle", "path": "meshes/female_idle2.dae" }
+    { "name": "femaleIdle", "path": "meshes/female_idle2.dae" },
+    { "name": "femaleRunning", "path": "meshes/female_running2.dae" }
   ],
   "materials": [
     { "name": "white", "diffuseColor": [1, 1, 1, 1] },
@@ -35,7 +36,8 @@
     { "name": "female", "path": "female.png", "displayDensityFactorAware": false }
   ],
   "skeletalAnimations": [
-    { "name": "femaleIdle", "meshName": "femaleIdle", "path": "meshes/female_idle2.dae" }
+    { "name": "femaleIdle", "meshName": "femaleIdle", "path": "meshes/female_idle2.dae" },
+    { "name": "femaleRunning", "meshName": "femaleRunning", "path": "meshes/female_running2.dae" }
   ],
   "physicsParams": {
     "gravity": [0, -9.8, 0]
@@ -262,6 +264,20 @@
         { "type": "Material", "materialName": "female" },
         { "type": "MeshRenderer", "layerNames": ["scene"] },
         { "type": "SkeletalAnimation", "animationName": "femaleIdle" },
+        { "type": "SkeletalAnimationPlayer" }
+      ]
+    },
+    {
+      "name": "femaleRunning",
+      "parent": "playerRotor",
+      "position" : [0.0, -1.0, 0.0],
+      "rotation" : [0.0, 180.0, 0.0],
+      "scale": [2, 2, 2],
+      "components": [
+        { "type": "Mesh", "meshName": "femaleRunning" },
+        { "type": "Material", "materialName": "female" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] },
+        { "type": "SkeletalAnimation", "animationName": "femaleRunning" },
         { "type": "SkeletalAnimationPlayer" }
       ]
     },

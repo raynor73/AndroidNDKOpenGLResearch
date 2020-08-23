@@ -21,8 +21,11 @@ class PlayerController : DisplayInfoUpdateDetector {
 
     std::shared_ptr<TransformationComponent> m_playerRotorTransform;
 
+    std::shared_ptr<GameObject> m_playerRotor;
+    std::shared_ptr<GameObject> m_femaleIdle;
+    std::shared_ptr<GameObject> m_femaleRunning;
+
     float m_cameraRotationSensitivity;
-    float m_cameraMovementMaxSpeed;
 
     float m_playerAngle = 0;
     bool m_isEnabled;
@@ -33,7 +36,10 @@ public:
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<SimpleJoystick> movementJoystick,
             std::shared_ptr<ScrollDetectorComponent> playerViewDirectionScrollDetector,
-            std::shared_ptr<TransformationComponent> playerRotorTransform
+            std::shared_ptr<TransformationComponent> playerRotorTransform,
+            std::shared_ptr<GameObject> playerRotor,
+            std::shared_ptr<GameObject> femaleIdle,
+            std::shared_ptr<GameObject> femaleRunning
     );
 
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }

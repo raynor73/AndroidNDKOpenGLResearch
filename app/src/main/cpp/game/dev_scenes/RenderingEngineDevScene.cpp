@@ -130,13 +130,14 @@ void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string s
             m_displayInfo,
             m_movementJoystick,
             findComponent<ScrollDetectorComponent>("rightControllerArea"),
-            findComponent<TransformationComponent>("playerRotor")
+            findComponent<TransformationComponent>("playerRotor"),
+            m_gameObjectsMap.at("playerRotor"),
+            m_gameObjectsMap.at("femaleIdle"),
+            m_gameObjectsMap.at("femaleRunning")
     );
     m_playerCamera = findComponent<PerspectiveCameraComponent>("playerCamera");
 
     switchCamera(m_shouldUsePlayerCamera);
-
-    findComponent<SkeletalAnimationPlayerComponent>("femaleIdle")->play();
 }
 
 void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
