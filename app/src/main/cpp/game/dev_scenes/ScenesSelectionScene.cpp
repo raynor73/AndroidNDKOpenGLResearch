@@ -25,8 +25,8 @@ void ScenesSelectionScene::update(float) {
     }
 }
 
-void ScenesSelectionScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
-    Scene::restoreFromStateRepresentation(stateRepresentation);
+void ScenesSelectionScene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
+    Scene::restoreStaticStateFromRepresentation(stateRepresentation);
 
     auto renderingEngineDevSceneMenuItemGameObject = m_gameObjectsMap.at("renderingEngineDevSceneMenuItem");
     auto screenBlinkingSceneMenuItemGameObject = m_gameObjectsMap.at("screenBlinkingSceneMenuItem");

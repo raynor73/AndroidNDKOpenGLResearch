@@ -123,7 +123,7 @@ void Scene::removeGameObject(const std::string &name) {
     gameObject->parent()->removeChild(gameObject);
 }
 
-void Scene::restoreFromStateRepresentation(const std::string stateRepresentation) {
+void Scene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
     std::unordered_map<std::string, Material> materialsMap;
     std::unordered_map<std::string, TextAppearance> textAppearancesMap;
 

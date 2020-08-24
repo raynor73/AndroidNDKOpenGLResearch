@@ -43,7 +43,7 @@ public:
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
     );
 
-    virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
+    virtual void restoreStaticStateFromRepresentation(const std::string& stateRepresentation) override;
 
 protected:
     virtual void update(float dt) override;

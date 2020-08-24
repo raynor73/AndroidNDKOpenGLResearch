@@ -47,7 +47,7 @@ public:
 
     virtual void update(float dt) override;
 
-    virtual void restoreFromStateRepresentation(const std::string stateRepresentation) override;
+    virtual void restoreStaticStateFromRepresentation(const std::string& stateRepresentation) override;
 };
 
 

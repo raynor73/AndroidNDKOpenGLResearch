@@ -82,8 +82,8 @@ void RenderingEngineDevScene::update(float dt) {
     }
 }
 
-void RenderingEngineDevScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
-    Scene::restoreFromStateRepresentation(stateRepresentation);
+void RenderingEngineDevScene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
+    Scene::restoreStaticStateFromRepresentation(stateRepresentation);
 
     m_sceneCloser = std::make_shared<SceneCloser>(
             m_sceneManager,

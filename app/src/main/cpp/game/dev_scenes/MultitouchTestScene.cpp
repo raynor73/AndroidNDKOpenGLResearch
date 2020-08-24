@@ -112,8 +112,8 @@ void MultitouchTestScene::update(float dt) {
     }
 }
 
-void MultitouchTestScene::restoreFromStateRepresentation(const std::string stateRepresentation) {
-    Scene::restoreFromStateRepresentation(stateRepresentation);
+void MultitouchTestScene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
+    Scene::restoreStaticStateFromRepresentation(stateRepresentation);
 
     m_sceneCloser = std::make_shared<SceneCloser>(
             m_sceneManager,
