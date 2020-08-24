@@ -27,11 +27,13 @@ PlayerController::PlayerController(
     m_femaleIdle(std::move(femaleIdle)),
     m_femaleRunning(std::move(femaleRunning))
 {
+    m_playerRotor->removeChild(m_femaleIdle);
     m_playerRotor->removeChild(m_femaleRunning);
 }
 
 void PlayerController::update() {
     if (!m_isEnabled) {
+        activateIdleAnimationIfNecessary();
         return;
     }
 
@@ -61,19 +63,31 @@ void PlayerController::update() {
             m_physicsEngine->addForce("player", forceDirection * 100.0f);
         }
 
-        if (m_femaleIdle->parent() != nullptr) {
-            m_playerRotor->removeChild(m_femaleIdle);
-            m_playerRotor->addChild(m_femaleRunning);
-            m_femaleRunning->findComponent<SkeletalAnimationPlayerComponent>()->play();
-        }
+        activateRunningAnimationIfNecessary();
     } else {
         m_physicsEngine->setRigidBodyFriction("player", 100);
 
-        if (m_femaleIdle->parent() == nullptr) {
-            m_playerRotor->removeChild(m_femaleRunning);
-            m_playerRotor->addChild(m_femaleIdle);
-            m_femaleIdle->findComponent<SkeletalAnimationPlayerComponent>()->play();
-        }
+        activateIdleAnimationIfNecessary();
     }
     m_playerRotorTransform->setRotation(eulerZXY(0, 0, m_playerAngle));
+}
+
+void PlayerController::activateIdleAnimationIfNecessary() {
+    if (m_femaleIdle->parent() == nullptr) {
+        m_playerRotor->addChild(m_femaleIdle);
+        m_femaleIdle->findComponent<SkeletalAnimationPlayerComponent>()->play();
+    }
+    if (m_femaleRunning->parent() != nullptr) {
+        m_playerRotor->removeChild(m_femaleRunning);
+    }
+}
+
+void PlayerController::activateRunningAnimationIfNecessary() {
+    if (m_femaleRunning->parent() == nullptr) {
+        m_playerRotor->addChild(m_femaleRunning);
+        m_femaleRunning->findComponent<SkeletalAnimationPlayerComponent>()->play();
+    }
+    if (m_femaleIdle->parent() != nullptr) {
+        m_playerRotor->removeChild(m_femaleIdle);
+    }
 }

@@ -45,6 +45,10 @@ public:
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
     void update();
+
+private:
+    void activateIdleAnimationIfNecessary();
+    void activateRunningAnimationIfNecessary();
 };
 
 
