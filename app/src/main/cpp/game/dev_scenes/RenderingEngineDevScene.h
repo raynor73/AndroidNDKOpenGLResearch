@@ -19,11 +19,13 @@
 #include <game/FreeFlyCameraController.h>
 #include <engine_3d/PerspectiveCameraComponent.h>
 #include <game/PlayerController.h>
+#include <engine_3d/FsAbstraction.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<SceneManager> m_sceneManager;
+    std::shared_ptr<FsAbstraction> m_fsAbstraction;
 
     FpsCalculator m_fpsCalculator;
     std::shared_ptr<SceneCloser> m_sceneCloser;
@@ -64,14 +66,17 @@ public:
             std::shared_ptr<TexturesRepository> texturesRepository,
             std::shared_ptr<SceneManager> sceneManager,
             std::shared_ptr<PhysicsEngine> physicsEngine,
-            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
+            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
+            std::shared_ptr<FsAbstraction> fsAbstraction
     );
 
     virtual void update(float dt) override;
 
-    virtual void restoreStaticStateFromRepresentation(const std::string& stateRepresentation) override;
+    virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) override;
 
 private:
+    static const std::string DYNAMIC_STATE_FILE_PATH;
+
     template<typename T>
     std::shared_ptr<T> findComponent(const std::string& gameObjectName) {
         auto gameObject = m_gameObjectsMap.at(gameObjectName);

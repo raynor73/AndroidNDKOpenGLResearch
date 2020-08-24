@@ -25,8 +25,8 @@ void ScenesSelectionScene::update(float) {
     }
 }
 
-void ScenesSelectionScene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
-    Scene::restoreStaticStateFromRepresentation(stateRepresentation);
+void ScenesSelectionScene::buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) {
+    Scene::buildHierarchyFromRepresentation(hierarchyRepresentation);
 
     auto renderingEngineDevSceneMenuItemGameObject = m_gameObjectsMap.at("renderingEngineDevSceneMenuItem");
     auto screenBlinkingSceneMenuItemGameObject = m_gameObjectsMap.at("screenBlinkingSceneMenuItem");

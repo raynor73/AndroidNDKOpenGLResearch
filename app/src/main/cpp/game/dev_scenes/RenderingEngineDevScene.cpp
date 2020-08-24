@@ -10,9 +10,12 @@
 #include <engine_3d/CollisionsInfoComponent.h>
 #include <engine_3d/RigidBodyComponent.h>
 #include <engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.h>
+#include <nlohmann/json.hpp>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
+
+const std::string RenderingEngineDevScene::DYNAMIC_STATE_FILE_PATH = "rendering_engine_dev_scene_dynamic_state.json";
 
 RenderingEngineDevScene::RenderingEngineDevScene(
         std::shared_ptr<TimeProvider> timeProvider,
@@ -25,7 +28,8 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::shared_ptr<TexturesRepository> texturesRepository,
         std::shared_ptr<SceneManager> sceneManager,
         std::shared_ptr<PhysicsEngine> physicsEngine,
-        std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
+        std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
+        std::shared_ptr<FsAbstraction> fsAbstraction
 ) : Scene(
         std::move(timeProvider),
         std::move(displayInfo),
@@ -38,7 +42,8 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::move(physicsEngine),
         std::move(skeletalAnimationRepository)
     ),
-    m_sceneManager(std::move(sceneManager))
+    m_sceneManager(std::move(sceneManager)),
+    m_fsAbstraction(std::move(fsAbstraction))
 {}
 
 void RenderingEngineDevScene::update(float dt) {
@@ -82,8 +87,8 @@ void RenderingEngineDevScene::update(float dt) {
     }
 }
 
-void RenderingEngineDevScene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
-    Scene::restoreStaticStateFromRepresentation(stateRepresentation);
+void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) {
+    Scene::buildHierarchyFromRepresentation(hierarchyRepresentation);
 
     m_sceneCloser = std::make_shared<SceneCloser>(
             m_sceneManager,
@@ -138,6 +143,13 @@ void RenderingEngineDevScene::restoreStaticStateFromRepresentation(const std::st
     m_playerCamera = findComponent<PerspectiveCameraComponent>("playerCamera");
 
     switchCamera(m_shouldUsePlayerCamera);
+
+    if (m_fsAbstraction->isFileExists(DYNAMIC_STATE_FILE_PATH)) {
+        auto dynamicStateJson = nlohmann::json::parse(m_fsAbstraction->readTextFileContent(DYNAMIC_STATE_FILE_PATH));
+
+        // TODO Restore camera transform
+        // TODO Restore player transform
+    }
 }
 
 void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {

@@ -47,7 +47,7 @@ public:
 
     virtual void update(float dt) override;
 
-    virtual void restoreStaticStateFromRepresentation(const std::string& stateRepresentation) override;
+    virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) override;
 };
 
 

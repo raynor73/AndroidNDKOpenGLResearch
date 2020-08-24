@@ -123,13 +123,13 @@ void Scene::removeGameObject(const std::string &name) {
     gameObject->parent()->removeChild(gameObject);
 }
 
-void Scene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
+void Scene::buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) {
     std::unordered_map<std::string, Material> materialsMap;
     std::unordered_map<std::string, TextAppearance> textAppearancesMap;
 
     nlohmann::json sceneJson;
     try {
-        sceneJson = nlohmann::json::parse(stateRepresentation);
+        sceneJson = nlohmann::json::parse(hierarchyRepresentation);
     } catch (nlohmann::json::parse_error& e) {
         L::e(App::Constants::LOG_TAG, "Error restoring scene", e);
     }

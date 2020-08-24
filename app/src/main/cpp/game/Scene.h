@@ -49,9 +49,7 @@ public:
 
     std::shared_ptr<GameObject> rootGameObject() { return m_rootGameObject; }
 
-    virtual std::string createDynamicStateRepresentation() { throw std::domain_error("Not implemented"); };
-    virtual void restoreStaticStateFromRepresentation(const std::string& stateRepresentation);
-    virtual void restoreDynamicStateFromRepresentation(const std::string& stateRepresentation) { throw std::domain_error("Not implemented"); }
+    virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation);
 
     void update();
 

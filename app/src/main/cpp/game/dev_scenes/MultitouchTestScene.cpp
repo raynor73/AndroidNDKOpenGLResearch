@@ -112,8 +112,8 @@ void MultitouchTestScene::update(float dt) {
     }
 }
 
-void MultitouchTestScene::restoreStaticStateFromRepresentation(const std::string& stateRepresentation) {
-    Scene::restoreStaticStateFromRepresentation(stateRepresentation);
+void MultitouchTestScene::buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) {
+    Scene::buildHierarchyFromRepresentation(hierarchyRepresentation);
 
     m_sceneCloser = std::make_shared<SceneCloser>(
             m_sceneManager,

@@ -22,7 +22,7 @@ void AndroidSceneDataLoader::loadSceneData(const std::string &path, Scene &scene
     const char* resultCString = env->GetStringUTFChars(resultJString, JNI_FALSE);
     std::string jsonString = resultCString;
 
-    scene.restoreStaticStateFromRepresentation(jsonString);
+    scene.buildHierarchyFromRepresentation(jsonString);
 
     env->ReleaseStringUTFChars(resultJString, resultCString);
 }

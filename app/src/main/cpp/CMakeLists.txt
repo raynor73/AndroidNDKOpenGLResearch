@@ -96,6 +96,7 @@ add_library(
         main/AndroidTouchScreen.cpp
         main/AndroidBitmapDataLoader.cpp
         main/AndroidSkeletalAnimationLoadingRepository.cpp
+        main/AndroidFsAbstraction.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)

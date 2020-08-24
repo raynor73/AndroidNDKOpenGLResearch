@@ -1,0 +1,16 @@
+//
+// Created by Igor Lapin on 24/08/2020.
+//
+
+#ifndef ANDROID_NDK_OPENGL_RESEARCH_ANDROIDFSABSTRACTION_H
+#define ANDROID_NDK_OPENGL_RESEARCH_ANDROIDFSABSTRACTION_H
+
+
+#include <engine_3d/FsAbstraction.h>
+
+class AndroidFsAbstraction {
+
+};
+
+
+#endif //ANDROID_NDK_OPENGL_RESEARCH_ANDROIDFSABSTRACTION_H
