@@ -59,7 +59,8 @@ GameWrapper::GameWrapper(
             m_javaVm,
             bridgeClass,
             bridgeObject
-    ))
+    )),
+    m_fsAbstraction(std::make_shared<AndroidFsAbstraction>(m_javaVm, bridgeClass, bridgeObject))
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
         m_sceneManager = std::shared_ptr<SceneManager>(this);
@@ -109,7 +110,8 @@ void GameWrapper::onDrawFrame() {
                         m_texturesRepository,
                         m_sceneManager,
                         m_physicsEngine,
-                        m_skeletalAnimationsRepository
+                        m_skeletalAnimationsRepository,
+                        m_fsAbstraction
                 );
                 m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
                 break;

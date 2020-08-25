@@ -31,6 +31,7 @@
 #include "AndroidShaderSourceRepository.h"
 #include "AndroidFontDataLoader.h"
 #include "AndroidTouchScreen.h"
+#include "AndroidFsAbstraction.h"
 
 class GameWrapper : public SceneManager {
 
@@ -62,6 +63,7 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<SceneManager> m_sceneManager;
     std::shared_ptr<BulletPhysicsEngine> m_physicsEngine;
     std::shared_ptr<AndroidSkeletalAnimationLoadingRepository> m_skeletalAnimationsRepository;
+    std::shared_ptr<AndroidFsAbstraction> m_fsAbstraction;
 
     std::optional<SceneType> m_requestedSceneTypeOptional;
     std::unordered_map<std::string, RequestedSceneArgValue> m_requestedSceneArgs;

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
 import android.util.Log
 import ilapin.opengl_research.MainActivity.Companion.LOG_TAG
+import java.io.File
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import javax.microedition.khronos.egl.EGLConfig
@@ -53,6 +54,36 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         bitmap.copyPixelsToBuffer(byteBuffer)
         inputStream.close()
         return BitmapInfo(byteBuffer.array(), bitmap.width, bitmap.height)
+    }
+
+    fun isFileExistsInPrivateStorage(path: String): Boolean {
+        return File(context.filesDir, path).exists()
+    }
+
+    fun loadTextFileFromPrivateStorage(path: String): String {
+        val inputStream = context.openFileInput(path)
+        val fileContent = inputStream.readBytes().toString(Charset.defaultCharset())
+        inputStream.close()
+        return fileContent
+    }
+
+    fun saveTextToFileInPrivateStorage(path: String, text: String) {
+        val outputStream = context.openFileOutput(path, Context.MODE_PRIVATE)
+        outputStream.write(text.toByteArray(Charset.defaultCharset()))
+        outputStream.close()
+    }
+
+    fun loadBinaryFileFromPrivateStorage(path: String): ByteArray {
+        val inputStream = context.openFileInput(path)
+        val fileContent = inputStream.readBytes()
+        inputStream.close()
+        return fileContent
+    }
+
+    fun saveDataToFileInPrivateStorage(path: String, data:  ByteArray) {
+        val outputStream = context.openFileOutput(path, Context.MODE_PRIVATE)
+        outputStream.write(data)
+        outputStream.close()
     }
 
     @SuppressLint("LongLogTag")
