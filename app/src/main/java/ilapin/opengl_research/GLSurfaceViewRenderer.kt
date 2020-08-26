@@ -80,7 +80,7 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         return fileContent
     }
 
-    fun saveDataToFileInPrivateStorage(path: String, data:  ByteArray) {
+    fun saveDataToFileInPrivateStorage(path: String, data: ByteArray) {
         val outputStream = context.openFileOutput(path, Context.MODE_PRIVATE)
         outputStream.write(data)
         outputStream.close()

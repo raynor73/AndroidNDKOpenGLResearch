@@ -37,7 +37,16 @@ public:
 
     void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
+    float cameraAngleX() const { return m_cameraAngleX; }
+    void setCameraAngleX(float cameraAngleX) { m_cameraAngleX = cameraAngleX; updateRotation(); };
+
+    float cameraAngleY() const { return m_cameraAngleY; }
+    void setCameraAngleY(float cameraAngleY) { m_cameraAngleY = cameraAngleY; updateRotation(); }
+
     void update();
+
+private:
+    void updateRotation();
 };
 
 

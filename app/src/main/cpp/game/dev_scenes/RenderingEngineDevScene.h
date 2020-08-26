@@ -46,6 +46,8 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<ClickDetectorComponent> m_cameraButtonClickDetector;
     bool m_shouldUsePlayerCamera = false;
 
+    std::shared_ptr<ClickDetectorComponent> m_saveButtonClickDetector;
+
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;
     float m_boxAngleZ = 0;

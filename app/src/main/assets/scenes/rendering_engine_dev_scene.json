@@ -21,7 +21,9 @@
     { "name": "house", "textureName": "house", "isTranslucent": false, "isUnlit": false },
     { "name": "female", "textureName": "female", "isTranslucent": false, "isUnlit": false },
     { "name": "videoCamera", "textureName": "videoCamera", "isTranslucent": true, "isUnlit": true },
-    { "name": "outlinedVideoCamera", "textureName": "outlinedVideoCamera", "isTranslucent": true, "isUnlit": true }
+    { "name": "outlinedVideoCamera", "textureName": "outlinedVideoCamera", "isTranslucent": true, "isUnlit": true },
+    { "name": "save", "textureName": "save", "isTranslucent": true, "isUnlit": true },
+    { "name": "outlinedSave", "textureName": "outlinedSave", "isTranslucent": true, "isUnlit": true }
   ],
   "textAppearances": [
     { "name": "fpsText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
@@ -33,7 +35,9 @@
     { "name": "outlinedVideoCamera", "path": "outline_videocam_white_48.png", "displayDensityFactorAware": true },
     { "name": "unlit", "path": "unlit.png", "displayDensityFactorAware": false },
     { "name": "house", "path": "house_diffuse.png", "displayDensityFactorAware": false },
-    { "name": "female", "path": "female.png", "displayDensityFactorAware": false }
+    { "name": "female", "path": "female.png", "displayDensityFactorAware": false },
+    { "name": "save", "path": "baseline_save_white_48.png", "displayDensityFactorAware": true },
+    { "name": "outlinedSave", "path": "outline_save_white_48.png", "displayDensityFactorAware": true }
   ],
   "skeletalAnimations": [
     { "name": "femaleIdle", "meshName": "femaleIdle", "path": "meshes/female_idle2.dae" },
@@ -158,6 +162,32 @@
         { "type": "GestureConsumer", "priority": 20 },
         { "type": "ClickDetector" },
         { "type": "ImageButton", "materialName": "videoCamera", "pressedMaterialName": "outlinedVideoCamera" },
+        { "type": "Transform2D", "position": [0, 0], "scale": ["48dp", "48dp"] }
+      ]
+    },
+    {
+      "name": "saveButton",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "quad" },
+        { "type": "Material", "materialName": "save" },
+        { "type": "MeshRenderer", "layerNames": ["ui"] },
+        { "type": "ViewBounds", "left": 0, "bottom": 0, "width": "48dp", "height": "48dp" },
+        {
+          "type": "Layout",
+          "padding": [0, "16dp", 0, 0],
+          "verticalLayout": "BOTTOM_OUTSIDE",
+          "horizontalLayout": "RIGHT_INSIDE",
+          "originVerticalLayout": "CENTER",
+          "originHorizontalLayout": "CENTER",
+          "referenceViewBoundsName": "cameraButton"
+        },
+        { "type": "GestureConsumer", "priority": 20 },
+        { "type": "ClickDetector" },
+        { "type": "ImageButton", "materialName": "save", "pressedMaterialName": "outlinedSave" },
         { "type": "Transform2D", "position": [0, 0], "scale": ["48dp", "48dp"] }
       ]
     },

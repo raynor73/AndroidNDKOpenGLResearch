@@ -21,6 +21,8 @@ public:
 
     virtual std::string readTextFileContent(const std::string& path) = 0;
     virtual void writeTextFileContent(const std::string& path, const std::string& text) = 0;
+
+    //virtual void deleteFile(const std::string& path) = 0;
 };
 
 

@@ -32,17 +32,7 @@ void FreeFlyCameraController::update() {
         m_cameraAngleX += glm::radians(scrollEvent.dy* m_cameraRotationSensitivity);
         m_cameraAngleY += glm::radians(-scrollEvent.dx * m_cameraRotationSensitivity);
 
-        auto rotation = glm::rotate(
-                glm::identity<glm::quat>(),
-                m_cameraAngleY,
-                glm::vec3(0, 1, 0)
-        );
-        rotation = glm::rotate(
-                rotation,
-                m_cameraAngleX,
-                glm::vec3(1, 0, 0)
-        );
-        m_cameraTransform->setRotation(rotation);
+        updateRotation();
     }
 
     auto movementJoystickPosition = m_movementJoystick->position();
@@ -64,4 +54,18 @@ void FreeFlyCameraController::update() {
                 movementJoystickPosition.x;
         m_cameraTransform->setPosition(m_cameraTransform->position() + strafe);
     }
+}
+
+void FreeFlyCameraController::updateRotation() {
+    auto rotation = glm::rotate(
+            glm::identity<glm::quat>(),
+            m_cameraAngleY,
+            glm::vec3(0, 1, 0)
+    );
+    rotation = glm::rotate(
+            rotation,
+            m_cameraAngleX,
+            glm::vec3(1, 0, 0)
+    );
+    m_cameraTransform->setRotation(rotation);
 }

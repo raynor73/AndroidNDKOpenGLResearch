@@ -44,7 +44,24 @@ std::vector<uint8_t> AndroidFsAbstraction::readBinaryFileContent(const std::stri
 }
 
 void AndroidFsAbstraction::writeBinaryFileContent(const std::string& path, const std::vector<uint8_t>& data) {
+    JNIEnv *env;
+    m_javaVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+    jmethodID method = env->GetMethodID(
+            m_bridgeClass,
+            "saveDataToFileInPrivateStorage",
+            "(Ljava/lang/String;[B)V"
+    );
+    jstring pathJString = env->NewStringUTF(path.c_str());
 
+    jbyteArray dataJByteArray = env->NewByteArray(data.size());
+    jbyte* dataJBytes = env->GetByteArrayElements(dataJByteArray, JNI_FALSE);
+    std::memcpy(dataJBytes, data.data(), data.size());
+    env->ReleaseByteArrayElements(dataJByteArray, dataJBytes, 0);
+
+    env->CallVoidMethod(m_bridgeObject, method, pathJString, dataJByteArray);
+
+    env->DeleteLocalRef(pathJString);
+    env->DeleteLocalRef(dataJByteArray);
 }
 
 std::string AndroidFsAbstraction::readTextFileContent(const std::string& path) {
@@ -69,5 +86,18 @@ std::string AndroidFsAbstraction::readTextFileContent(const std::string& path) {
 }
 
 void AndroidFsAbstraction::writeTextFileContent(const std::string& path, const std::string& text) {
+    JNIEnv *env;
+    m_javaVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+    jmethodID method = env->GetMethodID(
+            m_bridgeClass,
+            "saveTextToFileInPrivateStorage",
+            "(Ljava/lang/String;Ljava/lang/String;)V"
+    );
+    jstring pathJString = env->NewStringUTF(path.c_str());
+    jstring textJString = env->NewStringUTF(text.c_str());
 
+    env->CallVoidMethod(m_bridgeObject, method, pathJString, textJString);
+
+    env->DeleteLocalRef(pathJString);
+    env->DeleteLocalRef(textJString);
 }
