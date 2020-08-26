@@ -104,8 +104,7 @@ void RenderingEngineDevScene::update(float dt) {
         };
 
         auto playerTransform = findComponent<TransformationComponent>("player");
-        dynamicStateJson["playerTransform"] = "bar";
-        /*dynamicStateJson["playerTransform"] = {
+        dynamicStateJson["playerTransform"] = {
                 {
                         "position", nlohmann::json::array({
                             playerTransform->position().x,
@@ -114,7 +113,7 @@ void RenderingEngineDevScene::update(float dt) {
                         }),
                 },
                 { "playerAngle", m_playerController->playerAngle() }
-        };*/
+        };
 
         m_fsAbstraction->writeTextFileContent(DYNAMIC_STATE_FILE_PATH, dynamicStateJson.dump(4));
 

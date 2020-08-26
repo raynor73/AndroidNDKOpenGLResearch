@@ -32,7 +32,11 @@ PlayerController::PlayerController(
 }
 
 void PlayerController::update() {
+    m_playerRotorTransform->setRotation(eulerZXY(0, 0, m_playerAngle));
+
     if (!m_isEnabled) {
+        m_physicsEngine->setRigidBodyFriction("player", 100);
+
         activateIdleAnimationIfNecessary();
         return;
     }
@@ -69,7 +73,6 @@ void PlayerController::update() {
 
         activateIdleAnimationIfNecessary();
     }
-    m_playerRotorTransform->setRotation(eulerZXY(0, 0, m_playerAngle));
 }
 
 void PlayerController::activateIdleAnimationIfNecessary() {
