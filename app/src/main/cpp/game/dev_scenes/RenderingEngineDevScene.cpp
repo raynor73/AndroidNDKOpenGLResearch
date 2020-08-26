@@ -105,6 +105,13 @@ void RenderingEngineDevScene::update(float dt) {
                 { "cameraAngleY", m_freeFlyCameraController->cameraAngleY() }
         };
         m_fsAbstraction->writeTextFileContent(DYNAMIC_STATE_FILE_PATH, dynamicStateJson.dump(4));
+
+        updateDeleteButtonVisibility();
+    }
+
+    if (m_deleteButtonClickDetector->isClickDetected()) {
+        m_fsAbstraction->deleteFile(DYNAMIC_STATE_FILE_PATH);
+        updateDeleteButtonVisibility();
     }
 }
 
@@ -167,6 +174,9 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
 
     m_saveButtonClickDetector = findComponent<ClickDetectorComponent>("saveButton");
 
+    m_deleteButton = m_gameObjectsMap.at("deleteButton");
+    m_deleteButtonClickDetector = findComponent<ClickDetectorComponent>("deleteButton");
+
     if (m_fsAbstraction->isFileExists(DYNAMIC_STATE_FILE_PATH)) {
         try {
             auto dynamicStateJson = nlohmann::json::parse(m_fsAbstraction->readTextFileContent(DYNAMIC_STATE_FILE_PATH));
@@ -193,6 +203,8 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
 
         // TODO Restore camera transform
     }
+
+    updateDeleteButtonVisibility();
 }
 
 void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
@@ -211,4 +223,8 @@ void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
         m_freeFlyCamera->setEnabled(true);
         m_freeFlyCameraController->setEnabled(true);
     }
+}
+
+void RenderingEngineDevScene::updateDeleteButtonVisibility() {
+    m_deleteButton->setEnabled(m_fsAbstraction->isFileExists(DYNAMIC_STATE_FILE_PATH));
 }

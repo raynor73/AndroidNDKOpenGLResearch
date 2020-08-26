@@ -48,6 +48,9 @@ class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<ClickDetectorComponent> m_saveButtonClickDetector;
 
+    std::shared_ptr<GameObject> m_deleteButton;
+    std::shared_ptr<ClickDetectorComponent> m_deleteButtonClickDetector;
+
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;
     float m_boxAngleZ = 0;
@@ -89,6 +92,8 @@ private:
     }
 
     void switchCamera(bool shouldUsePlayerCamera);
+
+    void updateDeleteButtonVisibility();
 };
 
 

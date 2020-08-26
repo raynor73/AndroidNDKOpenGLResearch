@@ -38,6 +38,8 @@ public:
 
     virtual void writeTextFileContent(const std::string& path, const std::string& text) override;
 
+    virtual void deleteFile(const std::string& path) override;
+
     AndroidFsAbstraction& operator=(const AndroidFsAbstraction&) = delete;
     AndroidFsAbstraction& operator=(AndroidFsAbstraction&&) = delete;
 };

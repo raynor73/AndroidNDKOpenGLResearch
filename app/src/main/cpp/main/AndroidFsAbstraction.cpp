@@ -101,3 +101,18 @@ void AndroidFsAbstraction::writeTextFileContent(const std::string& path, const s
     env->DeleteLocalRef(pathJString);
     env->DeleteLocalRef(textJString);
 }
+
+void AndroidFsAbstraction::deleteFile(const std::string& path) {
+    JNIEnv *env;
+    m_javaVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+    jmethodID method = env->GetMethodID(
+            m_bridgeClass,
+            "deleteFileFromPrivateStorage",
+            "(Ljava/lang/String;)V"
+    );
+    jstring pathJString = env->NewStringUTF(path.c_str());
+
+    env->CallVoidMethod(m_bridgeObject, method, pathJString);
+
+    env->DeleteLocalRef(pathJString);
+}

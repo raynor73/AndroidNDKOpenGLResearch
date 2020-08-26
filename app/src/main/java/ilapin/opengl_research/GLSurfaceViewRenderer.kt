@@ -86,6 +86,14 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         outputStream.close()
     }
 
+    fun deleteFileFromPrivateStorage(path: String) {
+        File(context.filesDir, path).apply {
+            if (exists()) {
+                delete()
+            }
+        }
+    }
+
     @SuppressLint("LongLogTag")
     fun putMessage(message: Any) {
         when (message) {
