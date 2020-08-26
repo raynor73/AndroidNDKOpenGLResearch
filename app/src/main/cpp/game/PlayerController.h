@@ -46,6 +46,9 @@ public:
 
     void update();
 
+    float playerAngle() const { return m_playerAngle; }
+    void setPlayerAngle(float playerAngle) { m_playerAngle = playerAngle; }
+
 private:
     void activateIdleAnimationIfNecessary();
     void activateRunningAnimationIfNecessary();

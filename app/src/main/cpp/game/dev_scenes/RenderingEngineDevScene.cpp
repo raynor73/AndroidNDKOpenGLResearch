@@ -88,11 +88,9 @@ void RenderingEngineDevScene::update(float dt) {
     }
 
     if (m_saveButtonClickDetector->isClickDetected()) {
-        // TODO Save player transform
+        nlohmann::json dynamicStateJson;
 
         auto cameraTransform = m_freeFlyCamera->gameObject()->findComponent<TransformationComponent>();
-
-        nlohmann::json dynamicStateJson;
         dynamicStateJson["cameraTransform"] = {
                 {
                     "position", nlohmann::json::array({
@@ -104,6 +102,20 @@ void RenderingEngineDevScene::update(float dt) {
                 { "cameraAngleX", m_freeFlyCameraController->cameraAngleX() },
                 { "cameraAngleY", m_freeFlyCameraController->cameraAngleY() }
         };
+
+        auto playerTransform = findComponent<TransformationComponent>("player");
+        dynamicStateJson["playerTransform"] = "bar";
+        /*dynamicStateJson["playerTransform"] = {
+                {
+                        "position", nlohmann::json::array({
+                            playerTransform->position().x,
+                            playerTransform->position().y,
+                            playerTransform->position().z
+                        }),
+                },
+                { "playerAngle", m_playerController->playerAngle() }
+        };*/
+
         m_fsAbstraction->writeTextFileContent(DYNAMIC_STATE_FILE_PATH, dynamicStateJson.dump(4));
 
         updateDeleteButtonVisibility();
@@ -182,26 +194,37 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
             auto dynamicStateJson = nlohmann::json::parse(m_fsAbstraction->readTextFileContent(DYNAMIC_STATE_FILE_PATH));
 
             auto cameraTransformJson = dynamicStateJson["cameraTransform"];
+            auto playerTransformJson = dynamicStateJson["playerTransform"];
 
             auto cameraAngleX = cameraTransformJson["cameraAngleX"].get<float>();
             auto cameraAngleY = cameraTransformJson["cameraAngleY"].get<float>();
 
             auto cameraPositionJson = cameraTransformJson["position"];
-            auto position = glm::vec3(
+            auto cameraPosition = glm::vec3(
                     cameraPositionJson[0].get<float>(),
                     cameraPositionJson[1].get<float>(),
                     cameraPositionJson[2].get<float>()
             );
 
+            auto playerAngle = playerTransformJson["playerAngle"].get<float>();
+
+            auto playerPositionJson = playerTransformJson["position"];
+            auto playerPosition = glm::vec3(
+                    playerPositionJson[0].get<float>(),
+                    playerPositionJson[1].get<float>(),
+                    playerPositionJson[2].get<float>()
+            );
+
             auto cameraTransform = m_freeFlyCamera->gameObject()->findComponent<TransformationComponent>();
-            cameraTransform->setPosition(position);
+            cameraTransform->setPosition(cameraPosition);
             m_freeFlyCameraController->setCameraAngleX(cameraAngleX);
             m_freeFlyCameraController->setCameraAngleY(cameraAngleY);
-        } catch (...) {
-            L::e(App::Constants::LOG_TAG, "Error restoring free fly camera state");
-        }
 
-        // TODO Restore camera transform
+            m_playerController->setPlayerAngle(playerAngle);
+            m_physicsEngine->setPosition("player", playerPosition);
+        } catch (...) {
+            L::e(App::Constants::LOG_TAG, "Error restoring dynamic state");
+        }
     }
 
     updateDeleteButtonVisibility();

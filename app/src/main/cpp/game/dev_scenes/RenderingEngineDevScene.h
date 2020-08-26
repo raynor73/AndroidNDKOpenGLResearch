@@ -87,7 +87,7 @@ private:
         auto gameObject = m_gameObjectsMap.at(gameObjectName);
         Engine3D::Utils::throwErrorIfNull(gameObject, "Game object not found");
         auto component = std::static_pointer_cast<T>(gameObject->findComponent(T::TYPE_NAME));
-        Engine3D::Utils::throwErrorIfNull(m_boxTransform, "Game object has no required component");
+        Engine3D::Utils::throwErrorIfNull(component, "Game object has no required component");
         return component;
     }
 

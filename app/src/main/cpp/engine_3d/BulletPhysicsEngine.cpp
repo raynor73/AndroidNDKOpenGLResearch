@@ -102,7 +102,11 @@ void BulletPhysicsEngine::setGravity(const glm::vec3& gravity) {
 }
 
 void BulletPhysicsEngine::setPosition(const std::string& rigidBodyName, const glm::vec3& position) {
+    auto rigidBody = getRigidBody(rigidBodyName);
 
+    auto transform = rigidBody->getCenterOfMassTransform();
+    transform.setOrigin(glmVec3ToBtVector3(position));
+    rigidBody->setCenterOfMassTransform(transform);
 }
 
 void BulletPhysicsEngine::setRotation(const std::string& rigidBodyName, const glm::quat& rotation) {
