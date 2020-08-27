@@ -33,6 +33,11 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         gameWrapperOnSurfaceCreated()
     }
 
+    fun isFileExistsInAssets(path: String): Boolean {
+        val file = File(path)
+        return context.assets.list(file.parent ?: "")?.contains(file.name) ?: false
+    }
+
     fun loadTextFileFromAssets(path: String): String {
         val inputStream = context.assets.open(path)
         val fileContent = inputStream.readBytes().toString(Charset.defaultCharset())

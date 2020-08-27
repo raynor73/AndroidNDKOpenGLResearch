@@ -97,6 +97,7 @@ add_library(
         main/AndroidBitmapDataLoader.cpp
         main/AndroidSkeletalAnimationLoadingRepository.cpp
         main/AndroidFsAbstraction.cpp
+        main/AndroidReadOnlyFsAbstraction.cpp
 )
 
 target_include_directories(native-lib PUBLIC .)
