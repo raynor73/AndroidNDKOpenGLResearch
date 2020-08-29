@@ -17,7 +17,8 @@ ScreenBlinkingScene::ScreenBlinkingScene(
         std::shared_ptr<TouchScreen> touchScreen,
         std::shared_ptr<TexturesRepository> texturesRepository,
         std::shared_ptr<PhysicsEngine> physicsEngine,
-        std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository
+        std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
+        std::shared_ptr<SoundLoadingRepository> soundLoadingRepository
 ) : m_elapsed(0),
     m_isWhite(true),
     Scene(
@@ -30,7 +31,8 @@ ScreenBlinkingScene::ScreenBlinkingScene(
             std::move(touchScreen),
             std::move(texturesRepository),
             std::move(physicsEngine),
-            std::move(skeletalAnimationRepository)
+            std::move(skeletalAnimationRepository),
+            std::move(soundLoadingRepository)
     )
 {
     // do nothing

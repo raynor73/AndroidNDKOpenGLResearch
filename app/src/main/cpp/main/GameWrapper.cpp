@@ -5,6 +5,7 @@
 #include <game/dev_scenes/RenderingEngineDevScene.h>
 #include <game/dev_scenes/ScenesSelectionScene.h>
 #include "GameWrapper.h"
+#include "AndroidReadOnlyFsAbstraction.h"
 #include <game/SceneManager.h>
 #include <game/dev_scenes/ScreenBlinkingScene.h>
 #include <game/dev_scenes/MultitouchTestScene.h>
@@ -60,7 +61,9 @@ GameWrapper::GameWrapper(
             bridgeClass,
             bridgeObject
     )),
-    m_fsAbstraction(std::make_shared<AndroidFsAbstraction>(m_javaVm, bridgeClass, bridgeObject))
+    m_fsAbstraction(std::make_shared<AndroidFsAbstraction>(m_javaVm, bridgeClass, bridgeObject)),
+    m_readOnlyFsAbstraction(std::make_shared<AndroidReadOnlyFsAbstraction>(m_javaVm, bridgeClass, bridgeObject)),
+    m_soundLoadingRepository(std::make_shared<AndroidSoundLoadingRepository>(m_readOnlyFsAbstraction))
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
         m_sceneManager = std::shared_ptr<SceneManager>(this);
@@ -93,7 +96,8 @@ void GameWrapper::onDrawFrame() {
                         m_sceneManager,
                         m_texturesRepository,
                         m_physicsEngine,
-                        m_skeletalAnimationsRepository
+                        m_skeletalAnimationsRepository,
+                        m_soundLoadingRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
                 break;
@@ -111,6 +115,7 @@ void GameWrapper::onDrawFrame() {
                         m_sceneManager,
                         m_physicsEngine,
                         m_skeletalAnimationsRepository,
+                        m_soundLoadingRepository,
                         m_fsAbstraction
                 );
                 m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
@@ -127,7 +132,8 @@ void GameWrapper::onDrawFrame() {
                         m_touchScreen,
                         m_texturesRepository,
                         m_physicsEngine,
-                        m_skeletalAnimationsRepository
+                        m_skeletalAnimationsRepository,
+                        m_soundLoadingRepository
                 );
                 break;
 
@@ -143,7 +149,8 @@ void GameWrapper::onDrawFrame() {
                         m_texturesRepository,
                         m_sceneManager,
                         m_physicsEngine,
-                        m_skeletalAnimationsRepository
+                        m_skeletalAnimationsRepository,
+                        m_soundLoadingRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/multitouch_test_scene.json", *m_scene);
                 break;
@@ -161,7 +168,8 @@ void GameWrapper::onDrawFrame() {
                         m_texturesRepository,
                         m_sceneManager,
                         m_physicsEngine,
-                        m_skeletalAnimationsRepository
+                        m_skeletalAnimationsRepository,
+                        m_soundLoadingRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/loading_scene.json", *m_scene);
                 break;

@@ -47,6 +47,9 @@
     { "name": "femaleIdle", "meshName": "femaleIdle", "path": "meshes/female_idle2.dae" },
     { "name": "femaleRunning", "meshName": "femaleRunning", "path": "meshes/female_running2.dae" }
   ],
+  "sounds": [
+    { "name": "waterFlow", "path": "sounds/water_flow.wav" }
+  ],
   "physicsParams": {
     "gravity": [0, -9.8, 0]
   },

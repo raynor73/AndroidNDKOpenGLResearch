@@ -45,6 +45,7 @@ add_library(
         engine_3d/Mesh.cpp
         engine_3d/skeletal_animation/SkeletalAnimationComponent.cpp
         engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.cpp
+        engine_3d/SoundStorage.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -98,6 +99,9 @@ add_library(
         main/AndroidSkeletalAnimationLoadingRepository.cpp
         main/AndroidFsAbstraction.cpp
         main/AndroidReadOnlyFsAbstraction.cpp
+        main/AndroidSoundLoadingRepository.cpp
+
+        iffdigest/iffdigest.cc
 )
 
 target_include_directories(native-lib PUBLIC .)

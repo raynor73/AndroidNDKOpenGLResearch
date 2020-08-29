@@ -26,6 +26,8 @@
 #include "DisplayInfo.h"
 #include "SkeletalAnimationStorage.h"
 #include <game/SkeletalAnimationLoadingRepository.h>
+#include <engine_3d/SoundLoadingRepository.h>
+#include <engine_3d/SoundStorage.h>
 
 class Scene {
 
@@ -43,7 +45,8 @@ public:
             std::shared_ptr<TouchScreen> touchScreen,
             std::shared_ptr<TexturesRepository> texturesRepository,
             std::shared_ptr<PhysicsEngine> physicsEngine,
-            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository
+            std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository,
+            std::shared_ptr<SoundLoadingRepository> soundLoadingRepository
     );
     virtual ~Scene() = default;
 
@@ -62,8 +65,10 @@ protected:
     std::shared_ptr<TexturesRepository> m_texturesRepository;
     std::shared_ptr<PhysicsEngine> m_physicsEngine;
     std::shared_ptr<SkeletalAnimationLoadingRepository> m_skeletalAnimationLoadingRepository;
+    std::shared_ptr<SoundLoadingRepository> m_soundLoadingRepository;
 
     MeshStorage m_meshStorage;
+    SoundStorage m_soundStorage;
     SkeletalAnimationStorage m_skeletalAnimationStorage;
     std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;
 
