@@ -12,6 +12,8 @@
 #include <engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.h>
 #include <nlohmann/json.hpp>
 #include <main/Constants.h>
+#include <AL/alc.h>
+#include <AL/al.h>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;

@@ -100,6 +100,7 @@ add_library(
         main/AndroidFsAbstraction.cpp
         main/AndroidReadOnlyFsAbstraction.cpp
         main/AndroidSoundLoadingRepository.cpp
+        main/AndroidOpenALSoundScene.cpp
 
         iffdigest/iffdigest.cc
 )
