@@ -20,6 +20,7 @@
 #include <engine_3d/PerspectiveCameraComponent.h>
 #include <game/PlayerController.h>
 #include <engine_3d/FsAbstraction.h>
+#include <engine_3d/SoundListenerComponent.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -38,9 +39,11 @@ class RenderingEngineDevScene : public Scene {
     std::shared_ptr<SimpleJoystick> m_movementJoystick;
 
     std::shared_ptr<PerspectiveCameraComponent> m_freeFlyCamera;
+    std::shared_ptr<SoundListenerComponent> m_freeFlySoundListener;
     std::shared_ptr<FreeFlyCameraController> m_freeFlyCameraController;
 
     std::shared_ptr<PerspectiveCameraComponent> m_playerCamera;
+    std::shared_ptr<SoundListenerComponent> m_playerSoundListener;
     std::shared_ptr<PlayerController> m_playerController;
 
     std::shared_ptr<ClickDetectorComponent> m_cameraButtonClickDetector;

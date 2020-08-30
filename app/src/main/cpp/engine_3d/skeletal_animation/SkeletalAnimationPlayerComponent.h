@@ -32,6 +32,8 @@ public:
 
     const std::vector<glm::mat4>& jointTransforms() const { return m_jointTransforms; }
 
+    virtual void setEnabled(bool isEnabled) override;
+
     virtual void update() override;
 
     void play();

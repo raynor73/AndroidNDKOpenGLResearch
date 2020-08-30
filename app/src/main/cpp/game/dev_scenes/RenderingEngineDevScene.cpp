@@ -14,6 +14,7 @@
 #include <main/Constants.h>
 #include <AL/alc.h>
 #include <AL/al.h>
+#include <engine_3d/SoundPlayerComponent.h>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
@@ -174,6 +175,7 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
             findComponent<ScrollDetectorComponent>("rightControllerArea")
     );
     m_freeFlyCamera = findComponent<PerspectiveCameraComponent>("sceneCamera");
+    m_freeFlySoundListener = findComponent<SoundListenerComponent>("sceneCamera");
 
     m_cameraButtonClickDetector = findComponent<ClickDetectorComponent>("cameraButton");
 
@@ -188,6 +190,7 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
             m_gameObjectsMap.at("femaleRunning")
     );
     m_playerCamera = findComponent<PerspectiveCameraComponent>("playerCamera");
+    m_playerSoundListener = findComponent<SoundListenerComponent>("playerCamera");
 
     switchCamera(m_shouldUsePlayerCamera);
 
@@ -235,6 +238,8 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
     }
 
     updateDeleteButtonVisibility();
+
+    findComponent<SoundPlayerComponent>("waterFlow")->play();
 }
 
 void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
@@ -242,15 +247,19 @@ void RenderingEngineDevScene::switchCamera(bool shouldUsePlayerCamera) {
 
     if (m_shouldUsePlayerCamera) {
         m_playerCamera->setEnabled(true);
+        m_playerSoundListener->setEnabled(true);
         m_playerController->setEnabled(true);
 
         m_freeFlyCamera->setEnabled(false);
+        m_freeFlySoundListener->setEnabled(false);
         m_freeFlyCameraController->setEnabled(false);
     } else {
         m_playerCamera->setEnabled(false);
+        m_playerSoundListener->setEnabled(false);
         m_playerController->setEnabled(false);
 
         m_freeFlyCamera->setEnabled(true);
+        m_freeFlySoundListener->setEnabled(true);
         m_freeFlyCameraController->setEnabled(true);
     }
 }

@@ -19,13 +19,16 @@ SkeletalAnimationPlayerComponent::SkeletalAnimationPlayerComponent(
     m_jointTransforms.resize(Engine3D::Constants::MAX_JOINTS);
 }
 
-void SkeletalAnimationPlayerComponent::update() {
-    GameObjectComponent::update();
+void SkeletalAnimationPlayerComponent::setEnabled(bool isEnabled) {
+    GameObjectComponent::setEnabled(isEnabled);
 
     if (!m_isEnabled) {
-        // TODO Enable GameObjectComponent::setEnabled override
         stop();
     }
+}
+
+void SkeletalAnimationPlayerComponent::update() {
+    GameObjectComponent::update();
 
     throwErrorIfNoGameObject();
 

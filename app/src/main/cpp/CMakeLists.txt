@@ -46,6 +46,8 @@ add_library(
         engine_3d/skeletal_animation/SkeletalAnimationComponent.cpp
         engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.cpp
         engine_3d/SoundStorage.cpp
+        engine_3d/SoundPlayerComponent.cpp
+        engine_3d/SoundListenerComponent.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp

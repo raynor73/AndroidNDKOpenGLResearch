@@ -37,6 +37,8 @@
 #include <engine_3d/CollisionsInfoComponent.h>
 #include <engine_3d/skeletal_animation/SkeletalAnimationComponent.h>
 #include <engine_3d/skeletal_animation/SkeletalAnimationPlayerComponent.h>
+#include <engine_3d/SoundListenerComponent.h>
+#include <engine_3d/SoundPlayerComponent.h>
 #include "Scene.h"
 
 Scene::Scene(
@@ -824,6 +826,20 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
         );
     } else if (type == "SkeletalAnimationPlayer") {
         return std::make_shared<SkeletalAnimationPlayerComponent>(m_timeProvider);
+    } else if (type == "SoundListener") {
+        return std::make_shared<SoundListenerComponent>(m_soundScene);
+    } else if (type == "SoundPlayer") {
+        return std::make_shared<SoundPlayerComponent>(
+                m_soundScene,
+                componentJson["soundName"].get<std::string>(),
+                componentJson["gain"].get<float>(),
+                componentJson["pitch"].get<float>(),
+                componentJson["rolloffFactor"].get<float>(),
+                componentJson["referenceDistance"].get<float>(),
+                componentJson["maxDistance"].get<float>(),
+                componentJson["isLooped"].get<bool>(),
+                componentJson.contains("isRelativeToListener") && componentJson["isRelativeToListener"].get<bool>()
+        );
     } else {
         std::stringstream ss;
         ss << "Unknown component type " << type;

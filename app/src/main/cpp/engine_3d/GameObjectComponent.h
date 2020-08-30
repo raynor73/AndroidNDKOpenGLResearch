@@ -35,7 +35,7 @@ public:
     virtual ~GameObjectComponent() = default;
 
     bool isEnabled() const { return m_isEnabled; }
-    void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
+    virtual void setEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
 
     virtual const std::string& typeName() const = 0;
 

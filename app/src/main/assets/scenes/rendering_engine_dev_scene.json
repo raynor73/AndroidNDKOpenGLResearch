@@ -64,6 +64,25 @@
       ]
     },
     {
+      "name": "waterFlow",
+      "parent": "root",
+      "position" : [0.0, 0.0, 0.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "components": [
+        {
+          "type": "SoundPlayer",
+          "soundName": "waterFlow",
+          "gain": 1,
+          "pitch": 1,
+          "rolloffFactor": 1,
+          "referenceDistance": 1,
+          "maxDistance": 10000,
+          "isLooped": true
+        }
+      ]
+    },
+    {
       "name": "directionalLight",
       "parent": "root",
       "position" : [0.0, 0.0, 0.0],
@@ -287,7 +306,8 @@
           "shouldClearColor": true,
           "order": 10
         },
-        { "type": "AmbientLight", "color": [0.1, 0.1, 0.1], "layerNames": ["scene"] }
+        { "type": "AmbientLight", "color": [0.1, 0.1, 0.1], "layerNames": ["scene"] },
+        { "type": "SoundListener" }
       ]
     },
     {
@@ -361,7 +381,8 @@
           "shouldClearDepth": true,
           "shouldClearColor": true,
           "order": 10
-        }
+        },
+        { "type": "SoundListener" }
       ]
     },
     {
