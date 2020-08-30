@@ -33,6 +33,7 @@
 #include "AndroidTouchScreen.h"
 #include "AndroidFsAbstraction.h"
 #include "AndroidSoundLoadingRepository.h"
+#include "AndroidOpenALSoundScene.h"
 
 class GameWrapper : public SceneManager {
 
@@ -67,6 +68,8 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<AndroidFsAbstraction> m_fsAbstraction;
     std::shared_ptr<ReadOnlyFsAbstraction> m_readOnlyFsAbstraction;
     std::shared_ptr<AndroidSoundLoadingRepository> m_soundLoadingRepository;
+    std::shared_ptr<SoundStorage> m_soundStorage;
+    std::shared_ptr<AndroidOpenALSoundScene> m_soundScene;
 
     std::optional<SceneType> m_requestedSceneTypeOptional;
     std::unordered_map<std::string, RequestedSceneArgValue> m_requestedSceneArgs;

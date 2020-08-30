@@ -33,7 +33,9 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::shared_ptr<PhysicsEngine> physicsEngine,
         std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
         std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
-        std::shared_ptr<FsAbstraction> fsAbstraction
+        std::shared_ptr<FsAbstraction> fsAbstraction,
+        std::shared_ptr<SoundStorage> soundStorage,
+        std::shared_ptr<SoundScene> soundScene
 ) : Scene(
         std::move(timeProvider),
         std::move(displayInfo),
@@ -45,7 +47,9 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::move(texturesRepository),
         std::move(physicsEngine),
         std::move(skeletalAnimationRepository),
-        std::move(soundLoadingRepository)
+        std::move(soundLoadingRepository),
+        std::move(soundStorage),
+        std::move(soundScene)
     ),
     m_sceneManager(std::move(sceneManager)),
     m_fsAbstraction(std::move(fsAbstraction))

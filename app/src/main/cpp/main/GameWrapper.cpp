@@ -63,7 +63,9 @@ GameWrapper::GameWrapper(
     )),
     m_fsAbstraction(std::make_shared<AndroidFsAbstraction>(m_javaVm, bridgeClass, bridgeObject)),
     m_readOnlyFsAbstraction(std::make_shared<AndroidReadOnlyFsAbstraction>(m_javaVm, bridgeClass, bridgeObject)),
-    m_soundLoadingRepository(std::make_shared<AndroidSoundLoadingRepository>(m_readOnlyFsAbstraction))
+    m_soundLoadingRepository(std::make_shared<AndroidSoundLoadingRepository>(m_readOnlyFsAbstraction)),
+    m_soundStorage(std::make_shared<SoundStorage>()),
+    m_soundScene(std::make_shared<AndroidOpenALSoundScene>(m_soundStorage))
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
         m_sceneManager = std::shared_ptr<SceneManager>(this);
@@ -78,6 +80,7 @@ void GameWrapper::onDrawFrame() {
         m_textRendererFactory->removeAllCharacters();
         m_texturesRepository->removeAllTextures();
         m_geometryBuffersStorage->removeAllBuffers();
+        m_soundStorage->removeAllSounds();
 
         m_scene.reset();
         m_physicsEngine->reset();
@@ -97,7 +100,9 @@ void GameWrapper::onDrawFrame() {
                         m_texturesRepository,
                         m_physicsEngine,
                         m_skeletalAnimationsRepository,
-                        m_soundLoadingRepository
+                        m_soundLoadingRepository,
+                        m_soundStorage,
+                        m_soundScene
                 );
                 m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
                 break;
@@ -116,7 +121,9 @@ void GameWrapper::onDrawFrame() {
                         m_physicsEngine,
                         m_skeletalAnimationsRepository,
                         m_soundLoadingRepository,
-                        m_fsAbstraction
+                        m_fsAbstraction,
+                        m_soundStorage,
+                        m_soundScene
                 );
                 m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
                 break;
@@ -133,7 +140,9 @@ void GameWrapper::onDrawFrame() {
                         m_texturesRepository,
                         m_physicsEngine,
                         m_skeletalAnimationsRepository,
-                        m_soundLoadingRepository
+                        m_soundLoadingRepository,
+                        m_soundStorage,
+                        m_soundScene
                 );
                 break;
 
@@ -150,7 +159,9 @@ void GameWrapper::onDrawFrame() {
                         m_sceneManager,
                         m_physicsEngine,
                         m_skeletalAnimationsRepository,
-                        m_soundLoadingRepository
+                        m_soundLoadingRepository,
+                        m_soundStorage,
+                        m_soundScene
                 );
                 m_sceneDataLoader->loadSceneData("scenes/multitouch_test_scene.json", *m_scene);
                 break;
@@ -169,7 +180,9 @@ void GameWrapper::onDrawFrame() {
                         m_sceneManager,
                         m_physicsEngine,
                         m_skeletalAnimationsRepository,
-                        m_soundLoadingRepository
+                        m_soundLoadingRepository,
+                        m_soundStorage,
+                        m_soundScene
                 );
                 m_sceneDataLoader->loadSceneData("scenes/loading_scene.json", *m_scene);
                 break;

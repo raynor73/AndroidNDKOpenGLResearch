@@ -18,7 +18,9 @@ ScreenBlinkingScene::ScreenBlinkingScene(
         std::shared_ptr<TexturesRepository> texturesRepository,
         std::shared_ptr<PhysicsEngine> physicsEngine,
         std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
-        std::shared_ptr<SoundLoadingRepository> soundLoadingRepository
+        std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
+        std::shared_ptr<SoundStorage> soundStorage,
+        std::shared_ptr<SoundScene> soundScene
 ) : m_elapsed(0),
     m_isWhite(true),
     Scene(
@@ -32,7 +34,9 @@ ScreenBlinkingScene::ScreenBlinkingScene(
             std::move(texturesRepository),
             std::move(physicsEngine),
             std::move(skeletalAnimationRepository),
-            std::move(soundLoadingRepository)
+            std::move(soundLoadingRepository),
+            std::move(soundStorage),
+            std::move(soundScene)
     )
 {
     // do nothing

@@ -73,7 +73,9 @@ public:
             std::shared_ptr<PhysicsEngine> physicsEngine,
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
             std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
-            std::shared_ptr<FsAbstraction> fsAbstraction
+            std::shared_ptr<FsAbstraction> fsAbstraction,
+            std::shared_ptr<SoundStorage> soundStorage,
+            std::shared_ptr<SoundScene> soundScene
     );
 
     virtual void update(float dt) override;

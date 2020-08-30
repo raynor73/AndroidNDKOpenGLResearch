@@ -28,6 +28,7 @@
 #include <game/SkeletalAnimationLoadingRepository.h>
 #include <engine_3d/SoundLoadingRepository.h>
 #include <engine_3d/SoundStorage.h>
+#include <engine_3d/SoundScene.h>
 
 class Scene {
 
@@ -46,7 +47,9 @@ public:
             std::shared_ptr<TexturesRepository> texturesRepository,
             std::shared_ptr<PhysicsEngine> physicsEngine,
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository,
-            std::shared_ptr<SoundLoadingRepository> soundLoadingRepository
+            std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
+            std::shared_ptr<SoundStorage> soundStorage,
+            std::shared_ptr<SoundScene> soundScene
     );
     virtual ~Scene() = default;
 
@@ -66,9 +69,10 @@ protected:
     std::shared_ptr<PhysicsEngine> m_physicsEngine;
     std::shared_ptr<SkeletalAnimationLoadingRepository> m_skeletalAnimationLoadingRepository;
     std::shared_ptr<SoundLoadingRepository> m_soundLoadingRepository;
+    std::shared_ptr<SoundStorage> m_soundStorage;
+    std::shared_ptr<SoundScene> m_soundScene;
 
     MeshStorage m_meshStorage;
-    SoundStorage m_soundStorage;
     SkeletalAnimationStorage m_skeletalAnimationStorage;
     std::shared_ptr<GesturesDispatcher> m_gesturesDispatcher;
 

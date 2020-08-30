@@ -50,7 +50,9 @@ Scene::Scene(
         std::shared_ptr<TexturesRepository> texturesRepository,
         std::shared_ptr<PhysicsEngine> physicsEngine,
         std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository,
-        std::shared_ptr<SoundLoadingRepository> soundLoadingRepository
+        std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
+        std::shared_ptr<SoundStorage> soundStorage,
+        std::shared_ptr<SoundScene> soundScene
 ) :
     m_rootGameObject(std::make_shared<GameObject>("root")),
     m_timeProvider(std::move(timeProvider)),
@@ -66,7 +68,9 @@ Scene::Scene(
     m_physicsEngine(std::move(physicsEngine)),
     m_skeletalAnimationLoadingRepository(std::move(skeletalAnimationLoadingRepository)),
     m_soundLoadingRepository(std::move(soundLoadingRepository)),
-    m_gesturesDispatcher(std::make_shared<GesturesDispatcher>())
+    m_gesturesDispatcher(std::make_shared<GesturesDispatcher>()),
+    m_soundStorage(std::move(soundStorage)),
+    m_soundScene(std::move(soundScene))
 {
     m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
 }
@@ -281,7 +285,7 @@ void Scene::buildHierarchyFromRepresentation(const std::string& hierarchyReprese
         auto soundsJsonArray = sceneJson["sounds"];
         if (soundsJsonArray.is_array()) {
             for (auto& soundJson : soundsJsonArray) {
-                m_soundStorage.putSound(
+                m_soundStorage->putSound(
                         soundJson["name"].get<std::string>(),
                         m_soundLoadingRepository->loadSound(soundJson["path"])
                 );

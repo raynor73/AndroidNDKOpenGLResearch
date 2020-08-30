@@ -9,6 +9,7 @@
 #include <engine_3d/SoundStorage.h>
 #include <engine_3d/SoundScene.h>
 #include <unordered_map>
+#include <set>
 #include <AL/al.h>
 #include <AL/alc.h>
 
@@ -24,8 +25,8 @@ class AndroidOpenALSoundScene : public SoundScene {
     std::unordered_map<std::string, ALuint> m_soundNameToSoundBufferMap;
     std::unordered_map<std::string, ALuint> m_playerNameToSoundSourceMap;
 
-    bool m_isPaused;
-    float m_globalGain;
+    bool m_isScenePaused = false;
+    std::set<ALuint> m_sourcesThatShouldBeResumed;
 
 public:
     AndroidOpenALSoundScene(std::shared_ptr<SoundStorage> soundStorage);
@@ -82,7 +83,7 @@ public:
     AndroidOpenALSoundScene& operator=(AndroidOpenALSoundScene&&) = delete;
 
 private:
-    inline float calculateFinalGain(float gain) const { return m_globalGain * gain; }
+    ALuint getSoundSource(const std::string& playerName);
 };
 
 
