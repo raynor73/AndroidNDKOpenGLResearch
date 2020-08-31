@@ -6,7 +6,7 @@
 #define ANDROID_NDK_OPENGL_RESEARCH_ANDROIDDISPLAYINFO_H
 
 
-#include "../game/DisplayInfo.h"
+#include <engine_3d/DisplayInfo.h>
 
 class AndroidDisplayInfo : public DisplayInfo {
 

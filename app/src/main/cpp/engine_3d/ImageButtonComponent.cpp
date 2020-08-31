@@ -6,7 +6,7 @@
 #include "Utils.h"
 #include "GameObject.h"
 #include "MaterialComponent.h"
-#include <game/touch_screen/ClickDetectorComponent.h>
+#include "touch_screen/ClickDetectorComponent.h"
 #include "ImageButtonComponent.h"
 
 using namespace Engine3D::Utils;

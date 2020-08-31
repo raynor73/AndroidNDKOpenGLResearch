@@ -6,13 +6,13 @@
 #define GAME_RENDERINGENGINEDEVSCENE_H
 
 
-#include <game/Scene.h>
+#include <engine_3d/Scene.h>
 #include <memory>
 #include <game/FpsCalculator.h>
-#include <game/touch_screen/ClickDetectorComponent.h>
-#include <game/SceneManager.h>
+#include <engine_3d/touch_screen/ClickDetectorComponent.h>
+#include <engine_3d/SceneManager.h>
 #include <engine_3d/TransformationComponent.h>
-#include <game/touch_screen/ScrollDetectorComponent.h>
+#include <engine_3d/touch_screen/ScrollDetectorComponent.h>
 #include <engine_3d/Utils.h>
 #include <game/SimpleJoystick.h>
 #include <engine_3d/PhysicsEngine.h>

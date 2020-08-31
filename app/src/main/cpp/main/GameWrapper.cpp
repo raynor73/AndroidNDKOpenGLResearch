@@ -6,7 +6,7 @@
 #include <game/dev_scenes/ScenesSelectionScene.h>
 #include "GameWrapper.h"
 #include "AndroidReadOnlyFsAbstraction.h"
-#include <game/SceneManager.h>
+#include <engine_3d/SceneManager.h>
 #include <game/dev_scenes/ScreenBlinkingScene.h>
 #include <game/dev_scenes/MultitouchTestScene.h>
 #include <game/dev_scenes/LoadingScene.h>

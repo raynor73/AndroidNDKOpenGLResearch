@@ -9,9 +9,9 @@
 #include <memory>
 #include <utility>
 #include <string>
-#include <game/touch_screen/GestureConsumerComponent.h>
-#include <game/DisplayInfoUpdateDetector.h>
-#include <game/UnitsConverter.h>
+#include <engine_3d/touch_screen/GestureConsumerComponent.h>
+#include <engine_3d/DisplayInfoUpdateDetector.h>
+#include <engine_3d/UnitsConverter.h>
 #include "Joystick.h"
 
 class SimpleJoystick : public Joystick, DisplayInfoUpdateDetector {

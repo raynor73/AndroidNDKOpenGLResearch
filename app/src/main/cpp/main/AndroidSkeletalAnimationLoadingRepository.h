@@ -6,7 +6,7 @@
 #define ANDROID_NDK_OPENGL_RESEARCH_ANDROIDSKELETALANIMATIONLOADINGREPOSITORY_H
 
 
-#include <game/SkeletalAnimationLoadingRepository.h>
+#include <engine_3d/SkeletalAnimationLoadingRepository.h>
 #include <jni.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>

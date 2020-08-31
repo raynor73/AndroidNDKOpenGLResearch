@@ -6,11 +6,11 @@
 #define GAME_PLAYER_CONTROLLER_H
 
 
-#include <game/touch_screen/ScrollDetectorComponent.h>
+#include <engine_3d/touch_screen/ScrollDetectorComponent.h>
 #include <engine_3d/TransformationComponent.h>
 #include <engine_3d/PhysicsEngine.h>
 #include "SimpleJoystick.h"
-#include "DisplayInfoUpdateDetector.h"
+#include <engine_3d/DisplayInfoUpdateDetector.h>
 
 class PlayerController : DisplayInfoUpdateDetector {
 

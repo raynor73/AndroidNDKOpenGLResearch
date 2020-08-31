@@ -13,7 +13,7 @@
 #include <GLES2/gl2.h>
 #include <vector>
 #include <main/OpenGLErrorDetector.h>
-#include <game/MeshStorage.h>
+#include <engine_3d/MeshStorage.h>
 #include <variant>
 #include <optional>
 #include "IboInfo.h"

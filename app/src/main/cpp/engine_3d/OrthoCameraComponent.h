@@ -6,9 +6,9 @@
 #define ENGINE_3D_ORTHOCAMERACOMPONENT_H
 
 
-#include <game/UnitsConverter.h>
-#include <game/DisplayInfo.h>
-#include <game/DisplayInfoUpdateDetector.h>
+#include "UnitsConverter.h"
+#include "DisplayInfo.h"
+#include "DisplayInfoUpdateDetector.h"
 #include <utility>
 #include <memory>
 #include "CameraComponent.h"

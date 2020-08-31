@@ -7,10 +7,10 @@
 
 
 #include <memory>
-#include <game/touch_screen/ScrollDetectorComponent.h>
+#include <engine_3d/touch_screen/ScrollDetectorComponent.h>
 #include "SimpleJoystick.h"
 #include "engine_3d/TransformationComponent.h"
-#include "DisplayInfo.h"
+#include <engine_3d/DisplayInfo.h>
 
 class FreeFlyCameraController {
 

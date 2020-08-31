@@ -6,7 +6,7 @@
 #define RENDERING_ENGINE_OPENGL_TEXT_RENDERER_FACTORY_H
 
 
-#include <game/TextRendererFactory.h>
+#include <engine_3d/TextRendererFactory.h>
 #include <main/OpenGLErrorDetector.h>
 #include "OpenGLGeometryBuffersStorage.h"
 #include "OpenGLVerticalQuadBuffersRepository.h"

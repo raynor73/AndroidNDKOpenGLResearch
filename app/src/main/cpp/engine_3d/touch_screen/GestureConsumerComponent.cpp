@@ -4,8 +4,8 @@
 
 #include <memory>
 #include <exception>
-#include <game/touch_screen/GesturesDispatcher.h>
-#include "engine_3d/GameObject.h"
+#include "GesturesDispatcher.h"
+#include "../GameObject.h"
 #include "GestureConsumerComponent.h"
 
 const std::string GestureConsumerComponent::TYPE_NAME = "GestureConsumerComponent";

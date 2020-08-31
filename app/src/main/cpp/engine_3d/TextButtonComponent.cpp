@@ -3,8 +3,8 @@
 //
 
 #include <memory>
-#include <game/touch_screen/ClickDetectorComponent.h>
-#include <engine_3d/Utils.h>
+#include "touch_screen/ClickDetectorComponent.h"
+#include "Utils.h"
 #include "GameObject.h"
 #include "TextButtonComponent.h"
 #include "TextComponent.h"

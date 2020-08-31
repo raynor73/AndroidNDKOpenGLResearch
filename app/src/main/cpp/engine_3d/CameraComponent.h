@@ -10,7 +10,7 @@
 #include <string>
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
-#include <game/UnitsConverter.h>
+#include "UnitsConverter.h"
 #include "GameObjectComponent.h"
 
 class CameraComponent : public GameObjectComponent {

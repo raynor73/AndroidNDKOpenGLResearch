@@ -7,7 +7,7 @@
 
 
 #include <jni.h>
-#include <game/MeshLoadingRepository.h>
+#include <engine_3d/MeshLoadingRepository.h>
 
 class AndroidMeshLoadingRepository : public MeshLoadingRepository {
 

@@ -10,10 +10,10 @@
 #include FT_FREETYPE_H
 #include <unordered_map>
 #include <memory>
-#include <game/CharactersRepository.h>
-#include <game/FontDataLoader.h>
-#include <game/UnitsConverter.h>
-#include <game/DisplayInfoUpdateDetector.h>
+#include <engine_3d/CharactersRepository.h>
+#include <engine_3d/FontDataLoader.h>
+#include <engine_3d/UnitsConverter.h>
+#include <engine_3d/DisplayInfoUpdateDetector.h>
 #include "OpenGLTexturesRepository.h"
 
 namespace std {

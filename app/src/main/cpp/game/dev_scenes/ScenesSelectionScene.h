@@ -6,10 +6,10 @@
 #define GAME_SCENES_SELECTION_SCENE_H
 
 
-#include <game/Scene.h>
-#include <game/touch_screen/ClickDetectorComponent.h>
+#include <engine_3d/Scene.h>
+#include <engine_3d/touch_screen/ClickDetectorComponent.h>
 #include <engine_3d/TextComponent.h>
-#include <game/SceneManager.h>
+#include <engine_3d/SceneManager.h>
 
 class ScenesSelectionScene : public Scene {
 

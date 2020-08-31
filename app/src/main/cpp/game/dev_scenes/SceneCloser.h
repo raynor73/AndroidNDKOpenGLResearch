@@ -8,8 +8,8 @@
 
 #include <memory>
 #include <utility>
-#include <game/touch_screen/ClickDetectorComponent.h>
-#include <game/SceneManager.h>
+#include <engine_3d/touch_screen/ClickDetectorComponent.h>
+#include <engine_3d/SceneManager.h>
 #include <engine_3d/GameObject.h>
 
 class   SceneCloser {

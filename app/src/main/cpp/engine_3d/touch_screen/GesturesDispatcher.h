@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-#include <game/touch_screen/GestureConsumerComponent.h>
+#include "GestureConsumerComponent.h"
 
 class GesturesDispatcher {
 

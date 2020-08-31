@@ -11,7 +11,7 @@
 #include <engine_3d/Constants.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <unordered_map>
-#include <game/TimeProvider.h>
+#include "../TimeProvider.h"
 #include <engine_3d/Time.h>
 #include "Joint.h"
 #include "KeyFrame.h"

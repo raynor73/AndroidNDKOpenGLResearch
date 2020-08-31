@@ -7,9 +7,9 @@
 
 
 #include <engine_3d/GameObject.h>
-#include <game/ObjectPool.h>
-#include <game/Scene.h>
-#include <game/SceneManager.h>
+#include <engine_3d/ObjectPool.h>
+#include <engine_3d/Scene.h>
+#include <engine_3d/SceneManager.h>
 #include <game/dev_scenes/SceneCloser.h>
 #include <utility>
 #include <game/FpsCalculator.h>

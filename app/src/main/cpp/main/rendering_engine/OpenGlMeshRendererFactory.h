@@ -6,7 +6,7 @@
 #define RENDERING_ENGINE_OPENGL_MESH_RENDERER_FACTORY_H
 
 
-#include <game/MeshRendererFactory.h>
+#include <engine_3d/MeshRendererFactory.h>
 #include "OpenGLTexturesRepository.h"
 
 class OpenGlMeshRendererFactory : public MeshRendererFactory {

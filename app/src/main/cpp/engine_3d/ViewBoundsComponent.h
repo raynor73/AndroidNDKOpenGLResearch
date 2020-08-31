@@ -10,8 +10,8 @@
 #include <memory>
 #include <utility>
 #include <variant>
-#include <game/UnitsConverter.h>
-#include <game/DisplayInfoUpdateDetector.h>
+#include "UnitsConverter.h"
+#include "DisplayInfoUpdateDetector.h"
 #include "GameObjectComponent.h"
 
 struct EdgesInitParams {

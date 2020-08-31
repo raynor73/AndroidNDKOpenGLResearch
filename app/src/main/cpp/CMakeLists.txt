@@ -35,7 +35,7 @@ add_library(
         engine_3d/TextButtonComponent.cpp
         engine_3d/ImageButtonComponent.cpp
         engine_3d/Transformation2DComponent.cpp
-        game/touch_screen/GestureConsumerComponent.cpp
+        engine_3d/touch_screen/GestureConsumerComponent.cpp
         engine_3d/PerspectiveCameraComponent.cpp
         engine_3d/DirectionalLightComponent.cpp
         engine_3d/OdePhysicsEngine.cpp
@@ -49,29 +49,29 @@ add_library(
         engine_3d/SoundPlayerComponent.cpp
         engine_3d/SoundListenerComponent.cpp
         engine_3d/Time.cpp
+        engine_3d/DisplayInfo.cpp
+        engine_3d/TimeProvider.cpp
+        engine_3d/Scene.cpp
+        engine_3d/SceneDataLoader.cpp
+        engine_3d/MessageQueue.cpp
+        engine_3d/UnitsConverter.cpp
+        engine_3d/MeshStorage.cpp
+        engine_3d/touch_screen/GesturesDispatcher.cpp
+        engine_3d/touch_screen/ClickDetectorComponent.cpp
+        engine_3d/touch_screen/ScrollDetectorComponent.cpp
+        engine_3d/DisplayInfoUpdateDetector.cpp
+        engine_3d/SkeletalAnimationStorage.cpp
 
-        game/DisplayInfo.cpp
-        game/TimeProvider.cpp
-        game/Scene.cpp
-        game/SceneDataLoader.cpp
         game/dev_scenes/ScreenBlinkingScene.cpp
         game/dev_scenes/RenderingEngineDevScene.cpp
-        game/MessageQueue.cpp
-        game/UnitsConverter.cpp
-        game/MeshStorage.cpp
         game/FpsCalculator.cpp
-        game/touch_screen/GesturesDispatcher.cpp
         game/dev_scenes/ScenesSelectionScene.cpp
-        game/touch_screen/ClickDetectorComponent.cpp
         game/dev_scenes/SceneCloser.cpp
         game/dev_scenes/MultitouchTestScene.cpp
-        game/DisplayInfoUpdateDetector.cpp
-        game/touch_screen/ScrollDetectorComponent.cpp
         game/SimpleJoystick.cpp
         game/FreeFlyCameraController.cpp
         game/dev_scenes/LoadingScene.cpp
         game/PlayerController.cpp
-        game/SkeletalAnimationStorage.cpp
 
         main/rendering_engine/OpenGlMeshRendererComponent.cpp
         main/rendering_engine/OpenGlMeshRendererFactory.cpp

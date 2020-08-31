@@ -7,7 +7,7 @@
 
 
 #include <memory>
-#include <game/Scene.h>
+#include <engine_3d/Scene.h>
 
 class ScreenBlinkingScene : public Scene {
 

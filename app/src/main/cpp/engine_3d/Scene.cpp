@@ -22,9 +22,9 @@
 #include <engine_3d/TextComponent.h>
 #include <engine_3d/ViewBoundsComponent.h>
 #include <engine_3d/LayoutComponent.h>
-#include <game/touch_screen/GestureConsumerComponent.h>
-#include <game/touch_screen/ClickDetectorComponent.h>
-#include <game/touch_screen/ScrollDetectorComponent.h>
+#include "touch_screen/GestureConsumerComponent.h"
+#include "touch_screen/ClickDetectorComponent.h"
+#include "touch_screen/ScrollDetectorComponent.h"
 #include <engine_3d/TextButtonComponent.h>
 #include <engine_3d/ImageButtonComponent.h>
 #include <engine_3d/Transformation2DComponent.h>

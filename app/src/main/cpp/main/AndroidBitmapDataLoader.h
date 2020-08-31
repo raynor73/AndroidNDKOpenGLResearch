@@ -7,7 +7,7 @@
 
 
 #include <jni.h>
-#include <game/BitmapDataLoader.h>
+#include <engine_3d/BitmapDataLoader.h>
 
 class AndroidBitmapDataLoader : public BitmapDataLoader {
 

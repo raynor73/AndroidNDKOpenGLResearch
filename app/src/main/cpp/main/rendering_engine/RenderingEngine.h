@@ -7,9 +7,9 @@
 
 
 #include <stack>
-#include <game/Scene.h>
+#include <engine_3d/Scene.h>
 #include <main/OpenGLErrorDetector.h>
-#include <game/UnitsConverter.h>
+#include <engine_3d/UnitsConverter.h>
 #include <engine_3d/CameraComponent.h>
 #include <engine_3d/AmbientLightComponent.h>
 #include <engine_3d/DirectionalLightComponent.h>

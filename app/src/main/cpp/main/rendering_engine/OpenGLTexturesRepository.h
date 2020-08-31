@@ -11,10 +11,11 @@
 #include <unordered_map>
 #include <variant>
 #include <optional>
-#include <game/TexturesRepository.h>
+#include <engine_3d/TexturesRepository.h>
 #include <main/OpenGLErrorDetector.h>
 #include <main/AndroidBitmapDataLoader.h>
-#include <game/DisplayInfo.h>
+#include <engine_3d/DisplayInfo.h>
+#include <engine_3d/BitmapDataLoader.h>
 #include "TextureCreationParams.h"
 #include "TextureInfo.h"
 

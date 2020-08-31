@@ -7,7 +7,7 @@
 
 
 #include <jni.h>
-#include <game/SceneDataLoader.h>
+#include <engine_3d/SceneDataLoader.h>
 
 class AndroidSceneDataLoader : public SceneDataLoader {
 

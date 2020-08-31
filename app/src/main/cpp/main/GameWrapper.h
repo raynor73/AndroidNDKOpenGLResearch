@@ -9,7 +9,7 @@
 #include <memory>
 #include <jni.h>
 #include <optional>
-#include <game/MessageQueue.h>
+#include <engine_3d/MessageQueue.h>
 #include <main/rendering_engine/RenderingEngine.h>
 #include <main/rendering_engine/OpenGLGeometryBuffersStorage.h>
 #include <main/AndroidSceneDataLoader.h>
@@ -21,9 +21,10 @@
 #include <main/rendering_engine/OpenGLVerticalQuadBuffersRepository.h>
 #include <main/rendering_engine/OpenGLFreeTypeCharactersRepository.h>
 #include <main/rendering_engine/OpenGLTexturesRepository.h>
-#include <game/touch_screen/TouchEvent.h>
-#include <game/SceneManager.h>
-#include <game/TimeProvider.h>
+#include <engine_3d/touch_screen/TouchEvent.h>
+#include <engine_3d/SceneManager.h>
+#include <engine_3d/Scene.h>
+#include <engine_3d/Time.h>
 #include <engine_3d/BulletPhysicsEngine.h>
 #include <main/AndroidSkeletalAnimationLoadingRepository.h>
 #include <engine_3d/AppStateRepository.h>

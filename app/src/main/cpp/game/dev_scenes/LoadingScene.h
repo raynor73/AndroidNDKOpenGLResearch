@@ -6,8 +6,8 @@
 #define GAME_LOADING_SCENE_H
 
 
-#include <game/Scene.h>
-#include <game/SceneManager.h>
+#include <engine_3d/Scene.h>
+#include <engine_3d/SceneManager.h>
 
 class LoadingScene : public Scene {
 

@@ -7,7 +7,7 @@
 
 
 #include <jni.h>
-#include <game/FontDataLoader.h>
+#include <engine_3d/FontDataLoader.h>
 
 class AndroidFontDataLoader : public FontDataLoader {
 

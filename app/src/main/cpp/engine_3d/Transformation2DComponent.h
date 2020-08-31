@@ -9,8 +9,8 @@
 #include <string>
 #include <memory>
 #include <glm/glm.hpp>
-#include <game/DisplayInfoUpdateDetector.h>
-#include <game/UnitsConverter.h>
+#include "DisplayInfoUpdateDetector.h"
+#include "UnitsConverter.h"
 #include "GameObjectComponent.h"
 
 class Transformation2DComponent : public GameObjectComponent, DisplayInfoUpdateDetector {

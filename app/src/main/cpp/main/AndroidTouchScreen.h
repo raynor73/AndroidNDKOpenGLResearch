@@ -8,8 +8,8 @@
 
 #include <memory>
 #include <vector>
-#include <game/MessageQueue.h>
-#include <game/touch_screen/TouchScreen.h>
+#include <engine_3d/MessageQueue.h>
+#include <engine_3d/touch_screen/TouchScreen.h>
 
 class AndroidTouchScreen : public TouchScreen {
 

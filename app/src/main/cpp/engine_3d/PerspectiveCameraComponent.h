@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 #include <string>
-#include <game/DisplayInfo.h>
+#include "DisplayInfo.h"
 #include "CameraComponent.h"
 
 class PerspectiveCameraComponent : public CameraComponent {

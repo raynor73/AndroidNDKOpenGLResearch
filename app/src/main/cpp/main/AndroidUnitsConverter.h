@@ -6,8 +6,8 @@
 #define ANDROID_NDK_OPENGL_RESEARCH_ANDROIDUNITSCONVERTER_H
 
 
-#include <game/UnitsConverter.h>
-#include <game/DisplayInfo.h>
+#include <engine_3d/UnitsConverter.h>
+#include <engine_3d/DisplayInfo.h>
 #include <memory>
 
 class AndroidUnitsConverter : public UnitsConverter {
