@@ -13,8 +13,8 @@ using namespace Engine3D::Utils;
 const std::string SkeletalAnimationPlayerComponent::TYPE_NAME = "SkeletalAnimationPlayerComponent";
 
 SkeletalAnimationPlayerComponent::SkeletalAnimationPlayerComponent(
-        std::shared_ptr<TimeProvider> timeProvider
-) : m_timeProvider(std::move(timeProvider))
+        std::shared_ptr<Time> time
+) : m_time(std::move(time))
 {
     m_jointTransforms.resize(Engine3D::Constants::MAX_JOINTS);
 }
@@ -42,12 +42,9 @@ void SkeletalAnimationPlayerComponent::update() {
 
     int currentFrameIndex = 0;
     if (m_isPlaying) {
-        auto currentTimestamp = m_timeProvider->getTimestamp();
-        auto elapsedTime = fmod(
-                (currentTimestamp - m_startTimestamp) / TimeProvider::NANOS_IN_SECOND,
-                skeletalAnimation.length
-        );
-        currentFrameIndex = (skeletalAnimation.keyFrames.size() - 1) * elapsedTime / skeletalAnimation.length;
+        m_elapsedTime += m_time->deltaTime();
+        auto clampedElapsedTime = fmod(m_elapsedTime, skeletalAnimation.length);
+        currentFrameIndex = (skeletalAnimation.keyFrames.size() - 1) * clampedElapsedTime / skeletalAnimation.length;
     }
 
     for (auto& joint : skeletalAnimation.joints) {
@@ -57,7 +54,7 @@ void SkeletalAnimationPlayerComponent::update() {
 }
 
 void SkeletalAnimationPlayerComponent::play() {
-    m_startTimestamp = m_timeProvider->getTimestamp();
+    m_elapsedTime = 0;
     m_isPlaying = true;
 }
 
@@ -72,7 +69,7 @@ void SkeletalAnimationPlayerComponent::onDetachedFromGameObject() {
 }
 
 std::shared_ptr<GameObjectComponent> SkeletalAnimationPlayerComponent::clone() {
-    auto clone = std::make_shared<SkeletalAnimationPlayerComponent>(m_timeProvider);
+    auto clone = std::make_shared<SkeletalAnimationPlayerComponent>(m_time);
     clone->setEnabled(m_isEnabled);
     return clone;
 }

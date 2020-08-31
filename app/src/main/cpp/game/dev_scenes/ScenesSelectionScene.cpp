@@ -9,7 +9,9 @@
 
 using namespace Engine3D::Utils;
 
-void ScenesSelectionScene::update(float) {
+void ScenesSelectionScene::update() {
+    Scene::update();
+
     if (m_renderingEngineDevSceneMenuItemClickDetector->isClickDetected()) {
         std::unordered_map<std::string, RequestedSceneArgValue> args;
         args.insert({ LoadingScene::LOADING_SCENE_TYPE_KEY, static_cast<int>(SceneType::RENDERING_ENGINE_DEV_SCENE) });

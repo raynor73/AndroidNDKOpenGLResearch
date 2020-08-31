@@ -25,6 +25,7 @@ GameWrapper::GameWrapper(
     m_bridgeObject(bridgeObject),
     m_openGlErrorDetector(std::make_shared<OpenGLErrorDetector>()),
     m_timeProvider(std::make_shared<TimeProvider>()),
+    m_time(std::make_shared<Time>(m_timeProvider)),
     m_sceneDataLoader(std::make_shared<AndroidSceneDataLoader>(
             m_javaVm,
             bridgeClass,
@@ -68,7 +69,9 @@ GameWrapper::GameWrapper(
     m_soundScene(std::make_shared<AndroidOpenALSoundScene>(m_soundStorage))
     {
         // TODO Make another solution instead of this. Despite in current case this works fine in future it can lead to crashes because of multiple delete calls or similar issues.
-        m_sceneManager = std::shared_ptr<SceneManager>(this);
+        auto gameWrapperSharedPtr = std::shared_ptr<GameWrapper>(this);
+        m_sceneManager = gameWrapperSharedPtr;
+        m_appStateRepository = gameWrapperSharedPtr;
     }
 
 void GameWrapper::putTouchEventIntoQueue(std::shared_ptr<TouchEvent> touchEvent) {
@@ -89,7 +92,7 @@ void GameWrapper::onDrawFrame() {
 
             case SceneType::SCENES_SELECTION_SCENE:
                 m_scene = std::make_shared<ScenesSelectionScene>(
-                        m_timeProvider,
+                        m_time,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -102,14 +105,15 @@ void GameWrapper::onDrawFrame() {
                         m_skeletalAnimationsRepository,
                         m_soundLoadingRepository,
                         m_soundStorage,
-                        m_soundScene
+                        m_soundScene,
+                        m_appStateRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/scenes_selection_scene.json", *m_scene);
                 break;
 
             case SceneType::RENDERING_ENGINE_DEV_SCENE:
                 m_scene = std::make_shared<RenderingEngineDevScene>(
-                        m_timeProvider,
+                        m_time,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -123,14 +127,15 @@ void GameWrapper::onDrawFrame() {
                         m_soundLoadingRepository,
                         m_fsAbstraction,
                         m_soundStorage,
-                        m_soundScene
+                        m_soundScene,
+                        m_appStateRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/rendering_engine_dev_scene.json", *m_scene);
                 break;
 
             case SceneType::SCREEN_BLINKING_SCENE:
                 m_scene = std::make_shared<ScreenBlinkingScene>(
-                        m_timeProvider,
+                        m_time,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -142,13 +147,14 @@ void GameWrapper::onDrawFrame() {
                         m_skeletalAnimationsRepository,
                         m_soundLoadingRepository,
                         m_soundStorage,
-                        m_soundScene
+                        m_soundScene,
+                        m_appStateRepository
                 );
                 break;
 
             case SceneType::MULTITOUCH_TEST_SCENE:
                 m_scene = std::make_shared<MultitouchTestScene>(
-                        m_timeProvider,
+                        m_time,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -161,7 +167,8 @@ void GameWrapper::onDrawFrame() {
                         m_skeletalAnimationsRepository,
                         m_soundLoadingRepository,
                         m_soundStorage,
-                        m_soundScene
+                        m_soundScene,
+                        m_appStateRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/multitouch_test_scene.json", *m_scene);
                 break;
@@ -169,7 +176,7 @@ void GameWrapper::onDrawFrame() {
             case SceneType::LOADING_SCENE:
                 m_scene = std::make_shared<LoadingScene>(
                         m_requestedSceneArgs,
-                        m_timeProvider,
+                        m_time,
                         m_displayInfo,
                         m_unitsConverter,
                         m_meshLoadingRepository,
@@ -182,7 +189,8 @@ void GameWrapper::onDrawFrame() {
                         m_skeletalAnimationsRepository,
                         m_soundLoadingRepository,
                         m_soundStorage,
-                        m_soundScene
+                        m_soundScene,
+                        m_appStateRepository
                 );
                 m_sceneDataLoader->loadSceneData("scenes/loading_scene.json", *m_scene);
                 break;
@@ -257,4 +265,3 @@ void GameWrapper::requestSceneLoadAndStart(
 void GameWrapper::requestSceneLoadAndStart(SceneType type) {
     requestSceneLoadAndStart(type, {});
 }
-

@@ -102,13 +102,22 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
     @SuppressLint("LongLogTag")
     fun putMessage(message: Any) {
         when (message) {
+            is AppState ->
+                if (message.isAppInForeground)
+                    gameWrapperReportAppInForeground()
+                else
+                    gameWrapperReportAppInBackground()
+
             is TouchEvent -> gameWrapperPutTouchEventIntoQueue(message)
+
             else -> Log.e(LOG_TAG, "Unexpected message type ${message.javaClass.simpleName}")
         }
     }
 
     private external fun gameWrapperInit(displayDensityFactor: Float)
     private external fun gameWrapperPutTouchEventIntoQueue(touchEvent: TouchEvent)
+    private external fun gameWrapperReportAppInForeground()
+    private external fun gameWrapperReportAppInBackground()
     private external fun gameWrapperOnDrawFrame()
     private external fun gameWrapperOnSurfaceChanged(width: Int, height: Int)
     private external fun gameWrapperOnSurfaceCreated()

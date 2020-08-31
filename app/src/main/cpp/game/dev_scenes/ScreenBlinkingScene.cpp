@@ -8,7 +8,7 @@
 #include "ScreenBlinkingScene.h"
 
 ScreenBlinkingScene::ScreenBlinkingScene(
-        std::shared_ptr<TimeProvider> timeProvider,
+        std::shared_ptr<Time> time,
         std::shared_ptr<DisplayInfo> displayInfo,
         std::shared_ptr<UnitsConverter> unitsConverter,
         std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -20,11 +20,12 @@ ScreenBlinkingScene::ScreenBlinkingScene(
         std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
         std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
         std::shared_ptr<SoundStorage> soundStorage,
-        std::shared_ptr<SoundScene> soundScene
+        std::shared_ptr<SoundScene> soundScene,
+        std::shared_ptr<AppStateRepository> appStateRepository
 ) : m_elapsed(0),
     m_isWhite(true),
     Scene(
-            std::move(timeProvider),
+            std::move(time),
             std::move(displayInfo),
             std::move(unitsConverter),
             std::move(meshLoadingRepository),
@@ -36,13 +37,18 @@ ScreenBlinkingScene::ScreenBlinkingScene(
             std::move(skeletalAnimationRepository),
             std::move(soundLoadingRepository),
             std::move(soundStorage),
-            std::move(soundScene)
+            std::move(soundScene),
+            std::move(appStateRepository)
     )
 {
     // do nothing
 }
 
-void ScreenBlinkingScene::update(float dt) {
+void ScreenBlinkingScene::update() {
+    Scene::update();
+
+    auto dt = m_time->deltaTime();
+
     glClear(GL_COLOR_BUFFER_BIT);
     if (m_isWhite) {
         glClearColor(1, 1, 1, 1);

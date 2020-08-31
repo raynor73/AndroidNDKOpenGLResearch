@@ -14,6 +14,7 @@
 #include <utility>
 #include <game/FpsCalculator.h>
 #include <unordered_map>
+#include <engine_3d/AppStateRepository.h>
 
 class MultitouchTestScene : public Scene {
 
@@ -30,7 +31,7 @@ class MultitouchTestScene : public Scene {
 
 public:
     MultitouchTestScene(
-            std::shared_ptr<TimeProvider> timeProvider,
+            std::shared_ptr<Time> time,
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -43,13 +44,14 @@ public:
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
             std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
             std::shared_ptr<SoundStorage> soundStorage,
-            std::shared_ptr<SoundScene> soundScene
+            std::shared_ptr<SoundScene> soundScene,
+            std::shared_ptr<AppStateRepository> appStateRepository
     );
 
     virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) override;
 
 protected:
-    virtual void update(float dt) override;
+    virtual void update() override;
 };
 
 

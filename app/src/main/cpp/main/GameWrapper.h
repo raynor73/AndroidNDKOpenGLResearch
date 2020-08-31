@@ -26,6 +26,7 @@
 #include <game/TimeProvider.h>
 #include <engine_3d/BulletPhysicsEngine.h>
 #include <main/AndroidSkeletalAnimationLoadingRepository.h>
+#include <engine_3d/AppStateRepository.h>
 #include "AndroidBitmapDataLoader.h"
 #include "AndroidDisplayInfo.h"
 #include "AndroidShaderSourceRepository.h"
@@ -35,7 +36,7 @@
 #include "AndroidSoundLoadingRepository.h"
 #include "AndroidOpenALSoundScene.h"
 
-class GameWrapper : public SceneManager {
+class GameWrapper : public SceneManager, public AppStateRepository {
 
     std::shared_ptr<MessageQueue::Queue> m_messageQueue;
     float m_displayDensityFactor;
@@ -44,6 +45,7 @@ class GameWrapper : public SceneManager {
     jobject m_bridgeObject;
     std::shared_ptr<OpenGLErrorDetector> m_openGlErrorDetector;
     std::shared_ptr<TimeProvider> m_timeProvider;
+    std::shared_ptr<Time> m_time;
     std::shared_ptr<AndroidDisplayInfo> m_displayInfo;
     std::shared_ptr<AndroidUnitsConverter> m_unitsConverter;
     std::shared_ptr<Scene> m_scene;
@@ -63,6 +65,7 @@ class GameWrapper : public SceneManager {
     std::shared_ptr<OpenGLFreeTypeCharactersRepository> m_charactersRepository;
     std::shared_ptr<AndroidTouchScreen> m_touchScreen;
     std::shared_ptr<SceneManager> m_sceneManager;
+    std::shared_ptr<AppStateRepository> m_appStateRepository;
     std::shared_ptr<BulletPhysicsEngine> m_physicsEngine;
     std::shared_ptr<AndroidSkeletalAnimationLoadingRepository> m_skeletalAnimationsRepository;
     std::shared_ptr<AndroidFsAbstraction> m_fsAbstraction;
@@ -73,6 +76,8 @@ class GameWrapper : public SceneManager {
 
     std::optional<SceneType> m_requestedSceneTypeOptional;
     std::unordered_map<std::string, RequestedSceneArgValue> m_requestedSceneArgs;
+
+    bool m_isAppInForeground = true;
 
 public:
     explicit GameWrapper(
@@ -95,6 +100,9 @@ public:
     ) override;
 
     void requestSceneLoadAndStart(SceneType type) override;
+
+    void setAppInForeground(bool isAppInForeground) { m_isAppInForeground = isAppInForeground; }
+    virtual bool isAppInForeground() const override { return m_isAppInForeground; }
 
     GameWrapper& operator=(const GameWrapper&) = delete;
     GameWrapper& operator=(GameWrapper&&) = delete;

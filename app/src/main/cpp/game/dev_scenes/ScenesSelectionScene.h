@@ -21,7 +21,7 @@ class ScenesSelectionScene : public Scene {
 
 public:
     ScenesSelectionScene(
-            std::shared_ptr<TimeProvider> timeProvider,
+            std::shared_ptr<Time> time,
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -34,9 +34,10 @@ public:
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
             std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
             std::shared_ptr<SoundStorage> soundStorage,
-            std::shared_ptr<SoundScene> soundScene
+            std::shared_ptr<SoundScene> soundScene,
+            std::shared_ptr<AppStateRepository> appStateRepository
     ) : Scene(
-            timeProvider,
+            time,
             displayInfo,
             unitsConverter,
             meshLoadingRepository,
@@ -48,10 +49,11 @@ public:
             skeletalAnimationRepository,
             soundLoadingRepository,
             soundStorage,
-            soundScene
+            soundScene,
+            appStateRepository
     ), m_sceneManager(sceneManager) {}
 
-    virtual void update(float dt) override;
+    virtual void update() override;
 
     virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) override;
 };

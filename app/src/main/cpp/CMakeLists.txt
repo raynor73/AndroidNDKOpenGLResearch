@@ -48,6 +48,7 @@ add_library(
         engine_3d/SoundStorage.cpp
         engine_3d/SoundPlayerComponent.cpp
         engine_3d/SoundListenerComponent.cpp
+        engine_3d/Time.cpp
 
         game/DisplayInfo.cpp
         game/TimeProvider.cpp
@@ -58,7 +59,6 @@ add_library(
         game/MessageQueue.cpp
         game/UnitsConverter.cpp
         game/MeshStorage.cpp
-        game/LocalTimeRepository.cpp
         game/FpsCalculator.cpp
         game/touch_screen/GesturesDispatcher.cpp
         game/dev_scenes/ScenesSelectionScene.cpp

@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         glView.setEGLContextClientVersion(2)
+        glView.preserveEGLContextOnPause = true
         //glView.setEGLConfigChooser(8, 8, 8, 8, 24, 8)
         glView.setRenderer(renderer)
         glView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
@@ -77,6 +78,14 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         hideControls()
+
+        renderer.putMessage(AppState(true))
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        renderer.putMessage(AppState(false))
     }
 
     private fun hideControls() {

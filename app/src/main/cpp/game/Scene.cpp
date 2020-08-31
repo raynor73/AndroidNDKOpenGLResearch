@@ -42,7 +42,7 @@
 #include "Scene.h"
 
 Scene::Scene(
-        std::shared_ptr<TimeProvider> timeProvider,
+        std::shared_ptr<Time> time,
         std::shared_ptr<DisplayInfo> displayInfo,
         std::shared_ptr<UnitsConverter> unitsConverter,
         std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -54,13 +54,12 @@ Scene::Scene(
         std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository,
         std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
         std::shared_ptr<SoundStorage> soundStorage,
-        std::shared_ptr<SoundScene> soundScene
+        std::shared_ptr<SoundScene> soundScene,
+        std::shared_ptr<AppStateRepository> appStateRepository
 ) :
     m_rootGameObject(std::make_shared<GameObject>("root")),
-    m_timeProvider(std::move(timeProvider)),
+    m_time(std::move(time)),
     m_displayInfo(std::move(displayInfo)),
-    m_prevTimestamp(0.0f),
-    m_hasPrevTimestamp(false),
     m_unitsConverter(std::move(unitsConverter)),
     m_meshLoadingRepository(std::move(meshLoadingRepository)),
     m_meshRendererFactory(std::move(meshRendererFactory)),
@@ -72,12 +71,21 @@ Scene::Scene(
     m_soundLoadingRepository(std::move(soundLoadingRepository)),
     m_gesturesDispatcher(std::make_shared<GesturesDispatcher>()),
     m_soundStorage(std::move(soundStorage)),
-    m_soundScene(std::move(soundScene))
+    m_soundScene(std::move(soundScene)),
+    m_appStateRepository(std::move(appStateRepository))
 {
     m_gameObjectsMap[m_rootGameObject->name()] = m_rootGameObject;
 }
 
 void Scene::update() {
+    m_time->update();
+
+    if (m_appStateRepository->isAppInForeground()) {
+        m_soundScene->setSoundListenerGain(1);
+    } else {
+        m_soundScene->setSoundListenerGain(0);
+    }
+
     m_gesturesDispatcher->prepare();
     for (auto& event : m_touchScreen->events()) {
         m_gesturesDispatcher->onTouchEvent(event);
@@ -85,20 +93,10 @@ void Scene::update() {
 
     m_rootGameObject->update();
 
-    auto currentTimestamp = m_timeProvider->getTimestamp();
-
-    float dt;
-    if (m_hasPrevTimestamp) {
-        dt = (currentTimestamp - m_prevTimestamp) / TimeProvider::NANOS_IN_SECOND;
-    } else {
-        dt = 0.0f;
+    float dt = m_time->deltaTime();
+    if (dt > 0) {
+        m_physicsEngine->update(dt);
     }
-    m_prevTimestamp = currentTimestamp;
-    m_hasPrevTimestamp = true;
-
-    m_physicsEngine->update(dt);
-
-    update(dt);
 }
 
 void Scene::addGameObject(const std::string &parentName, std::shared_ptr<GameObject> gameObject) {
@@ -825,7 +823,7 @@ std::shared_ptr<GameObjectComponent> Scene::parseComponent(
             name
         );
     } else if (type == "SkeletalAnimationPlayer") {
-        return std::make_shared<SkeletalAnimationPlayerComponent>(m_timeProvider);
+        return std::make_shared<SkeletalAnimationPlayerComponent>(m_time);
     } else if (type == "SoundListener") {
         return std::make_shared<SoundListenerComponent>(m_soundScene);
     } else if (type == "SoundPlayer") {

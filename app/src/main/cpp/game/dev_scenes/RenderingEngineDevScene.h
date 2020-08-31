@@ -64,7 +64,7 @@ class RenderingEngineDevScene : public Scene {
 
 public:
     RenderingEngineDevScene(
-            std::shared_ptr<TimeProvider> timeProvider,
+            std::shared_ptr<Time> time,
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -78,10 +78,11 @@ public:
             std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
             std::shared_ptr<FsAbstraction> fsAbstraction,
             std::shared_ptr<SoundStorage> soundStorage,
-            std::shared_ptr<SoundScene> soundScene
+            std::shared_ptr<SoundScene> soundScene,
+            std::shared_ptr<AppStateRepository> appStateRepository
     );
 
-    virtual void update(float dt) override;
+    virtual void update() override;
 
     virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) override;
 

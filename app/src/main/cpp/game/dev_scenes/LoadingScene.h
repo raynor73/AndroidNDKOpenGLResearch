@@ -20,7 +20,7 @@ public:
 
     LoadingScene(
             std::unordered_map<std::string, RequestedSceneArgValue> args,
-            std::shared_ptr<TimeProvider> timeProvider,
+            std::shared_ptr<Time> time,
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -33,11 +33,12 @@ public:
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationRepository,
             std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
             std::shared_ptr<SoundStorage> soundStorage,
-            std::shared_ptr<SoundScene> soundScene
+            std::shared_ptr<SoundScene> soundScene,
+            std::shared_ptr<AppStateRepository> appStateRepository
     );
 
 protected:
-    virtual void update(float dt) override;
+    virtual void update() override;
 };
 
 

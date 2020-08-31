@@ -22,7 +22,7 @@ using namespace Engine3D::Utils;
 const std::string RenderingEngineDevScene::DYNAMIC_STATE_FILE_PATH = "rendering_engine_dev_scene_dynamic_state.json";
 
 RenderingEngineDevScene::RenderingEngineDevScene(
-        std::shared_ptr<TimeProvider> timeProvider,
+        std::shared_ptr<Time> time,
         std::shared_ptr<DisplayInfo> displayInfo,
         std::shared_ptr<UnitsConverter> unitsConverter,
         std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -36,9 +36,10 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
         std::shared_ptr<FsAbstraction> fsAbstraction,
         std::shared_ptr<SoundStorage> soundStorage,
-        std::shared_ptr<SoundScene> soundScene
+        std::shared_ptr<SoundScene> soundScene,
+        std::shared_ptr<AppStateRepository> appStateRepository
 ) : Scene(
-        std::move(timeProvider),
+        std::move(time),
         std::move(displayInfo),
         std::move(unitsConverter),
         std::move(meshLoadingRepository),
@@ -50,13 +51,18 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::move(skeletalAnimationRepository),
         std::move(soundLoadingRepository),
         std::move(soundStorage),
-        std::move(soundScene)
+        std::move(soundScene),
+        std::move(appStateRepository)
     ),
     m_sceneManager(std::move(sceneManager)),
     m_fsAbstraction(std::move(fsAbstraction))
 {}
 
-void RenderingEngineDevScene::update(float dt) {
+void RenderingEngineDevScene::update() {
+    Scene::update();
+
+    auto dt = m_time->deltaTime();
+
     m_movementJoystick->update();
     m_freeFlyCameraController->update();
     m_playerController->update();

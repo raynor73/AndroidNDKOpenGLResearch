@@ -98,3 +98,18 @@ JNIEXPORT void JNICALL
 Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperOnSurfaceCreated(JNIEnv *env, jobject that) {
     gameWrapper->onSurfaceCreated();
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperReportAppInForeground(JNIEnv* env, jobject that) {
+    if (gameWrapper != nullptr) {
+        gameWrapper->setAppInForeground(true);
+    }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperReportAppInBackground(JNIEnv* env, jobject that) {
+    if (gameWrapper != nullptr) {
+        gameWrapper->setAppInForeground(false);
+    }
+}

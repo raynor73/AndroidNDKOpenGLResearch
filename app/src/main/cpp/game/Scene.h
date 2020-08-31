@@ -29,15 +29,14 @@
 #include <engine_3d/SoundLoadingRepository.h>
 #include <engine_3d/SoundStorage.h>
 #include <engine_3d/SoundScene.h>
+#include <engine_3d/Time.h>
+#include <engine_3d/AppStateRepository.h>
 
 class Scene {
 
-    float m_prevTimestamp;
-    bool m_hasPrevTimestamp;
-
 public:
     explicit Scene(
-            std::shared_ptr<TimeProvider> timeProvider,
+            std::shared_ptr<Time> time,
             std::shared_ptr<DisplayInfo> displayInfo,
             std::shared_ptr<UnitsConverter> unitsConverter,
             std::shared_ptr<MeshLoadingRepository> meshLoadingRepository,
@@ -49,7 +48,8 @@ public:
             std::shared_ptr<SkeletalAnimationLoadingRepository> skeletalAnimationLoadingRepository,
             std::shared_ptr<SoundLoadingRepository> soundLoadingRepository,
             std::shared_ptr<SoundStorage> soundStorage,
-            std::shared_ptr<SoundScene> soundScene
+            std::shared_ptr<SoundScene> soundScene,
+            std::shared_ptr<AppStateRepository> appStateRepository
     );
     virtual ~Scene() = default;
 
@@ -57,7 +57,7 @@ public:
 
     virtual void buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation);
 
-    void update();
+    virtual void update();
 
 protected:
     std::shared_ptr<UnitsConverter> m_unitsConverter;
@@ -71,6 +71,7 @@ protected:
     std::shared_ptr<SoundLoadingRepository> m_soundLoadingRepository;
     std::shared_ptr<SoundStorage> m_soundStorage;
     std::shared_ptr<SoundScene> m_soundScene;
+    std::shared_ptr<AppStateRepository> m_appStateRepository;
 
     MeshStorage m_meshStorage;
     SkeletalAnimationStorage m_skeletalAnimationStorage;
@@ -78,10 +79,8 @@ protected:
 
     std::shared_ptr<GameObject> m_rootGameObject;
     std::unordered_map<std::string, std::shared_ptr<GameObject>> m_gameObjectsMap;
-    std::shared_ptr<TimeProvider> m_timeProvider;
+    std::shared_ptr<Time> m_time;
     std::shared_ptr<DisplayInfo> m_displayInfo;
-
-    virtual void update(float dt) = 0;
 
     void addGameObject(const std::string& parentName, std::shared_ptr<GameObject> gameObject);
     void removeGameObject(const std::string& name);

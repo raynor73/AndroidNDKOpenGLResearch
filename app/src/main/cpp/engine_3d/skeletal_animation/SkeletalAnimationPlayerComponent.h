@@ -12,23 +12,24 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <unordered_map>
 #include <game/TimeProvider.h>
+#include <engine_3d/Time.h>
 #include "Joint.h"
 #include "KeyFrame.h"
 
 class SkeletalAnimationPlayerComponent : public GameObjectComponent {
 
-    std::shared_ptr<TimeProvider> m_timeProvider;
+    std::shared_ptr<Time> m_time;
 
     std::vector<glm::mat4> m_jointTransforms;
     std::unordered_map<std::string, glm::mat4> m_preCalculatedJointWorldTransform;
 
-    float m_startTimestamp = 0;
+    float m_elapsedTime = 0;
     bool m_isPlaying = false;
 
 public:
     static const std::string TYPE_NAME;
 
-    SkeletalAnimationPlayerComponent(std::shared_ptr<TimeProvider> timeProvider);
+    SkeletalAnimationPlayerComponent(std::shared_ptr<Time> time);
 
     const std::vector<glm::mat4>& jointTransforms() const { return m_jointTransforms; }
 
