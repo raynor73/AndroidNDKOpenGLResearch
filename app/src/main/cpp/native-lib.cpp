@@ -113,3 +113,9 @@ Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperReportAppInBackgro
         gameWrapper->setAppInForeground(false);
     }
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_ilapin_opengl_1research_GLSurfaceViewRenderer_gameWrapperReportMusicCompletion(JNIEnv* env, jobject thiz) {
+
+}

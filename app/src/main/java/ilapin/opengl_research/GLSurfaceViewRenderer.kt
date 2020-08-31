@@ -3,6 +3,7 @@ package ilapin.opengl_research
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.opengl.GLSurfaceView
 import android.util.Log
 import ilapin.opengl_research.MainActivity.Companion.LOG_TAG
@@ -17,8 +18,13 @@ import javax.microedition.khronos.opengles.GL10
  */
 class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: Float) : GLSurfaceView.Renderer {
 
+    private val musicPlayer = MediaPlayer()
+
     init {
         gameWrapperInit(displayDensityFactor)
+
+        musicPlayer.setOnPreparedListener { musicPlayer.start() }
+        musicPlayer.setOnCompletionListener {  }
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -99,6 +105,34 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
         }
     }
 
+    fun playMusic(path: String) {
+        musicPlayer.reset()
+
+        val fileDescriptor = context.assets.openFd(path)
+        musicPlayer.setDataSource(fileDescriptor.fileDescriptor, fileDescriptor.startOffset, fileDescriptor.length)
+        fileDescriptor.close()
+
+        musicPlayer.prepareAsync()
+    }
+
+    fun pauseMusic() {
+        if (musicPlayer.isPlaying) {
+            musicPlayer.pause()
+        }
+    }
+
+    fun resumeMusic() {
+        musicPlayer.start()
+    }
+
+    fun stopMusic() {
+        musicPlayer.reset()
+    }
+
+    fun setMusicGain(gain: Float) {
+        musicPlayer.setVolume(gain, gain)
+    }
+
     @SuppressLint("LongLogTag")
     fun putMessage(message: Any) {
         when (message) {
@@ -118,6 +152,7 @@ class GLSurfaceViewRenderer(private val context: Context, displayDensityFactor: 
     private external fun gameWrapperPutTouchEventIntoQueue(touchEvent: TouchEvent)
     private external fun gameWrapperReportAppInForeground()
     private external fun gameWrapperReportAppInBackground()
+    private external fun gameWrapperReportMusicCompletion()
     private external fun gameWrapperOnDrawFrame()
     private external fun gameWrapperOnSurfaceChanged(width: Int, height: Int)
     private external fun gameWrapperOnSurfaceCreated()
