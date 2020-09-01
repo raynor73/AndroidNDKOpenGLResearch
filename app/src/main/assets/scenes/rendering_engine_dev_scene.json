@@ -25,7 +25,23 @@
     { "name": "save", "textureName": "save", "isTranslucent": true, "isUnlit": true },
     { "name": "outlinedSave", "textureName": "outlinedSave", "isTranslucent": true, "isUnlit": true },
     { "name": "delete", "textureName": "delete", "isTranslucent": true, "isUnlit": true },
-    { "name": "outlinedDelete", "textureName": "outlinedDelete", "isTranslucent": true, "isUnlit": true }
+    { "name": "outlinedDelete", "textureName": "outlinedDelete", "isTranslucent": true, "isUnlit": true },
+    {
+      "name": "opaqueGradient",
+      "diffuseColor": [0, 0, 0, 0],
+      "topColor": [0, 1, 0, 1],
+      "bottomColor": [0, 0, 1, 1],
+      "isUnlit": true,
+      "isGradient": true
+    },
+    {
+      "name": "translucentGradient",
+      "diffuseColor": [0, 0, 0, 0],
+      "topColor": [0, 1, 1, 1],
+      "bottomColor": [0, 0, 0, 0],
+      "isUnlit": true,
+      "isGradient": true
+    }
   ],
   "textAppearances": [
     { "name": "fpsText", "textSize": "50dp", "fontPath": "fonts/ArialCE.ttf" }
@@ -421,6 +437,30 @@
           "meshRotation": [0, 0, 0],
           "meshScale": [1, 1, 1]
         }
+      ]
+    },
+    {
+      "name": "gradientPanel1",
+      "parent": "root",
+      "position" : [-5.0, 0.6, -5.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "quad" },
+        { "type": "Material", "materialName": "opaqueGradient" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] }
+      ]
+    },
+    {
+      "name": "gradientPanel2",
+      "parent": "root",
+      "position" : [-3.9, 0.6, -5.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "quad" },
+        { "type": "Material", "materialName": "translucentGradient" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] }
       ]
     },
     {

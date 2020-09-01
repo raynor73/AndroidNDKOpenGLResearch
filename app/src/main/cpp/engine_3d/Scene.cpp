@@ -219,11 +219,14 @@ void Scene::buildHierarchyFromRepresentation(const std::string& hierarchyReprese
             if (diffuseColorJson.is_array()) {
                 Material material {
                     parseColor4f(materialJson["diffuseColor"]),
+                    materialJson.contains("topColor") ? parseColor4f(materialJson["topColor"]) : glm::vec4(0),
+                    materialJson.contains("bottomColor") ? parseColor4f(materialJson["bottomColor"]) : glm::vec4(0),
                     "",
                     true,
                     isTranslucent,
                     isWireframe,
-                    isUnlit
+                    isUnlit,
+                    materialJson.contains("isGradient") ? materialJson["isGradient"].get<bool>() : false
                 };
                 materialsMap[nameJson.get<std::string>()] = material;
             } else {
@@ -233,11 +236,14 @@ void Scene::buildHierarchyFromRepresentation(const std::string& hierarchyReprese
                 }
                 Material material {
                     glm::vec4(0),
+                    materialJson.contains("topColor") ? parseColor4f(materialJson["topColor"]) : glm::vec4(0),
+                    materialJson.contains("bottomColor") ? parseColor4f(materialJson["bottomColor"]) : glm::vec4(0),
                     textureNameJson.get<std::string>(),
                     false,
                     isTranslucent,
                     isWireframe,
-                    isUnlit
+                    isUnlit,
+                    materialJson.contains("isGradient") ? materialJson["isGradient"].get<bool>() : false
                 };
                 materialsMap[nameJson.get<std::string>()] = material;
             }
