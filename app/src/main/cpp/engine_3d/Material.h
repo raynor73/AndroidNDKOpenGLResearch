@@ -18,6 +18,7 @@ struct Material {
     bool isWireframe;
     bool isUnlit;
     bool isGradient;
+    bool isDoubleSided;
 };
 
 

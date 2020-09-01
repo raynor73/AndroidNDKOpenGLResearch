@@ -229,11 +229,11 @@ void OpenGlMeshRendererComponent::render(
         glUniform1i(hasSkeletalAnimationUniform, hasSkeletalAnimation ? GL_TRUE : GL_FALSE);
     }
 
-    /*if (materialComponent.isDoubleSided) {
-        GLES20.glDisable(GLES20.GL_CULL_FACE)
+    if (material.isDoubleSided) {
+        glDisable(GL_CULL_FACE);
     } else {
-        GLES20.glEnable(GLES20.GL_CULL_FACE)
-    }*/
+        glEnable(GL_CULL_FACE);
+    }
 
     GLenum mode;
     if (material.isWireframe) {
@@ -242,7 +242,6 @@ void OpenGlMeshRendererComponent::render(
         mode = GL_TRIANGLES;
     }
 
-    glEnable(GL_CULL_FACE);
     if (material.isTranslucent) {
         glCullFace(GL_FRONT);
         glDrawElements(

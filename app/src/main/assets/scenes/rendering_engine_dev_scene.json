@@ -32,7 +32,8 @@
       "topColor": [0, 1, 0, 1],
       "bottomColor": [0, 0, 1, 1],
       "isUnlit": true,
-      "isGradient": true
+      "isGradient": true,
+      "isDoubleSided": true
     },
     {
       "name": "translucentGradient",
@@ -40,7 +41,8 @@
       "topColor": [0, 1, 1, 1],
       "bottomColor": [0, 0, 0, 0],
       "isUnlit": true,
-      "isGradient": true
+      "isGradient": true,
+      "isTranslucent": true
     }
   ],
   "textAppearances": [

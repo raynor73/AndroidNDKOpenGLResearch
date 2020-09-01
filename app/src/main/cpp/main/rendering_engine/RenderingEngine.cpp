@@ -45,6 +45,12 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createFragmentShader("unlit", unlitFragmentShaderSource);
     shadersRepository->createShaderProgram("unlit", "unlit", "unlit");
 
+    auto gradientFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
+            "shaders/unlit/gradientFragmentShader.glsl"
+    );
+    shadersRepository->createFragmentShader("gradient", gradientFragmentShaderSource);
+    shadersRepository->createShaderProgram("gradient", "unlit", "gradient");
+
     auto textVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
             "shaders/text/textVertexShader.glsl"
     );
@@ -291,6 +297,10 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
 
     shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("directionalLight");
     glUseProgram(shaderProgramContainer.shaderProgram());
+
+    /*auto vertexIndexIterator = vertexIndexToJointIndexAndWeightsMap.begin();
+    vertexIndexIterator != vertexIndexToJointIndexAndWeightsMap.end();
+    vertexIndexIterator = vertexIndexToJointIndexAndWeightsMap.upper_bound(vertexIndexIterator->first)*/
     // TODO Fix incorrect iteration through directional lights of layer (fix with upper_bound etc).
     for (
             auto it = layerNameToDirectionalLightsMap.find(layerName);

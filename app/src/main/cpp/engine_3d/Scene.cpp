@@ -226,7 +226,8 @@ void Scene::buildHierarchyFromRepresentation(const std::string& hierarchyReprese
                     isTranslucent,
                     isWireframe,
                     isUnlit,
-                    materialJson.contains("isGradient") ? materialJson["isGradient"].get<bool>() : false
+                    materialJson.contains("isGradient") ? materialJson["isGradient"].get<bool>() : false,
+                    materialJson.contains("isDoubleSided") ? materialJson["isDoubleSided"].get<bool>() : false
                 };
                 materialsMap[nameJson.get<std::string>()] = material;
             } else {
@@ -243,7 +244,8 @@ void Scene::buildHierarchyFromRepresentation(const std::string& hierarchyReprese
                     isTranslucent,
                     isWireframe,
                     isUnlit,
-                    materialJson.contains("isGradient") ? materialJson["isGradient"].get<bool>() : false
+                    materialJson.contains("isGradient") ? materialJson["isGradient"].get<bool>() : false,
+                    materialJson.contains("isDoubleSided") ? materialJson["isDoubleSided"].get<bool>() : false
                 };
                 materialsMap[nameJson.get<std::string>()] = material;
             }

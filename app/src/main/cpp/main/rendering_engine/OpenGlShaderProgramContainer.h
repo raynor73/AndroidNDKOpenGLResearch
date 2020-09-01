@@ -26,6 +26,8 @@ class OpenGlShaderProgramContainer {
     GLint m_textureUniform;
     GLint m_diffuseColorUniform;
     GLint m_useDiffuseColorUniform;
+    GLint m_topColorUniform;
+    GLint m_bottomColorUniform;
 
     GLint m_ambientColorUniform;
     GLint m_directionalLightColorUniform;
