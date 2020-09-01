@@ -56,6 +56,9 @@ public:
 
     GLint useDiffuseColorUniform() const { return m_useDiffuseColorUniform; }
 
+    GLint topColorUniform() const { return m_topColorUniform; }
+    GLint bottomColorUniform() const { return m_bottomColorUniform; }
+
     GLint ambientColorUniform() const { return m_ambientColorUniform; }
     GLint directionalLightColorUniform() const { return m_directionalLightColorUniform; }
     GLint directionalLightDirectionUniform() const { return m_directionalLightDirectionUniform; }

@@ -65,6 +65,13 @@ void OpenGlMeshRendererComponent::render(
         return;
     }
 
+    if (
+            (material.isGradient && shaderType != ShaderType::GRADIENT) ||
+            (!material.isGradient && shaderType == ShaderType::GRADIENT)
+    ) {
+        return;
+    }
+
     if (meshComponent == nullptr) {
         std::stringstream ss;
         ss << "No material for rendering game object: " << m_gameObject->name();
@@ -183,6 +190,26 @@ void OpenGlMeshRendererComponent::render(
                 material.diffuseColor.y,
                 material.diffuseColor.z,
                 material.diffuseColor.w
+        );
+    }
+
+    if (auto topColorUniform = shaderProgramContainer.topColorUniform(); topColorUniform >= 0) {
+        glUniform4f(
+                topColorUniform,
+                material.topColor.r,
+                material.topColor.g,
+                material.topColor.b,
+                material.topColor.a
+        );
+    }
+
+    if (auto bottomColorUniform = shaderProgramContainer.bottomColorUniform(); bottomColorUniform >= 0) {
+        glUniform4f(
+                bottomColorUniform,
+                material.bottomColor.r,
+                material.bottomColor.g,
+                material.bottomColor.b,
+                material.bottomColor.a
         );
     }
 

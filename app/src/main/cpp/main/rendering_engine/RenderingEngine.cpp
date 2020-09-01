@@ -271,6 +271,10 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
     glUseProgram(shaderProgramContainer.shaderProgram());
     renderMesh(camera, meshRenderer, ShaderType::UNLIT, shaderProgramContainer);
 
+    shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("gradient");
+    glUseProgram(shaderProgramContainer.shaderProgram());
+    renderMesh(camera, meshRenderer, ShaderType::GRADIENT, shaderProgramContainer);
+
     const auto& ambientLight = layerNameToAmbientLightMap.at(layerName);
     throwErrorIfNull(ambientLight, "No ambient light found");
     shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("ambient");

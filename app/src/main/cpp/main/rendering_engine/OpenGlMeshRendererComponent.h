@@ -18,7 +18,7 @@
 #include "OpenGLTexturesRepository.h"
 
 enum class ShaderType {
-    UNLIT, LIGHT
+    UNLIT, LIGHT, GRADIENT
 };
 
 class OpenGlMeshRendererComponent : public GameObjectComponent {
