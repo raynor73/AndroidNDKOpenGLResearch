@@ -21,8 +21,7 @@ void OpenGlMeshRendererComponent::render(
         const OpenGlShaderProgramContainer& shaderProgramContainer,
         const glm::mat4x4& modelMatrix,
         const glm::mat4x4& viewMatrix,
-        const glm::mat4x4& projectionMatrix,
-        ShaderType shaderType
+        const glm::mat4x4& projectionMatrix
 ) {
     throwErrorIfNoGameObject();
 
@@ -57,20 +56,6 @@ void OpenGlMeshRendererComponent::render(
             m_gameObject->findComponent(MaterialComponent::TYPE_NAME)
     );
     auto material = materialComponent->material();
-
-    if (
-            (material.isUnlit && shaderType != ShaderType::UNLIT) ||
-            (!material.isUnlit && shaderType == ShaderType::UNLIT)
-    ) {
-        return;
-    }
-
-    if (
-            (material.isGradient && shaderType != ShaderType::GRADIENT) ||
-            (!material.isGradient && shaderType == ShaderType::GRADIENT)
-    ) {
-        return;
-    }
 
     if (meshComponent == nullptr) {
         std::stringstream ss;
@@ -170,6 +155,11 @@ void OpenGlMeshRendererComponent::render(
         glUniformMatrix4fv(modelMatrixUniform, 1, false, &modelMatrix[0][0]);
     }
 
+    glm::mat4x4 mvMatrix = viewMatrix * modelMatrix;
+    if (auto mvMatrixUniform = shaderProgramContainer.mvMatrixUniform(); mvMatrixUniform >= 0) {
+        glUniformMatrix4fv(mvMatrixUniform, 1, false, &mvMatrix[0][0]);
+    }
+
     /*shaderProgram.lightMvpMatrixUniform.takeIf { it >= 0 }?.let { lightMvpMatrixUniform ->
             tmpMatrix.set(lightProjectionMatrix)
             tmpMatrix.mul(lightViewMatrix)
@@ -211,6 +201,34 @@ void OpenGlMeshRendererComponent::render(
                 material.bottomColor.b,
                 material.bottomColor.a
         );
+    }
+
+    if (!m_isTopAndBottomPointsFound) {
+        findTopAndBottomPoints(meshComponent->mesh());
+    }
+
+    if (auto topPointUniform = shaderProgramContainer.topPointUniform(); topPointUniform >=0) {
+        auto topPointTransformed = modelMatrix * glm::vec4(m_topPoint, 1);
+        glUniform3f(
+                topPointUniform,
+                topPointTransformed.x,
+                topPointTransformed.y,
+                topPointTransformed.z
+        );
+    }
+
+    if (auto bottomPointUniform = shaderProgramContainer.bottomPointUniform(); bottomPointUniform >= 0) {
+        auto bottomPointTransformed = modelMatrix * glm::vec4(m_bottomPoint, 1);
+        glUniform3f(
+                bottomPointUniform,
+                bottomPointTransformed.x,
+                bottomPointTransformed.y,
+                bottomPointTransformed.z
+        );
+    }
+
+    if (auto isGradientUniform = shaderProgramContainer.isGradientUniform(); isGradientUniform >= 0) {
+        glUniform1i(isGradientUniform, material.isGradient ? GL_TRUE : GL_FALSE);
     }
 
     if (auto useDiffuseColorUniform = shaderProgramContainer.useDiffuseColorUniform(); useDiffuseColorUniform >= 0) {
@@ -327,4 +345,23 @@ std::shared_ptr<GameObjectComponent> OpenGlMeshRendererComponent::clone() {
     );
     clone->setEnabled(m_isEnabled);
     return clone;
+}
+
+void OpenGlMeshRendererComponent::findTopAndBottomPoints(const Mesh& mesh) {
+    m_topPoint = { 0, 0, 0 };
+    m_bottomPoint = { 0, 0, 0 };
+
+    for (auto& vertex : mesh.vertices()) {
+        auto position = vertex.position();
+
+        if (position.y > m_topPoint.y) {
+            m_topPoint.y = position.y;
+        }
+
+        if (position.y < m_bottomPoint.y) {
+            m_bottomPoint.y = position.y;
+        }
+    }
+
+    m_isTopAndBottomPointsFound = true;
 }

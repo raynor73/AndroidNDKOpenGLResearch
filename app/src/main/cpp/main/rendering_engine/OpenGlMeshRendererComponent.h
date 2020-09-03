@@ -17,10 +17,6 @@
 #include "OpenGlShaderProgramContainer.h"
 #include "OpenGLTexturesRepository.h"
 
-enum class ShaderType {
-    UNLIT, LIGHT, GRADIENT
-};
-
 class OpenGlMeshRendererComponent : public GameObjectComponent {
 
     std::vector<std::string> m_layerNames;
@@ -53,8 +49,7 @@ public:
             const OpenGlShaderProgramContainer& shaderProgramContainer,
             const glm::mat4x4& modelMatrix,
             const glm::mat4x4& viewMatrix,
-            const glm::mat4x4& projectionMatrix,
-            ShaderType shaderType
+            const glm::mat4x4& projectionMatrix
     );
 
     virtual const std::string& typeName() const override { return TYPE_NAME; }
@@ -62,24 +57,7 @@ public:
     virtual std::shared_ptr<GameObjectComponent> clone() override;
 
 private:
-    void findTopAndBottomPoints(const Mesh& mesh) {
-        m_topPoint = { 0, 0, 0 };
-        m_bottomPoint = { 0, 0, 0 };
-
-        for (auto& vertex : mesh.vertices()) {
-            auto position = vertex.position();
-
-            if (position.y > m_topPoint.y) {
-                m_topPoint.y = position.y;
-            }
-
-            if (position.y < m_bottomPoint.y) {
-                m_bottomPoint.y = position.y;
-            }
-        }
-
-        m_isTopAndBottomPointsFound = true;
-    }
+    void findTopAndBottomPoints(const Mesh& mesh);
 };
 
 

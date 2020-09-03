@@ -252,91 +252,71 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
         const std::unordered_multimap<std::string, std::shared_ptr<DirectionalLightComponent>>& layerNameToDirectionalLightsMap,
         const std::string& layerName
 ) {
-    /*auto material = meshRenderer->gameObject()->findComponent<MaterialComponent>()->material();
+    auto material = meshRenderer->gameObject()->findComponent<MaterialComponent>()->material();
     if (material.isUnlit) {
-        if (material.isGradient) {
-        } else {
-            if (material.useDiffuseColor) {
-
-            } else {
-
-            }
-        }
+        auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
+        glUseProgram(shaderProgramContainer.shaderProgram());
+        renderMesh(camera, meshRenderer, shaderProgramContainer);
     } else {
-        if (material.isGradient) {
+        const auto& ambientLight = layerNameToAmbientLightMap.at(layerName);
+        throwErrorIfNull(ambientLight, "No ambient light found");
+        auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("ambient");
+        glUseProgram(shaderProgramContainer.shaderProgram());
+        if (auto ambientColorUniform = shaderProgramContainer.ambientColorUniform(); ambientColorUniform >= 0) {
+            auto ambientColor = ambientLight->color();
+            glUniform3f(
+                    ambientColorUniform,
+                    ambientColor.r,
+                    ambientColor.g,
+                    ambientColor.b
+            );
+        }
+        renderMesh(camera, meshRenderer, shaderProgramContainer);
 
-        } else {
-            if (material.useDiffuseColor) {
+        pushOpenGLState({
+                viewport,
+                scissor,
+                true,
+                {GL_ONE, GL_ONE},
+                false,
+                GL_EQUAL
+        });
 
-            } else {
+        shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("directionalLight");
+        glUseProgram(shaderProgramContainer.shaderProgram());
 
+        auto layerDirectionalLightsRange = layerNameToDirectionalLightsMap.equal_range(layerName);
+        for (auto it = layerDirectionalLightsRange.first; it != layerDirectionalLightsRange.second; it++) {
+            if (auto colorUniform = shaderProgramContainer.directionalLightColorUniform(); colorUniform >= 0) {
+                auto color = it->second->color();
+                glUniform3f(
+                        colorUniform,
+                        color.r,
+                        color.g,
+                        color.b
+                );
             }
+            if (auto directionUniform = shaderProgramContainer.directionalLightDirectionUniform(); directionUniform >= 0) {
+                auto transform = it->second->gameObject()->findComponent<TransformationComponent>();
+                throwErrorIfNull(transform, "Directional light have no transform while rendering");
+                auto direction = transform->rotation() * it->second->direction();
+                glUniform3f(
+                        directionUniform,
+                        direction.x,
+                        direction.y,
+                        direction.z
+                );
+            }
+            renderMesh(camera, meshRenderer, shaderProgramContainer);
         }
-    }*/
 
-    auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
-    glUseProgram(shaderProgramContainer.shaderProgram());
-    renderMesh(camera, meshRenderer, ShaderType::UNLIT, shaderProgramContainer);
-
-    const auto& ambientLight = layerNameToAmbientLightMap.at(layerName);
-    throwErrorIfNull(ambientLight, "No ambient light found");
-    shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("ambient");
-    glUseProgram(shaderProgramContainer.shaderProgram());
-    if (auto ambientColorUniform = shaderProgramContainer.ambientColorUniform(); ambientColorUniform >= 0) {
-        auto ambientColor = ambientLight->color();
-        glUniform3f(
-                ambientColorUniform,
-                ambientColor.r,
-                ambientColor.g,
-                ambientColor.b
-        );
+        popOpenGLState();
     }
-    renderMesh(camera, meshRenderer, ShaderType::LIGHT, shaderProgramContainer);
-
-    pushOpenGLState({
-        viewport,
-        scissor,
-        true,
-        {GL_ONE, GL_ONE},
-        false,
-        GL_EQUAL
-    });
-
-    shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("directionalLight");
-    glUseProgram(shaderProgramContainer.shaderProgram());
-
-    auto layerDirectionalLightsRange = layerNameToDirectionalLightsMap.equal_range(layerName);
-    for (auto it = layerDirectionalLightsRange.first; it != layerDirectionalLightsRange.second; it++) {
-        if (auto colorUniform = shaderProgramContainer.directionalLightColorUniform(); colorUniform >= 0) {
-            auto color = it->second->color();
-            glUniform3f(
-                    colorUniform,
-                    color.r,
-                    color.g,
-                    color.b
-            );
-        }
-        if (auto directionUniform = shaderProgramContainer.directionalLightDirectionUniform(); directionUniform >= 0) {
-            auto transform = it->second->gameObject()->findComponent<TransformationComponent>();
-            throwErrorIfNull(transform, "Directional light have no transform while rendering");
-            auto direction = transform->rotation() * it->second->direction();
-            glUniform3f(
-                    directionUniform,
-                    direction.x,
-                    direction.y,
-                    direction.z
-            );
-        }
-        renderMesh(camera, meshRenderer, ShaderType::LIGHT, shaderProgramContainer);
-    }
-
-    popOpenGLState();
 }
 
 void RenderingEngine::renderMesh(
         const std::shared_ptr<CameraComponent>& camera,
         const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
-        ShaderType shaderType,
         const OpenGlShaderProgramContainer& shaderProgramContainer
 ) {
     auto gameObject = meshRenderer->gameObject();
@@ -361,8 +341,7 @@ void RenderingEngine::renderMesh(
             shaderProgramContainer,
             modelMatrix,
             camera->calculateViewMatrix(),
-            camera->calculateProjectionMatrix(),
-            shaderType
+            camera->calculateProjectionMatrix()
     );
 }
 

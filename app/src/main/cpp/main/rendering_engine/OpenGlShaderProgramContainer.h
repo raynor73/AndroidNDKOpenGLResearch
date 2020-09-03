@@ -23,11 +23,15 @@ class OpenGlShaderProgramContainer {
 
     GLint m_mvpMatrixUniform;
     GLint m_modelMatrixUniform;
+    GLint m_mvMatrixUniform;
     GLint m_textureUniform;
     GLint m_diffuseColorUniform;
     GLint m_useDiffuseColorUniform;
     GLint m_topColorUniform;
     GLint m_bottomColorUniform;
+    GLint m_topPointUniform;
+    GLint m_bottomPointUniform;
+    GLint m_isGradientUniform;
 
     GLint m_ambientColorUniform;
     GLint m_directionalLightColorUniform;
@@ -51,6 +55,7 @@ public:
 
     GLint mvpMatrixUniform() const { return m_mvpMatrixUniform; }
     GLint modelMatrixUniform() const { return m_modelMatrixUniform; }
+    GLint mvMatrixUniform() const { return m_mvMatrixUniform; }
     GLint textureUniform() const { return m_textureUniform; }
     GLint diffuseColorUniform() const { return m_diffuseColorUniform; }
 
@@ -58,6 +63,10 @@ public:
 
     GLint topColorUniform() const { return m_topColorUniform; }
     GLint bottomColorUniform() const { return m_bottomColorUniform; }
+
+    GLint topPointUniform() const { return m_topPointUniform; }
+    GLint bottomPointUniform() const { return m_bottomPointUniform; }
+    GLint isGradientUniform() const { return m_isGradientUniform; }
 
     GLint ambientColorUniform() const { return m_ambientColorUniform; }
     GLint directionalLightColorUniform() const { return m_directionalLightColorUniform; }

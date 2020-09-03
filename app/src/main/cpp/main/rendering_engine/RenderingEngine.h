@@ -67,7 +67,6 @@ private:
     static void renderMesh(
             const std::shared_ptr<CameraComponent>& camera,
             const std::shared_ptr<OpenGlMeshRendererComponent>& meshRenderer,
-            ShaderType shaderType,
             const OpenGlShaderProgramContainer& shaderProgramContainer
     );
     void renderText(

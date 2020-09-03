@@ -31,6 +31,7 @@
       "diffuseColor": [0, 0, 0, 0],
       "topColor": [0, 1, 0, 1],
       "bottomColor": [0, 0, 1, 1],
+      "isUnlit": true,
       "isGradient": true,
       "isDoubleSided": true
     },
@@ -39,6 +40,7 @@
       "diffuseColor": [0, 0, 0, 0],
       "topColor": [0, 1, 1, 1],
       "bottomColor": [0, 0, 0, 0],
+      "isUnlit": true,
       "isGradient": true,
       "isTranslucent": true
     }
