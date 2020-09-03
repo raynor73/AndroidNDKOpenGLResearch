@@ -213,11 +213,8 @@ void RenderingEngine::render(Scene &scene) {
         glClear(clearMask);
 
         for (auto& layerName : camera->layerNames()) {
-            for (
-                    auto it = layerNameToMeshRenderersMap.find(layerName);
-                    it != layerNameToMeshRenderersMap.end();
-                    it++
-            ) {
+            auto layerRenderersRange = layerNameToMeshRenderersMap.equal_range(layerName);
+            for (auto it = layerRenderersRange.first; it != layerRenderersRange.second; it++) {
                 renderMeshWithAllRequiredShaders(
                         camera,
                         viewport,
@@ -229,11 +226,8 @@ void RenderingEngine::render(Scene &scene) {
                 );
             }
 
-            for (
-                    auto it = layerNameToTranslucentMeshRenderersMap.find(layerName);
-                    it != layerNameToMeshRenderersMap.end();
-                    it++
-            ) {
+            auto layerTranslucentRenderersRange = layerNameToTranslucentMeshRenderersMap.equal_range(layerName);
+            for (auto it = layerTranslucentRenderersRange.first; it != layerTranslucentRenderersRange.second; it++) {
                 renderMeshWithAllRequiredShaders(
                         camera,
                         viewport,
@@ -245,11 +239,8 @@ void RenderingEngine::render(Scene &scene) {
                 );
             }
 
-            for (
-                    auto it = layerNameToTextRenderersMap.find(layerName);
-                    it != layerNameToTextRenderersMap.end();
-                    it++
-            ) {
+            auto layerTextRenderersRange = layerNameToTextRenderersMap.equal_range(layerName);
+            for (auto it = layerTextRenderersRange.first; it != layerTextRenderersRange.second; it++) {
                 renderText(camera, it->second);
             }
         }
@@ -302,15 +293,8 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
     shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("directionalLight");
     glUseProgram(shaderProgramContainer.shaderProgram());
 
-    /*auto vertexIndexIterator = vertexIndexToJointIndexAndWeightsMap.begin();
-    vertexIndexIterator != vertexIndexToJointIndexAndWeightsMap.end();
-    vertexIndexIterator = vertexIndexToJointIndexAndWeightsMap.upper_bound(vertexIndexIterator->first)*/
-    // TODO Fix incorrect iteration through directional lights of layer (fix with upper_bound etc).
-    for (
-            auto it = layerNameToDirectionalLightsMap.find(layerName);
-            it != layerNameToDirectionalLightsMap.end();
-            it++
-    ) {
+    auto layerDirectionalLightsRange = layerNameToDirectionalLightsMap.equal_range(layerName);
+    for (auto it = layerDirectionalLightsRange.first; it != layerDirectionalLightsRange.second; it++) {
         if (auto colorUniform = shaderProgramContainer.directionalLightColorUniform(); colorUniform >= 0) {
             auto color = it->second->color();
             glUniform3f(
