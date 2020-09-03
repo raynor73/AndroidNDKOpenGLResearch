@@ -45,12 +45,6 @@ RenderingEngine::RenderingEngine(
     shadersRepository->createFragmentShader("unlit", unlitFragmentShaderSource);
     shadersRepository->createShaderProgram("unlit", "unlit", "unlit");
 
-    auto gradientFragmentShaderSource = shaderSourcePreprocessor->loadShaderSource(
-            "shaders/unlit/gradientFragmentShader.glsl"
-    );
-    shadersRepository->createFragmentShader("gradient", gradientFragmentShaderSource);
-    shadersRepository->createShaderProgram("gradient", "unlit", "gradient");
-
     auto textVertexShaderSource = shaderSourcePreprocessor->loadShaderSource(
             "shaders/text/textVertexShader.glsl"
     );
@@ -258,13 +252,31 @@ void RenderingEngine::renderMeshWithAllRequiredShaders(
         const std::unordered_multimap<std::string, std::shared_ptr<DirectionalLightComponent>>& layerNameToDirectionalLightsMap,
         const std::string& layerName
 ) {
+    /*auto material = meshRenderer->gameObject()->findComponent<MaterialComponent>()->material();
+    if (material.isUnlit) {
+        if (material.isGradient) {
+        } else {
+            if (material.useDiffuseColor) {
+
+            } else {
+
+            }
+        }
+    } else {
+        if (material.isGradient) {
+
+        } else {
+            if (material.useDiffuseColor) {
+
+            } else {
+
+            }
+        }
+    }*/
+
     auto shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("unlit");
     glUseProgram(shaderProgramContainer.shaderProgram());
     renderMesh(camera, meshRenderer, ShaderType::UNLIT, shaderProgramContainer);
-
-    shaderProgramContainer = m_shadersRepository->getShaderProgramContainer("gradient");
-    glUseProgram(shaderProgramContainer.shaderProgram());
-    renderMesh(camera, meshRenderer, ShaderType::GRADIENT, shaderProgramContainer);
 
     const auto& ambientLight = layerNameToAmbientLightMap.at(layerName);
     throwErrorIfNull(ambientLight, "No ambient light found");

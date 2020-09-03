@@ -28,6 +28,10 @@ class OpenGlMeshRendererComponent : public GameObjectComponent {
     std::shared_ptr<OpenGLGeometryBuffersStorage> m_geometryBuffersStorage;
     std::shared_ptr<OpenGLTexturesRepository> m_texturesRepository;
 
+    glm::vec3 m_topPoint;
+    glm::vec3 m_bottomPoint;
+    bool m_isTopAndBottomPointsFound = false;
+
 public:
     static const std::string TYPE_NAME;
 
@@ -56,6 +60,26 @@ public:
     virtual const std::string& typeName() const override { return TYPE_NAME; }
 
     virtual std::shared_ptr<GameObjectComponent> clone() override;
+
+private:
+    void findTopAndBottomPoints(const Mesh& mesh) {
+        m_topPoint = { 0, 0, 0 };
+        m_bottomPoint = { 0, 0, 0 };
+
+        for (auto& vertex : mesh.vertices()) {
+            auto position = vertex.position();
+
+            if (position.y > m_topPoint.y) {
+                m_topPoint.y = position.y;
+            }
+
+            if (position.y < m_bottomPoint.y) {
+                m_bottomPoint.y = position.y;
+            }
+        }
+
+        m_isTopAndBottomPointsFound = true;
+    }
 };
 
 
