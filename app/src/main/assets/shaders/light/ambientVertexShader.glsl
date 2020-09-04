@@ -7,10 +7,12 @@ attribute vec3 jointIndicesAttribute;
 attribute vec3 jointWeightsAttribute;
 
 uniform mat4 mvpMatrixUniform;
+uniform mat4 modelMatrixUniform;
 uniform mat4 jointTransformsUniform[MAX_JOINTS];
 uniform bool hasSkeletalAnimationUniform;
 
 varying vec2 uvVarying;
+varying vec3 positionVarying;
 
 void main() {
     uvVarying = uvAttribute;
@@ -24,8 +26,11 @@ void main() {
             finalVertexCoordinate += posedVertexCoordinate * jointWeightsAttribute[i];
         }
 
+        positionVarying = (modelMatrixUniform * finalVertexCoordinate).xyz;
         gl_Position = mvpMatrixUniform * finalVertexCoordinate;
     } else {
-        gl_Position = mvpMatrixUniform * vec4(positionAttribute, 1.0);
+        vec4 position = vec4(positionAttribute, 1.0);
+        positionVarying = (modelMatrixUniform * position).xyz;
+        gl_Position =  mvpMatrixUniform * position;
     }
 }

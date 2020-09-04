@@ -43,6 +43,14 @@
       "isUnlit": true,
       "isGradient": true,
       "isTranslucent": true
+    },
+    {
+      "name": "translucentGradient2",
+      "diffuseColor": [0, 0, 0, 0],
+      "topColor": [1, 0, 1, 1],
+      "bottomColor": [0, 0, 0, 0],
+      "isGradient": true,
+      "isTranslucent": true
     }
   ],
   "textAppearances": [
@@ -131,6 +139,18 @@
       "components": [
         { "type": "Mesh", "meshName": "box" },
         { "type": "Material", "materialName": "blueUnlit" },
+        { "type": "MeshRenderer", "layerNames": ["scene"] }
+      ]
+    },
+    {
+      "name": "box3",
+      "parent": "root",
+      "position" : [1.75, 1.0, -5.0],
+      "rotation" : [0.0, 0.0, 0.0],
+      "scale": [1, 1, 1],
+      "components": [
+        { "type": "Mesh", "meshName": "box" },
+        { "type": "Material", "materialName": "translucentGradient2" },
         { "type": "MeshRenderer", "layerNames": ["scene"] }
       ]
     },

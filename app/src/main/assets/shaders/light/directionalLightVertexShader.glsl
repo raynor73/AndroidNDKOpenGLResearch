@@ -16,6 +16,7 @@ uniform bool hasSkeletalAnimationUniform;
 
 varying vec2 uvVarying;
 varying vec3 normalVarying;
+varying vec3 positionVarying;
 //varying vec4 shadowMapUvVariying;
 
 void main() {
@@ -36,9 +37,12 @@ void main() {
         }
 
         normalVarying = (modelMatrixUniform * finalNormal).xyz;
+        positionVarying = (modelMatrixUniform * finalPosition).xyz;
         gl_Position = mvpMatrixUniform * finalPosition;
     } else {
         normalVarying = (modelMatrixUniform * vec4(normalAttribute, 0.0)).xyz;
-        gl_Position = mvpMatrixUniform * vec4(positionAttribute, 1.0);
+        vec4 position = vec4(positionAttribute, 1.0);
+        positionVarying = (modelMatrixUniform * position).xyz;
+        gl_Position =  mvpMatrixUniform * position;
     }
 }

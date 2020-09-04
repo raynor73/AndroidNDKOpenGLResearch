@@ -8,7 +8,6 @@ attribute vec3 jointWeightsAttribute;
 
 uniform mat4 mvpMatrixUniform;
 uniform mat4 modelMatrixUniform;
-uniform mat4 mvMatrixUniform;
 uniform mat4 jointTransformsUniform[MAX_JOINTS];
 uniform bool hasSkeletalAnimationUniform;
 

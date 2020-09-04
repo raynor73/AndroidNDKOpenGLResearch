@@ -274,12 +274,6 @@ void OpenGlMeshRendererComponent::render(
         glUniform1i(hasSkeletalAnimationUniform, hasSkeletalAnimation ? GL_TRUE : GL_FALSE);
     }
 
-    if (material.isDoubleSided) {
-        glDisable(GL_CULL_FACE);
-    } else {
-        glEnable(GL_CULL_FACE);
-    }
-
     GLenum mode;
     if (material.isWireframe) {
         mode = GL_LINE_STRIP;
@@ -288,22 +282,40 @@ void OpenGlMeshRendererComponent::render(
     }
 
     if (material.isTranslucent) {
-        glCullFace(GL_FRONT);
-        glDrawElements(
-                mode,
-                iboInfo.numberOfIndices,
-                GL_UNSIGNED_SHORT,
-                reinterpret_cast<void*>(0)
-        );
+        glEnable(GL_CULL_FACE);
 
-        glCullFace(GL_BACK);
-        glDrawElements(
-                mode,
-                iboInfo.numberOfIndices,
-                GL_UNSIGNED_SHORT,
-                reinterpret_cast<void*>(0)
-        );
+        if (material.isDoubleSided) {
+            glCullFace(GL_FRONT);
+            glDrawElements(
+                    mode,
+                    iboInfo.numberOfIndices,
+                    GL_UNSIGNED_SHORT,
+                    reinterpret_cast<void*>(0)
+            );
+
+            glCullFace(GL_BACK);
+            glDrawElements(
+                    mode,
+                    iboInfo.numberOfIndices,
+                    GL_UNSIGNED_SHORT,
+                    reinterpret_cast<void*>(0)
+            );
+        } else {
+            glCullFace(GL_BACK);
+            glDrawElements(
+                    mode,
+                    iboInfo.numberOfIndices,
+                    GL_UNSIGNED_SHORT,
+                    reinterpret_cast<void*>(0)
+            );
+        }
     } else {
+        if (material.isDoubleSided) {
+            glDisable(GL_CULL_FACE);
+        } else {
+            glEnable(GL_CULL_FACE);
+        }
+
         glCullFace(GL_BACK);
         glDrawElements(
                 mode,
