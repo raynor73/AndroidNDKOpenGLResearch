@@ -61,6 +61,8 @@ add_library(
         engine_3d/touch_screen/ScrollDetectorComponent.cpp
         engine_3d/DisplayInfoUpdateDetector.cpp
         engine_3d/SkeletalAnimationStorage.cpp
+        engine_3d/CycleInterpolator.cpp
+        engine_3d/ValueAnimator.cpp
 
         game/dev_scenes/ScreenBlinkingScene.cpp
         game/dev_scenes/RenderingEngineDevScene.cpp
