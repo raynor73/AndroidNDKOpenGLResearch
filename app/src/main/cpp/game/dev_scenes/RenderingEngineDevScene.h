@@ -21,6 +21,7 @@
 #include <game/PlayerController.h>
 #include <engine_3d/FsAbstraction.h>
 #include <engine_3d/SoundListenerComponent.h>
+#include <engine_3d/ValueAnimator.h>
 #include "SceneCloser.h"
 
 class RenderingEngineDevScene : public Scene {
@@ -33,6 +34,7 @@ class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<TransformationComponent> m_boxTransform;
     std::shared_ptr<TransformationComponent> m_box2Transform;
+    std::shared_ptr<TransformationComponent> m_box4Transform;
 
     std::shared_ptr<GameObject> m_ballPrefab;
 
@@ -53,6 +55,8 @@ class RenderingEngineDevScene : public Scene {
 
     std::shared_ptr<GameObject> m_deleteButton;
     std::shared_ptr<ClickDetectorComponent> m_deleteButtonClickDetector;
+
+    ValueAnimator m_box4Animator;
 
     float m_boxAngleX = 0;
     float m_boxAngleY = 0;

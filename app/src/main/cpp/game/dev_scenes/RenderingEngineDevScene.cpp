@@ -15,6 +15,7 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <engine_3d/SoundPlayerComponent.h>
+#include <engine_3d/CycleInterpolator.h>
 #include "RenderingEngineDevScene.h"
 
 using namespace Engine3D::Utils;
@@ -55,7 +56,8 @@ RenderingEngineDevScene::RenderingEngineDevScene(
         std::move(appStateRepository)
     ),
     m_sceneManager(std::move(sceneManager)),
-    m_fsAbstraction(std::move(fsAbstraction))
+    m_fsAbstraction(std::move(fsAbstraction)),
+    m_box4Animator(std::make_shared<CycleInterpolator>(1), 0.5, 1.5, 1, 0)
 {}
 
 void RenderingEngineDevScene::update() {
@@ -67,6 +69,7 @@ void RenderingEngineDevScene::update() {
     m_freeFlyCameraController->update();
     m_playerController->update();
     m_fpsCalculator.update(dt);
+    m_box4Animator.update(dt);
 
     if (m_sceneCloser != nullptr) {
         m_sceneCloser->update();
@@ -139,6 +142,8 @@ void RenderingEngineDevScene::update() {
         m_fsAbstraction->deleteFile(DYNAMIC_STATE_FILE_PATH);
         updateDeleteButtonVisibility();
     }
+
+    m_box4Transform->setPosition(glm::vec3(1.75, m_box4Animator.value(), -2.5));
 }
 
 void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string& hierarchyRepresentation) {
@@ -163,6 +168,9 @@ void RenderingEngineDevScene::buildHierarchyFromRepresentation(const std::string
             TransformationComponent::TYPE_NAME
     ));
     throwErrorIfNull(m_box2Transform, "Box has not transform");
+
+    m_box4Transform = findComponent<TransformationComponent>("box4");
+    m_box4Animator.start();
 
     m_ballPrefab = m_gameObjectsMap.at("ballPrefab");
     removeGameObject("ballPrefab");

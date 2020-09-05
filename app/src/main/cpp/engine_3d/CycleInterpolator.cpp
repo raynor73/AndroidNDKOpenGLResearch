@@ -8,5 +8,5 @@
 CycleInterpolator::CycleInterpolator(float period) : m_period(period) {}
 
 float CycleInterpolator::interpolate(float input) {
-    return sin(M_2_PI * m_period * input);
+    return 1 - (1 + cos(2 * M_PI * m_period * input)) / 2;
 }
