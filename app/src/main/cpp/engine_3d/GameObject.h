@@ -68,5 +68,7 @@ private:
     static int nextCloneNamePostfix();
 };
 
+typedef std::shared_ptr<GameObject> spGameObject;
+
 
 #endif //ENGINE_3D_GAMEOBJECT_H
