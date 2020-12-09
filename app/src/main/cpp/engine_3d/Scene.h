@@ -82,7 +82,8 @@ protected:
     std::shared_ptr<Time> m_time;
     std::shared_ptr<DisplayInfo> m_displayInfo;
 
-    void addGameObject(const std::string& parentName, std::shared_ptr<GameObject> gameObject);
+    //void addGameObject(const std::string& parentName, std::shared_ptr<GameObject> gameObject);
+    void addGameObject(const std::string& parentName, const spGameObject& gameObject);
     void removeGameObject(const std::string& name);
 
 private:

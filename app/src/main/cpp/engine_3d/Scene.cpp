@@ -99,7 +99,7 @@ void Scene::update() {
     }
 }
 
-void Scene::addGameObject(const std::string &parentName, std::shared_ptr<GameObject> gameObject) {
+void Scene::addGameObject(const std::string &parentName, const spGameObject& gameObject) {
     if (m_gameObjectsMap.count(parentName) == 0) {
         std::stringstream ss;
         ss << "Parent game object " << parentName << " not found";
